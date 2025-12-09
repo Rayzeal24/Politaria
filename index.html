@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -6,7 +7,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="Politaria, jeu de stratégie militaire et économique jouable sur le web." />
 
-  <!-- manifest/service worker si tu les utilises déjà -->
   <link rel="manifest" href="manifest.json">
 
   <style>
@@ -24,6 +24,10 @@
       color: #f9fafb;
     }
 
+    body {
+      background: radial-gradient(circle at top, #020617 0, #020617 40%, #020617 60%, #000 100%);
+    }
+
     .scene {
       position: relative;
       width: 100%;
@@ -31,6 +35,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      overflow: hidden;
     }
 
     canvas#space {
@@ -40,32 +45,90 @@
       height: 100%;
       display: block;
       z-index: 0;
+      background: radial-gradient(circle at 50% 10%, #020617 0, #020617 40%, #020617 60%, #000 100%);
+    }
+
+    /* légère “vignette” sombre autour */
+    .scene::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 50% 20%, rgba(15,23,42,0) 0, rgba(15,23,42,0) 40%, rgba(15,23,42,0.8) 100%);
+      mix-blend-mode: multiply;
+      z-index: 0;
     }
 
     .overlay {
       position: relative;
-      z-index: 1;
-      text-align: center;
-      padding: 20px;
-      max-width: 800px;
+      z-index: 2;
+      text-align: left;
+      padding: 24px 28px;
+      max-width: 560px;
+      border-radius: 24px;
+      background: radial-gradient(circle at top left, rgba(15,23,42,0.95), rgba(15,23,42,0.96))
+                  border-box;
+      border: 1px solid rgba(148,163,184,0.35);
+      box-shadow:
+        0 0 0 1px rgba(15,23,42,0.7),
+        0 32px 80px rgba(0,0,0,0.8);
+      backdrop-filter: blur(12px);
+    }
+
+    .overlay-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .badge-env {
+      font-size: 0.7rem;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(55,65,81,0.9);
+      color: #9ca3af;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .badge-env span.dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #22c55e, #16a34a);
+      box-shadow: 0 0 8px rgba(34,197,94,0.7);
     }
 
     .title {
-      font-size: clamp(2.4rem, 4vw, 3.6rem);
+      font-size: clamp(2.3rem, 4vw, 3.4rem);
       font-weight: 700;
       letter-spacing: 0.06em;
+      text-transform: uppercase;
+      line-height: 1.1;
     }
     .title span {
       display: inline-block;
-      background: linear-gradient(90deg, #38bdf8, #6366f1, #ec4899);
+      background: linear-gradient(120deg, #38bdf8, #22c55e, #f97316);
       -webkit-background-clip: text;
       color: transparent;
+      text-shadow: 0 0 16px rgba(52,211,153,0.6);
     }
 
     .subtitle {
-      margin-top: 12px;
-      font-size: 1rem;
-      color: #cbd5f5;
+      margin-top: 10px;
+      font-size: 0.95rem;
+      color: #e5e7eb;
+      line-height: 1.5;
+    }
+    .subtitle-quiet {
+      margin-top: 4px;
+      font-size: 0.8rem;
+      color: #9ca3af;
     }
 
     .alpha-tag {
@@ -73,16 +136,16 @@
       align-items: center;
       gap: 6px;
       margin-top: 14px;
-      padding: 4px 10px;
+      padding: 4px 11px;
       border-radius: 999px;
       background: #facc15;
       color: #111827;
       font-size: 0.75rem;
-      font-weight: 600;
+      font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.12em;
-      box-shadow: 0 0 20px rgba(250,204,21,0.6);
-      transform: rotate(-3deg);
+      letter-spacing: 0.16em;
+      box-shadow: 0 0 24px rgba(250,204,21,0.6);
+      transform: rotate(-2deg);
     }
 
     .alpha-tag span {
@@ -90,43 +153,81 @@
     }
 
     .cta {
-      margin-top: 28px;
-    }
-
-    .cta button {
-      border-radius: 999px;
-      border: none;
-      padding: 14px 34px;
-      font-size: 1rem;
-      cursor: pointer;
-      background: linear-gradient(90deg, #6366f1, #ec4899);
-      color: #f9fafb;
-      font-weight: 600;
-      box-shadow: 0 12px 30px rgba(15,23,42,0.9);
-      display: inline-flex;
+      margin-top: 22px;
+      display: flex;
+      flex-wrap: wrap;
       gap: 10px;
-      align-items: center;
-      transition: transform 0.1s ease, box-shadow 0.1s ease, filter 0.15s;
     }
 
-    .cta button:hover {
+    .btn-main,
+    .btn-ghost {
+      border-radius: 999px;
+      border: 1px solid transparent;
+      padding: 11px 24px;
+      font-size: 0.95rem;
+      cursor: pointer;
+      font-weight: 600;
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      justify-content: center;
+      transition:
+        transform 0.1s ease,
+        box-shadow 0.1s ease,
+        filter 0.15s ease,
+        background 0.15s ease,
+        border-color 0.15s ease,
+        color 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .btn-main {
+      background: linear-gradient(120deg, #22c55e, #22c55e, #22d3ee);
+      color: #022c22;
+      box-shadow:
+        0 12px 30px rgba(15,23,42,0.9),
+        0 0 32px rgba(34,197,94,0.5);
+    }
+
+    .btn-main:hover {
       transform: translateY(-2px);
-      box-shadow: 0 16px 40px rgba(15,23,42,1);
+      box-shadow:
+        0 18px 40px rgba(15,23,42,1),
+        0 0 40px rgba(34,197,94,0.8);
       filter: brightness(1.05);
     }
 
-    .cta button:active {
+    .btn-main:active {
       transform: translateY(0);
-      box-shadow: 0 8px 20px rgba(15,23,42,0.9);
+      box-shadow:
+        0 8px 22px rgba(15,23,42,0.9),
+        0 0 24px rgba(34,197,94,0.6);
     }
 
-    .cta button span.arrow {
+    .btn-ghost {
+      border-color: rgba(148,163,184,0.5);
+      background: radial-gradient(circle at top, rgba(15,23,42,0.9), rgba(15,23,42,0.95));
+      color: #e5e7eb;
+    }
+
+    .btn-ghost:hover {
+      border-color: rgba(248,250,252,0.9);
+      transform: translateY(-1px);
+      box-shadow: 0 12px 28px rgba(15,23,42,0.9);
+    }
+
+    .btn-ghost span.icon {
+      font-size: 1rem;
+      opacity: 0.8;
+    }
+
+    .btn-main span.arrow {
       display: inline-block;
-      font-size: 1.2rem;
+      font-size: 1.15rem;
       transition: transform 0.15s ease;
     }
 
-    .cta button:hover span.arrow {
+    .btn-main:hover span.arrow {
       transform: translateX(3px);
     }
 
@@ -134,31 +235,124 @@
       margin-top: 14px;
       font-size: 0.8rem;
       color: #9ca3af;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .hint::before {
+      content: "⭑";
+      font-size: 0.75rem;
+      color: #38bdf8;
+      opacity: 0.9;
     }
 
     .bottom-note {
       position: absolute;
-      bottom: 14px;
+      bottom: 12px;
       left: 50%;
       transform: translateX(-50%);
       font-size: 0.75rem;
       color: #6b7280;
       text-align: center;
-      z-index: 1;
-      padding: 4px 10px;
-      background: rgba(15,23,42,0.8);
+      z-index: 2;
+      padding: 5px 11px;
+      background: rgba(15,23,42,0.86);
       border-radius: 999px;
-      border: 1px solid rgba(31,41,55,0.9);
+      border: 1px solid rgba(31,41,55,0.95);
       backdrop-filter: blur(6px);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
     }
 
-    @media (max-width: 600px) {
-      .subtitle {
-        font-size: 0.9rem;
+    .bottom-note span.build {
+      font-variant-numeric: tabular-nums;
+      color: #9ca3af;
+    }
+
+    /* mini infos en haut à droite (facultatif, pour le style “UI de guerre”) */
+    .hud-top-right {
+      position: absolute;
+      right: 18px;
+      top: 16px;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: #9ca3af;
+      pointer-events: none;
+      opacity: 0.7;
+    }
+    .hud-top-right .hud-line {
+      border-radius: 999px;
+      padding: 4px 9px;
+      background: linear-gradient(90deg, rgba(15,23,42,0.9), rgba(15,23,42,0.2));
+      border: 1px solid rgba(55,65,81,0.9);
+    }
+
+    /* Easter egg panel caché */
+    .secret-panel {
+      position: absolute;
+      left: 12px;
+      bottom: 54px;
+      width: 220px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: radial-gradient(circle at top left, rgba(15,23,42,0.96), rgba(15,23,42,0.98));
+      border: 1px solid rgba(248,250,252,0.08);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.85);
+      color: #e5e7eb;
+      font-size: 0.75rem;
+      z-index: 3;
+      display: none;
+      backdrop-filter: blur(6px);
+    }
+    .secret-panel h3 {
+      font-size: 0.8rem;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: #a5b4fc;
+    }
+    .secret-panel p {
+      font-size: 0.74rem;
+      line-height: 1.4;
+      color: #d1d5db;
+    }
+    .secret-panel small {
+      display: block;
+      margin-top: 5px;
+      font-size: 0.68rem;
+      color: #9ca3af;
+    }
+
+    @media (max-width: 768px) {
+      .overlay {
+        margin: 0 12px;
+        padding: 18px 18px 20px;
       }
-      .cta button {
+      .overlay-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .cta {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .btn-main,
+      .btn-ghost {
         width: 100%;
-        justify-content: center;
+      }
+      .hud-top-right {
+        display: none;
+      }
+      .secret-panel {
+        width: calc(100% - 24px);
+        left: 12px;
       }
     }
   </style>
@@ -167,92 +361,103 @@
   <div class="scene">
     <canvas id="space"></canvas>
 
+    <div class="hud-top-right">
+      <div class="hud-line">GLOBAL THEATER: ONLINE</div>
+      <div class="hud-line">SIMULATION GRID: CALIBRÉE</div>
+    </div>
+
     <div class="overlay">
-      <div class="title">Bienvenue dans <span>Politaria</span></div>
+      <div class="overlay-header">
+        <div class="badge-env">
+          <span class="dot"></span>
+          Serveur local – Instance de test
+        </div>
+      </div>
+
+      <div class="title">
+        Bienvenue dans <span>Politaria</span>
+      </div>
+
       <p class="subtitle">
-        Un sandbox stratégique où tu diriges ton État entre guerres, crises et alliances.  
-        L’hémisphère qui tourne derrière réagit à ta souris ou à ton doigt.
+        Un sandbox stratégique où tu diriges ton État à travers guerres totales, crises internes et alliances fragiles.
+        La carte de guerre derrière toi visualise les fronts, les bombardements et les forces en mouvement.
+      </p>
+      <p class="subtitle-quiet">
+        Tout ce que tu vois n’est qu’un aperçu : l’équilibre mondial attend encore ta première décision.
       </p>
 
       <div class="alpha-tag">
-        <span>Alpha</span> • En développement
+        <span>Pré-alpha</span> • Interface expérimentale
       </div>
 
       <div class="cta">
-        <button id="enterBtn">
+        <button id="enterBtn" class="btn-main">
           Entrer dans Politaria
           <span class="arrow">➜</span>
+        </button>
+
+        <button id="skirmishBtn" class="btn-ghost">
+          <span class="icon">⚔</span>
+          Mode escarmouche (à venir)
         </button>
       </div>
 
       <p class="hint">
-        Bouge la souris (ou ton doigt) pour faire pivoter la sphère de points.
+        Bouge ta souris ou ton doigt : la carte réagit, les unités se déplacent, les zones de conflit s’illuminent.
       </p>
     </div>
 
     <div class="bottom-note">
-      Prototype personnel – interface et gameplay en cours d’évolution.
+      Prototype personnel – interface & gameplay en évolution.
+      <span class="build">build 0.0.3-dev</span>
+    </div>
+
+    <div class="secret-panel" id="secretPanel">
+      <h3>Interface cachée</h3>
+      <p>
+        Tu as trouvé un point mort sur la carte. Ici, tu pourras plus tard
+        récupérer des bonus, activer des scénarios spéciaux ou débloquer des skins de drapeaux.
+      </p>
+      <small>Astuce : déplace la carte et cherche d’autres anomalies…</small>
     </div>
   </div>
 
   <script>
     // --- Navigation vers le site principal ---
-    document.getElementById("enterBtn").addEventListener("click", () => {
-      // Change "index-app.html" par le nom de ton vrai site si besoin.
-      // Si ton ancienne page s'appelle "site.html", mets "site.html".
+    document.getElementById("enterBtn").addEventListener("click", function () {
       window.location.href = "index-app.html";
     });
 
-    // --- Canvas interactif : étoiles + "globe" en points ---
-    const canvas = document.getElementById("space");
-    const ctx = canvas.getContext("2d");
+    document.getElementById("skirmishBtn").addEventListener("click", function () {
+      // placeholder, tu pourras changer ça par une vraie route plus tard
+      alert("Le mode escarmouche sera disponible dans une future version de Politaria.");
+    });
 
-    let w = canvas.width = window.innerWidth;
-    let h = canvas.height = window.innerHeight;
+    // --- Canvas interactif : carte de guerre stylisée ---
+    var canvas = document.getElementById("space");
+    var ctx = canvas.getContext("2d");
 
-    window.addEventListener("resize", () => {
+    var w = canvas.width = window.innerWidth;
+    var h = canvas.height = window.innerHeight;
+
+    window.addEventListener("resize", function () {
       w = canvas.width = window.innerWidth;
       h = canvas.height = window.innerHeight;
     });
 
-    // étoiles de fond
-    const stars = [];
-    const STAR_COUNT = 250;
-
-    for (let i = 0; i < STAR_COUNT; i++) {
-      stars.push({
-        x: Math.random() * w,
-        y: Math.random() * h,
-        z: Math.random() * 1 + 0.2,
-        r: Math.random() * 1.4 + 0.3
-      });
-    }
-
-    // points du "globe"
-    const globePoints = [];
-    const GLOBE_COUNT = 450;
-    const baseRadius = () => Math.min(w, h) * 0.32;
-
-    for (let i = 0; i < GLOBE_COUNT; i++) {
-      const theta = Math.acos(2 * Math.random() - 1); // latitude
-      const phi = Math.random() * Math.PI;           // longitude sur un demi-globe
-      globePoints.push({ theta, phi });
-    }
-
-    let rotation = 0;
-    let targetRotation = 0;
-    let lastTime = 0;
-
-    const pointer = { x: 0.5, y: 0.5, active: false };
+    var pointer = {
+      x: 0.5,
+      y: 0.5,
+      active: false
+    };
 
     function onPointerMove(e) {
       pointer.active = true;
-      const rect = canvas.getBoundingClientRect();
-      const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
-      const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
-      pointer.x = x / rect.width;
-      pointer.y = y / rect.height;
-      targetRotation = (pointer.x - 0.5) * 2.5; // plus ou moins -1.25 rad
+      var rect = canvas.getBoundingClientRect();
+      var clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      var clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      pointer.x = (clientX - rect.left) / rect.width;
+      pointer.y = (clientY - rect.top) / rect.height;
     }
 
     function onPointerEnd() {
@@ -264,81 +469,331 @@
     canvas.addEventListener("mouseleave", onPointerEnd);
     canvas.addEventListener("touchend", onPointerEnd);
 
+    // étoiles/fond léger
+    var stars = [];
+    var STAR_COUNT = 200;
+
+    for (var i = 0; i < STAR_COUNT; i++) {
+      stars.push({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        z: Math.random() * 0.8 + 0.2,
+        r: Math.random() * 1.3 + 0.2
+      });
+    }
+
+    // "continents" simplifiés (polygones stylisés, pas une vraie Terre)
+    // coordonnées normalisées [0,1] que l’on adaptera à la taille
+    var landmasses = [
+      // grand bloc gauche
+      [
+        { x: 0.10, y: 0.35 },
+        { x: 0.23, y: 0.28 },
+        { x: 0.32, y: 0.30 },
+        { x: 0.38, y: 0.42 },
+        { x: 0.34, y: 0.55 },
+        { x: 0.20, y: 0.56 },
+        { x: 0.12, y: 0.47 }
+      ],
+      // bloc centre
+      [
+        { x: 0.42, y: 0.32 },
+        { x: 0.55, y: 0.29 },
+        { x: 0.64, y: 0.34 },
+        { x: 0.66, y: 0.45 },
+        { x: 0.57, y: 0.52 },
+        { x: 0.46, y: 0.49 }
+      ],
+      // bloc droite
+      [
+        { x: 0.70, y: 0.30 },
+        { x: 0.84, y: 0.33 },
+        { x: 0.89, y: 0.45 },
+        { x: 0.84, y: 0.56 },
+        { x: 0.74, y: 0.52 },
+        { x: 0.69, y: 0.40 }
+      ]
+    ];
+
+    // zones de conflit qui pulsent
+    var conflictZones = [
+      { x: 0.28, y: 0.40, baseR: 14, phase: Math.random() * Math.PI * 2 },
+      { x: 0.52, y: 0.44, baseR: 18, phase: Math.random() * Math.PI * 2 },
+      { x: 0.77, y: 0.39, baseR: 16, phase: Math.random() * Math.PI * 2 },
+      { x: 0.63, y: 0.52, baseR: 13, phase: Math.random() * Math.PI * 2 }
+    ];
+
+    // unités en mouvement (tanks/avions abstraits)
+    function createUnit(startX, startY, endX, endY, speed, kind) {
+      return {
+        startX: startX,
+        startY: startY,
+        endX: endX,
+        endY: endY,
+        t: Math.random(),
+        speed: speed,
+        kind: kind // "tank" ou "plane"
+      };
+    }
+
+    var units = [
+      createUnit(0.18, 0.57, 0.32, 0.42, 0.03, "tank"),
+      createUnit(0.80, 0.30, 0.68, 0.48, 0.04, "tank"),
+      createUnit(0.35, 0.32, 0.55, 0.29, 0.06, "plane"),
+      createUnit(0.62, 0.50, 0.78, 0.36, 0.05, "plane")
+    ];
+
+    // lignes de front
+    var fronts = [
+      { from: { x: 0.25, y: 0.42 }, to: { x: 0.50, y: 0.43 } },
+      { from: { x: 0.55, y: 0.36 }, to: { x: 0.78, y: 0.40 } }
+    ];
+
+    var lastTime = 0;
+
+    // Easter egg : double-clic dans un coin spécifique
+    var secretPanel = document.getElementById("secretPanel");
+
+    canvas.addEventListener("dblclick", function (e) {
+      var rect = canvas.getBoundingClientRect();
+      var x = e.clientX - rect.left;
+      var y = e.clientY - rect.top;
+
+      // zone invisible en bas à gauche (100×80 px)
+      if (x < 120 && y > rect.height - 120) {
+        secretPanel.style.display = secretPanel.style.display === "none" || secretPanel.style.display === "" ? "block" : "none";
+      }
+    });
+
     function draw(time) {
-      const dt = (time - lastTime) / 1000 || 0;
+      time = time || 0;
+      var dt = (time - lastTime) / 1000 || 0;
       lastTime = time;
 
       ctx.clearRect(0, 0, w, h);
 
-      // fond dégradé léger
-      const gradient = ctx.createRadialGradient(
-        w * 0.5, h * 0.2, 0,
-        w * 0.5, h * 0.8, Math.max(w, h)
-      );
+      // fond
+      var gradient = ctx.createLinearGradient(0, 0, 0, h);
       gradient.addColorStop(0, "#020617");
+      gradient.addColorStop(0.5, "#020617");
       gradient.addColorStop(1, "#000000");
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, w, h);
 
-      // étoiles
-      for (const s of stars) {
-        s.y += 8 * dt * s.z;
+      // étoiles légères
+      var i, s;
+      for (i = 0; i < stars.length; i++) {
+        s = stars[i];
+        s.y += 10 * dt * s.z;
         if (s.y > h) {
           s.y = 0;
           s.x = Math.random() * w;
         }
-        const alpha = 0.3 + s.z * 0.7;
-        ctx.fillStyle = `rgba(148, 163, 184, ${alpha})`;
+        var alpha = 0.25 + s.z * 0.6;
+        ctx.fillStyle = "rgba(148,163,184," + alpha.toFixed(3) + ")";
         ctx.beginPath();
         ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
         ctx.fill();
       }
 
-      // rotation douce vers la cible
-      rotation += (targetRotation - rotation) * Math.min(1, dt * 3);
+      // paramètre de carte (zone principale où on dessine)
+      var mapWidth = Math.min(w * 0.9, 1200);
+      var mapHeight = mapWidth * 0.5;
+      if (mapHeight > h * 0.7) {
+        mapHeight = h * 0.7;
+        mapWidth = mapHeight * 2;
+      }
 
-      const cx = w * 0.5;
-      const cy = h * 0.7;
-      const radius = baseRadius();
+      var mapX = (w - mapWidth) * 0.5;
+      var mapY = (h - mapHeight) * 0.55;
 
-      // halo
-      const haloGrad = ctx.createRadialGradient(cx, cy, radius * 0.2, cx, cy, radius * 1.3);
-      haloGrad.addColorStop(0, "rgba(59,130,246,0.4)");
-      haloGrad.addColorStop(1, "rgba(15,23,42,0)");
-      ctx.fillStyle = haloGrad;
+      // parallax doux
+      var offsetX = (pointer.x - 0.5) * 40;
+      var offsetY = (pointer.y - 0.5) * 18;
+
+      ctx.save();
+      ctx.translate(offsetX, offsetY);
+
+      // cadre de la carte
+      ctx.fillStyle = "rgba(15,23,42,0.95)";
+      ctx.strokeStyle = "rgba(55,65,81,0.9)";
+      ctx.lineWidth = 1.5;
       ctx.beginPath();
-      ctx.arc(cx, cy, radius * 1.4, 0, Math.PI * 2);
+      var radius = 16;
+      roundedRectPath(ctx, mapX, mapY, mapWidth, mapHeight, radius);
       ctx.fill();
+      ctx.stroke();
 
-      // points du globe
-      for (const p of globePoints) {
-        const rotPhi = p.phi + rotation + time * 0.0001;
-        const x3d = Math.sin(p.theta) * Math.cos(rotPhi);
-        const y3d = Math.cos(p.theta);
-        const z3d = Math.sin(p.theta) * Math.sin(rotPhi);
+      // grille
+      ctx.save();
+      ctx.beginPath();
+      roundedRectPath(ctx, mapX, mapY, mapWidth, mapHeight, radius - 2);
+      ctx.clip();
 
-        // on ne dessine que la "face" visible
-        if (z3d < -0.05) continue;
+      ctx.lineWidth = 0.5;
+      ctx.strokeStyle = "rgba(30,64,175,0.45)";
+      var stepX = mapWidth / 16;
+      var stepY = mapHeight / 8;
 
-        const projX = cx + x3d * radius;
-        const projY = cy + y3d * radius * 0.8;
-
-        const bright = 0.5 + 0.5 * z3d;
-        const size = 1.1 + 1.3 * z3d;
-        ctx.fillStyle = `rgba(248,250,252, ${bright})`;
+      var x, y;
+      for (x = mapX; x <= mapX + mapWidth + 1; x += stepX) {
         ctx.beginPath();
-        ctx.arc(projX, projY, size, 0, Math.PI * 2);
+        ctx.moveTo(x, mapY);
+        ctx.lineTo(x, mapY + mapHeight);
+        ctx.stroke();
+      }
+      for (y = mapY; y <= mapY + mapHeight + 1; y += stepY) {
+        ctx.beginPath();
+        ctx.moveTo(mapX, y);
+        ctx.lineTo(mapX + mapWidth, y);
+        ctx.stroke();
+      }
+
+      // continents stylisés
+      for (i = 0; i < landmasses.length; i++) {
+        var land = landmasses[i];
+        ctx.beginPath();
+        for (var j = 0; j < land.length; j++) {
+          var p = land[j];
+          var px = mapX + p.x * mapWidth;
+          var py = mapY + p.y * mapHeight;
+          if (j === 0) {
+            ctx.moveTo(px, py);
+          } else {
+            ctx.lineTo(px, py);
+          }
+        }
+        ctx.closePath();
+
+        ctx.fillStyle = "rgba(22,163,74,0.16)";
+        ctx.fill();
+        ctx.strokeStyle = "rgba(34,197,94,0.7)";
+        ctx.lineWidth = 1.2;
+        ctx.stroke();
+      }
+
+      // lignes de front (légèrement rouges, pointillées)
+      ctx.setLineDash([8, 4]);
+      ctx.lineWidth = 1.4;
+      ctx.strokeStyle = "rgba(248,113,113,0.9)";
+      for (i = 0; i < fronts.length; i++) {
+        var f = fronts[i];
+        var fx1 = mapX + f.from.x * mapWidth;
+        var fy1 = mapY + f.from.y * mapHeight;
+        var fx2 = mapX + f.to.x * mapWidth;
+        var fy2 = mapY + f.to.y * mapHeight;
+
+        ctx.beginPath();
+        ctx.moveTo(fx1, fy1);
+        ctx.lineTo(fx2, fy2);
+        ctx.stroke();
+      }
+      ctx.setLineDash([]);
+
+      // zones de conflit pulsantes (bombardements)
+      for (i = 0; i < conflictZones.length; i++) {
+        var cz = conflictZones[i];
+        cz.phase += dt * 2;
+        var centerX = mapX + cz.x * mapWidth;
+        var centerY = mapY + cz.y * mapHeight;
+        var pulse = (Math.sin(cz.phase) + 1) * 0.5;
+        var radiusPulse = cz.baseR + pulse * 12;
+
+        // halo externe
+        var g = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, radiusPulse);
+        g.addColorStop(0, "rgba(248,113,113,0.85)");
+        g.addColorStop(1, "rgba(248,113,113,0)");
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radiusPulse, 0, Math.PI * 2);
+        ctx.fill();
+
+        // noyau
+        ctx.fillStyle = "rgba(248,250,252,0.95)";
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, 3.5, 0, Math.PI * 2);
         ctx.fill();
       }
 
-      // ligne d'horizon
-      ctx.strokeStyle = "rgba(15,23,42,0.8)";
+      // unités
+      for (i = 0; i < units.length; i++) {
+        var u = units[i];
+        u.t += u.speed * dt;
+        if (u.t > 1.2) {
+          u.t = -Math.random() * 0.4;
+        }
+
+        var tNorm = Math.max(0, Math.min(1, u.t));
+        // petit easing pour ne pas être trop linéaire
+        var ease = tNorm * tNorm * (3 - 2 * tNorm);
+
+        var ux = mapX + (u.startX + (u.endX - u.startX) * ease) * mapWidth;
+        var uy = mapY + (u.startY + (u.endY - u.startY) * ease) * mapHeight;
+
+        ctx.save();
+        ctx.translate(ux, uy);
+
+        // direction
+        var angle = Math.atan2(u.endY - u.startY, u.endX - u.startX);
+        ctx.rotate(angle);
+
+        if (u.kind === "tank") {
+          ctx.fillStyle = "rgba(52,211,153,0.95)";
+          ctx.strokeStyle = "rgba(22,163,74,1)";
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.rect(-7, -4, 14, 8);
+          ctx.fill();
+          ctx.stroke();
+          // canon
+          ctx.beginPath();
+          ctx.moveTo(4, 0);
+          ctx.lineTo(10, 0);
+          ctx.stroke();
+        } else {
+          // avion
+          ctx.fillStyle = "rgba(59,130,246,0.95)";
+          ctx.strokeStyle = "rgba(37,99,235,1)";
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(0, 0);
+          ctx.lineTo(-10, 4);
+          ctx.lineTo(-10, -4);
+          ctx.closePath();
+          ctx.fill();
+          ctx.stroke();
+        }
+
+        ctx.restore();
+      }
+
+      // légère lueur sur les bords de la carte
+      var borderGlow = ctx.createLinearGradient(mapX, mapY, mapX + mapWidth, mapY + mapHeight);
+      borderGlow.addColorStop(0, "rgba(59,130,246,0.08)");
+      borderGlow.addColorStop(0.5, "rgba(34,197,94,0.06)");
+      borderGlow.addColorStop(1, "rgba(249,115,22,0.08)");
+      ctx.strokeStyle = borderGlow;
       ctx.lineWidth = 2;
       ctx.beginPath();
-      ctx.ellipse(cx, cy, radius * 1.05, radius * 0.55, 0, Math.PI, 0, true);
+      roundedRectPath(ctx, mapX, mapY, mapWidth, mapHeight, radius);
       ctx.stroke();
 
+      ctx.restore(); // fin parallax
+
       requestAnimationFrame(draw);
+    }
+
+    function roundedRectPath(context, x, y, width, height, r) {
+      var radius = r || 0;
+      context.moveTo(x + radius, y);
+      context.lineTo(x + width - radius, y);
+      context.quadraticCurveTo(x + width, y, x + width, y + radius);
+      context.lineTo(x + width, y + height - radius);
+      context.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+      context.lineTo(x + radius, y + height);
+      context.quadraticCurveTo(x, y + height, x, y + height - radius);
+      context.lineTo(x, y + radius);
+      context.quadraticCurveTo(x, y, x + radius, y);
     }
 
     requestAnimationFrame(draw);
