@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Politaria – Welcome</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+  body {
+    margin: 0;
+    overflow: hidden;
+    font-family: system-ui, sans-serif;
+    background: #000;
+    color: white;
+  }
+
+  #overlay {
+    position: absolute;
+    z-index: 10;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+
+  h1 {
+    font-size: 3.3rem;
+    margin-bottom: 10px;
+    text-shadow: 0 0 15px #fff;
+  }
+
+  p {
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+    opacity: 0.8;
+  }
+
+  #enterBtn {
+    padding: 14px 38px;
+    font-size: 1.2rem;
+    border-radius: 40px;
+    border: 2px solid #fff;
+    background: transparent;
+    color: #fff;
+    cursor: pointer;
+    pointer-events: auto;
+    transition: 0.3s;
+  }
+
+  #enterBtn:hover {
+    background: rgba(255,255,255,0.15);
+    transform: scale(1.05);
+  }
+</style>
+</head>
+<body>
+
+<!-- Conteneur 3D -->
+<canvas id="world"></canvas>
+
+<!-- Interface -->
+<div id="overlay">
+  <h1>Welcome to Politaria</h1>
+  <p>The new geopolitical strategy experience.</p>
+  <button id="enterBtn" onclick="location.href='index.html'">
+    Enter Politaria →
+  </button>
+</div>
+
+<!-- Bibliothèque Three.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<script>
+/* ========= SCÈNE ========= */
+const canvas = document.getElementById("world");
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 2000);
+camera.position.z = 320;
+
+/* ========= LUMIÈRES ========= */
+const light = new THREE.AmbientLight(0xffffff, 1);
+scene.add(light);
+
+/* ========= CARTE DU MONDE (flat + glow) ========= */
+const loader = new THREE.TextureLoader();
+loader.load("https://raw.githubusercontent.com/datasets/geo-boundaries-world-110m/master/world.png", texture => {
+    const geometry = new THREE.PlaneGeometry(600, 300);
+    const material = new THREE.MeshBasicMaterial({
+        map: texture,
+        transparent: true,
+        opacity: 0.9
+    });
+
+    worldMap = new THREE.Mesh(geometry, material);
+    worldMap.position.set(0, 0, 0);
+    scene.add(worldMap);
+
+    // Glow
+    const glow = new THREE.Mesh(
+      geometry,
+      new THREE.MeshBasicMaterial({
+        color: 0x44aaff,
+        transparent: true,
+        opacity: 0.15
+      })
+    );
+    glow.scale.set(1.1, 1.15, 1);
+    scene.add(glow);
+});
+
+/* ========= POINTS LUMINEUX (villes / zones actives) ========= */
+function createPoint(x, y) {
+    const dot = new THREE.Mesh(
+        new THREE.CircleGeometry(2, 12),
+        new THREE.MeshBasicMaterial({ color: 0x55aaff })
+    );
+    dot.position.set(x, y, 1);
+    scene.add(dot);
+}
+createPoint(-100, 30);
+createPoint(80, -20);
+createPoint(0, 60);
+createPoint(150, 10);
+
+/* ========= ANIMATION ========= */
+function animate() {
+    requestAnimationFrame(animate);
+
+    if (worldMap) {
+        worldMap.rotation.z += 0.0006;
+    }
+
+    renderer.render(scene, camera);
+}
+
+animate();
+
+/* ========= RESPONSIVE ========= */
+window.addEventListener("resize", () => {
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+});
+</script>
+
+</body>
+</html>
