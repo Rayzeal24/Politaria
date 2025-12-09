@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <title>Pax Historia – Infinite Universe</title>
+  <title>Pax Historia – Stellar Sandbox</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <style>
@@ -15,12 +15,11 @@
     body {
       background: #000;
       overflow: hidden;
-      font-family: system-ui, sans-serif;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       color: #fff;
     }
 
-    /* Canvas du gigantesque univers */
-    canvas#universe {
+    canvas#space {
       position: fixed;
       inset: 0;
       width: 100%;
@@ -29,6 +28,7 @@
     }
 
     .main {
+      position: relative;
       width: 100%;
       height: 100vh;
       display: flex;
@@ -36,39 +36,47 @@
       justify-content: center;
       align-items: center;
       text-align: center;
+      pointer-events: none;
     }
 
     h1 {
       font-size: 4rem;
       font-weight: 900;
-      background: linear-gradient(90deg, #ffffff, #d7e8ff, #ffffff);
+      letter-spacing: 2px;
+      background: linear-gradient(90deg, #ffffff, #e5f0ff, #ffffff);
       -webkit-background-clip: text;
       color: transparent;
-      text-shadow: 0 0 30px rgba(255,255,255,0.7);
+      text-shadow: 0 0 25px rgba(255,255,255,0.7);
     }
 
     .subtitle {
-      margin-top: 10px;
       font-size: 1.3rem;
-      opacity: 0.8;
+      opacity: 0.85;
+      margin-top: 10px;
     }
 
-    button {
+    .btn-wrap {
       margin-top: 40px;
+      pointer-events: auto;
+    }
+
+    .btn {
       padding: 15px 40px;
       border-radius: 999px;
-      background: rgba(255,255,255,0.15);
-      border: 2px solid rgba(255,255,255,0.5);
+      border: 2px solid rgba(255,255,255,0.7);
+      background: radial-gradient(circle at 0% 0%, #38bdf8 0, #020617 55%);
       color: #fff;
       font-size: 1.2rem;
+      font-weight: 600;
       cursor: pointer;
-      backdrop-filter: blur(6px);
-      transition: 0.3s;
+      box-shadow: 0 0 25px rgba(56,189,248,0.6);
+      transition: 0.25s;
     }
 
-    button:hover {
-      background: rgba(255,255,255,0.3);
-      transform: scale(1.05);
+    .btn:hover {
+      transform: translateY(-2px) scale(1.03);
+      box-shadow: 0 0 40px rgba(56,189,248,0.9);
+      background: radial-gradient(circle at 100% 0%, #38bdf8 0, #020617 60%);
     }
 
     .alpha {
@@ -76,50 +84,71 @@
       top: 40px;
       right: 80px;
       font-size: 1.5rem;
-      font-weight: bold;
+      font-weight: 800;
       color: #ffe066;
       transform: rotate(-15deg);
-      text-shadow: 0 0 10px rgba(255,220,100,0.7);
+      text-shadow: 0 0 10px rgba(255,224,102,0.8);
+    }
+
+    .footer {
+      position: fixed;
+      bottom: 20px;
+      width: 100%;
+      text-align: center;
+      font-size: 0.75rem;
+      opacity: 0.6;
     }
   </style>
 </head>
 
 <body>
 
-  <canvas id="universe"></canvas>
+  <canvas id="space"></canvas>
 
   <div class="alpha">Alpha!</div>
 
   <div class="main">
     <h1>Welcome to Pax Historia</h1>
-    <p class="subtitle">An alternate history sandbox in a limitless universe</p>
-    <button onclick="startGame()">Get Started →</button>
+    <p class="subtitle">An alternate history sandbox among the stars</p>
+    <div class="btn-wrap">
+      <button class="btn" onclick="startGame()">Get Started →</button>
+    </div>
+  </div>
+
+  <div class="footer">
+    Build your own system. Rewrite its history.
   </div>
 
 <script>
-/* ================================================================
-     🌌 UNIVERS MASSIF – MILLIERS D’ÉTOILES + PLANÈTES PARTOUT
-     Sans aucune réaction à la souris.
-   ================================================================ */
+/* ===========================================================
+   🌌 SYSTÈME STELLAIRE ANIMÉ – COMME L’IMAGE QUE TU AS MONTRÉE
+   - Fond étoilé
+   - Soleil central lumineux
+   - Orbites elliptiques visibles
+   - Grosses planètes + plein de petites
+   - Aucune réaction à la souris
+   =========================================================== */
 
-const canvas = document.getElementById("universe");
+const canvas = document.getElementById("space");
 const ctx = canvas.getContext("2d");
 
-let w, h;
+let w, h, cx, cy;
 
 function resize() {
   w = canvas.width = window.innerWidth;
   h = canvas.height = window.innerHeight;
+  // centre du système : légèrement à droite comme sur ton image
+  cx = w * 0.6;
+  cy = h * 0.5;
 }
 resize();
 window.addEventListener("resize", resize);
 
-
-/* ------------------------
-   🌟 1. ÉTOILES DE FOND
-------------------------- */
+/* -----------------------
+   🌟 Fond : ciel étoilé
+------------------------ */
 const stars = [];
-const STAR_COUNT = 3000;
+const STAR_COUNT = 2000;
 
 for (let i = 0; i < STAR_COUNT; i++) {
   stars.push({
@@ -127,48 +156,125 @@ for (let i = 0; i < STAR_COUNT; i++) {
     y: Math.random() * h,
     size: Math.random() * 1.4 + 0.2,
     baseAlpha: Math.random() * 0.6 + 0.2,
-    twinkleSpeed: Math.random() * 0.02 + 0.005
+    speed: Math.random() * 0.02 + 0.005
   });
 }
 
-
-/* ------------------------
-   🪐 2. PLANÈTES VISIBLES
-------------------------- */
-
+/* -----------------------
+   🪐 Système de planètes
+------------------------ */
+const orbits = [];
 const planets = [];
-const PLANET_COUNT = 350;
 
-for (let i = 0; i < PLANET_COUNT; i++) {
-  const radius = (Math.random() ** 2.2) * Math.min(w, h) * 0.6 + 30;
+// Définition des orbites principales (grosses planètes)
+const mainOrbitCount = 8;
+for (let i = 0; i < mainOrbitCount; i++) {
+  const rx = 80 + i * 55;           // rayon horizontal
+  const ry = rx * 0.7;              // rayon vertical pour effet ellipse
+  orbits.push({ rx, ry });
+}
 
+// Planètes principales avec taille/couleur différentes
+const mainPlanetsConfig = [
+  { size: 8,  color: "#b0bec5" },   // proche du soleil
+  { size: 10, color: "#ffb74d" },
+  { size: 12, color: "#4fc3f7" },
+  { size: 11, color: "#a5d6a7" },
+  { size: 18, color: "#ffcc80" },   // style Saturne/Jupiter
+  { size: 16, color: "#90caf9" },
+  { size: 14, color: "#ce93d8" },
+  { size: 20, color: "#80cbc4" }
+];
+
+for (let i = 0; i < mainOrbitCount; i++) {
+  const orbit = orbits[i];
+  const cfg = mainPlanetsConfig[i % mainPlanetsConfig.length];
   planets.push({
-    orbitRadius: radius,
+    orbit: orbit,
     angle: Math.random() * Math.PI * 2,
-    speed: Math.random() * 0.0004 + 0.0001, // très lente rotation
-    size: Math.random() * 5 + 2,
-    hue: 180 + Math.random() * 180, // couleurs variées
-    saturation: 40 + Math.random() * 50,
-    lightness: 40 + Math.random() * 40
+    speed: (0.0004 + i * 0.0001), // plus loin = un peu plus lent
+    size: cfg.size,
+    color: cfg.color,
+    ring: i === 4 // on donne un anneau à une planète style Saturne
   });
 }
 
+// Petites planètes / astéroïdes pour remplir les orbites
+const smallBodies = [];
+for (let i = 0; i < 220; i++) {
+  const orbit = orbits[Math.floor(Math.random() * orbits.length)];
+  smallBodies.push({
+    orbit: orbit,
+    angle: Math.random() * Math.PI * 2,
+    speed: (Math.random() * 0.0006 + 0.0001) * (Math.random() < 0.5 ? 1 : -1),
+    size: Math.random() * 3 + 0.8,
+    color: `hsl(${180 + Math.random() * 160}, 50%, ${40 + Math.random() * 30}%)`
+  });
+}
 
-/* ------------------------
-   ⭐ ANIMATION SANS MOUVEMENT SOURIS
-------------------------- */
+/* -----------------------
+   ☀️ Soleil central
+------------------------ */
+function drawSun() {
+  // halo externe
+  const maxR = 55;
+  const gradient = ctx.createRadialGradient(cx, cy, 5, cx, cy, maxR);
+  gradient.addColorStop(0, "#fff3e0");
+  gradient.addColorStop(0.4, "#ffb74d");
+  gradient.addColorStop(1, "rgba(0,0,0,0)");
+
+  ctx.fillStyle = gradient;
+  ctx.beginPath();
+  ctx.arc(cx, cy, maxR, 0, Math.PI * 2);
+  ctx.fill();
+
+  // disque lumineux
+  ctx.beginPath();
+  ctx.arc(cx, cy, 28, 0, Math.PI * 2);
+  ctx.fillStyle = "#ff6f00";
+  ctx.fill();
+
+  // cœur très lumineux
+  ctx.beginPath();
+  ctx.arc(cx, cy, 18, 0, Math.PI * 2);
+  ctx.fillStyle = "#ffcc80";
+  ctx.fill();
+}
+
+/* -----------------------
+   🌀 Orbites elliptiques
+------------------------ */
+function drawOrbits() {
+  ctx.lineWidth = 1;
+  ctx.strokeStyle = "rgba(255,255,255,0.18)";
+
+  orbits.forEach(o => {
+    ctx.beginPath();
+    for (let a = 0; a <= Math.PI * 2 + 0.1; a += 0.05) {
+      const x = cx + Math.cos(a) * o.rx;
+      const y = cy + Math.sin(a) * o.ry;
+      if (a === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+  });
+}
+
+/* -----------------------
+   🔁 Animation
+------------------------ */
 let t = 0;
-
 function animate() {
   t += 1;
 
-  // fond
-  ctx.fillStyle = "#000";
+  // fond noir
+  ctx.fillStyle = "#000011";
   ctx.fillRect(0, 0, w, h);
 
-  // étoiles scintillantes
-  for (let s of stars) {
-    const alpha = s.baseAlpha + Math.sin(t * s.twinkleSpeed) * 0.25;
+  // étoiles
+  for (let i = 0; i < stars.length; i++) {
+    const s = stars[i];
+    const alpha = s.baseAlpha + Math.sin(t * s.speed + i) * 0.25;
 
     ctx.beginPath();
     ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
@@ -176,34 +282,63 @@ function animate() {
     ctx.fill();
   }
 
-  // planètes (orbits circulaires lentes)
-  const centerX = w / 2;
-  const centerY = h * 0.65;
+  // orbites
+  drawOrbits();
 
-  for (let p of planets) {
-    p.angle += p.speed;
-
-    const x = centerX + Math.cos(p.angle) * p.orbitRadius;
-    const y = centerY + Math.sin(p.angle) * p.orbitRadius * 0.55; // forme galaxie
+  // petites planètes / astéroïdes
+  smallBodies.forEach(b => {
+    b.angle += b.speed;
+    const x = cx + Math.cos(b.angle) * b.orbit.rx;
+    const y = cy + Math.sin(b.angle) * b.orbit.ry;
 
     ctx.beginPath();
-    ctx.arc(x, y, p.size, 0, Math.PI * 2);
-    ctx.fillStyle = `hsl(${p.hue}, ${p.saturation}%, ${p.lightness}%)`;
+    ctx.arc(x, y, b.size, 0, Math.PI * 2);
+    ctx.fillStyle = b.color;
     ctx.fill();
-  }
+  });
+
+  // grosses planètes
+  planets.forEach(p => {
+    p.angle += p.speed;
+    const x = cx + Math.cos(p.angle) * p.orbit.rx;
+    const y = cy + Math.sin(p.angle) * p.orbit.ry;
+
+    // planète
+    ctx.beginPath();
+    ctx.arc(x, y, p.size, 0, Math.PI * 2);
+    ctx.fillStyle = p.color;
+    ctx.fill();
+
+    // anneau style Saturne
+    if (p.ring) {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(-0.4);
+      ctx.strokeStyle = "rgba(230,230,230,0.7)";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.ellipse(0, 0, p.size * 1.9, p.size * 0.8, 0, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
+    }
+  });
+
+  // soleil par dessus
+  drawSun();
 
   requestAnimationFrame(animate);
 }
 animate();
 
-
-/* ------------------------
-   🚀 Bouton
-------------------------- */
+/* -----------------------
+   🚀 Bouton "Get Started"
+------------------------ */
 function startGame() {
-  alert("Chargement du monde…");
+  // À remplacer par ta vraie navigation plus tard
+  alert("Bientôt : entrée dans une planète de Pax Historia…");
 }
 </script>
 
 </body>
 </html>
+
