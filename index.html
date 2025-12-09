@@ -174,8 +174,7 @@
     <div class="overlay">
       <div class="title">Bienvenue dans <span>Politaria</span></div>
       <p class="subtitle">
-        Les drapeaux brûlent, les avions grondent au-dessus de la ligne de front et les
-        silhouettes se font face.  
+        Les drapeaux brûlent, les avions grondent au-dessus de la ligne de front et les silhouettes se défient du regard.  
         Déplace ta souris ou ton doigt : le champ de bataille réagit à tes mouvements.
       </p>
 
@@ -250,7 +249,7 @@
     const EMBER_COUNT = 150;
     function resetEmber(e) {
       e.x = Math.random() * w;
-      e.y = h * 0.5 + Math.random() * h * 0.5;
+      e.y = h * 0.55 + Math.random() * h * 0.45;
       e.speed = 20 + Math.random() * 40;
       e.size = 1 + Math.random() * 2;
       e.dx = (Math.random() - 0.5) * 10;
@@ -287,10 +286,10 @@
     function resetPlane(p, fromLeft) {
       const dir = fromLeft ? 1 : -1;
       p.dir = dir;
-      p.y = h * 0.15 + Math.random() * h * 0.25;
+      p.y = h * 0.18 + Math.random() * h * 0.18;
       p.x = fromLeft ? -200 : w + 200;
       p.speed = 120 + Math.random() * 90;
-      p.scale = 1 + Math.random() * 0.6;
+      p.scale = 0.9 + Math.random() * 0.7;
     }
     for (let i = 0; i < PLANE_COUNT; i++) {
       const p = {};
@@ -300,23 +299,25 @@
 
     let lastTime = 0;
 
+    // --- Décor : fond / ruines ---
     function drawBackground() {
       // ciel
       const sky = ctx.createLinearGradient(0, 0, 0, h);
-      sky.addColorStop(0, "#1e293b");
-      sky.addColorStop(0.35, "#b91c1c");
-      sky.addColorStop(0.8, "#111827");
+      sky.addColorStop(0, "#111827");
+      sky.addColorStop(0.25, "#b91c1c");
+      sky.addColorStop(0.55, "#7f1d1d");
+      sky.addColorStop(1, "#020617");
       ctx.fillStyle = sky;
       ctx.fillRect(0, 0, w, h);
 
-      // fumée / nuages
+      // nuages de fumée
       ctx.save();
       ctx.globalAlpha = 0.35;
       for (let i = 0; i < 6; i++) {
         const cx = (i / 5) * w + camOffsetX * 0.4;
-        const cy = h * 0.18 + (i % 2) * 20 + camOffsetY * 0.2;
-        const radX = w * 0.22;
-        const radY = h * 0.12;
+        const cy = h * (0.12 + 0.06 * (i % 3)) + camOffsetY * 0.2;
+        const radX = w * 0.25;
+        const radY = h * 0.13;
 
         const smokeGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, radX);
         smokeGrad.addColorStop(0, "rgba(148,163,184,0.8)");
@@ -329,11 +330,32 @@
       }
       ctx.restore();
 
+      // silhouettes de ruines au fond
+      ctx.save();
+      ctx.translate(camOffsetX * 0.15, camOffsetY * 0.1);
+      ctx.fillStyle = "rgba(15,23,42,0.7)";
+      const horizon = h * 0.65;
+      ctx.beginPath();
+      ctx.moveTo(0, horizon);
+      for (let i = 0; i <= w; i += 80) {
+        const buildingHeight = (Math.random() * 0.18 + 0.05) * h;
+        ctx.lineTo(i + 20, horizon - buildingHeight);
+        ctx.lineTo(i + 40, horizon - buildingHeight * 0.6);
+        ctx.lineTo(i + 60, horizon - buildingHeight * 0.9);
+        ctx.lineTo(i + 80, horizon);
+      }
+      ctx.lineTo(w + 50, horizon);
+      ctx.lineTo(w + 50, h + 50);
+      ctx.lineTo(-50, h + 50);
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+
       // sol
       ctx.save();
+      const groundY = h * 0.78 + camOffsetY * 0.2;
       ctx.fillStyle = "#020617";
       ctx.beginPath();
-      const groundY = h * 0.78 + camOffsetY * 0.2;
       ctx.moveTo(-50, groundY);
       ctx.lineTo(w + 50, groundY);
       ctx.lineTo(w + 50, h + 50);
@@ -341,15 +363,16 @@
       ctx.closePath();
       ctx.fill();
 
-      // brume près du sol
-      const fogGrad = ctx.createLinearGradient(0, groundY - 40, 0, h);
+      // brume au ras du sol
+      const fogGrad = ctx.createLinearGradient(0, groundY - 50, 0, h);
       fogGrad.addColorStop(0, "rgba(15,23,42,0)");
-      fogGrad.addColorStop(1, "rgba(15,23,42,0.9)");
+      fogGrad.addColorStop(1, "rgba(15,23,42,0.95)");
       ctx.fillStyle = fogGrad;
-      ctx.fillRect(0, groundY - 40, w, h);
+      ctx.fillRect(0, groundY - 50, w, h);
       ctx.restore();
     }
 
+    // --- Drapeaux plus organiques ---
     function drawFlags(time) {
       const t = time * 0.001;
       const baseY = h * 0.35 + camOffsetY * 0.1;
@@ -362,46 +385,61 @@
         // mât
         ctx.strokeStyle = "#e5e7eb";
         ctx.lineWidth = 4;
+        ctx.lineCap = "round";
         ctx.beginPath();
         ctx.moveTo(0, -10);
-        ctx.lineTo(0, h * 0.4);
+        ctx.lineTo(0, h * 0.45);
         ctx.stroke();
 
-        // drapeau stylisé
-        const width = 160;
-        const height = 90;
-        const wave = Math.sin(t * 2 + x * 0.01) * 10;
+        // drapeau
+        const width = 180;
+        const height = 105;
+        const wave = Math.sin(t * 2.2 + x * 0.01) * 12;
+        const tear = 10 * Math.sin(t * 3 + x * 0.03);
 
         ctx.beginPath();
         ctx.moveTo(0, 0);
-        ctx.lineTo(width * 0.7, wave * 0.3);
-        ctx.lineTo(width, wave);
-        ctx.lineTo(width, height + wave * 0.4);
-        ctx.lineTo(width * 0.7, height + wave * 0.2);
-        ctx.lineTo(0, height);
+        ctx.quadraticCurveTo(width * 0.25, wave * 0.5, width * 0.55, wave * 0.2);
+        ctx.quadraticCurveTo(width * 0.9, wave, width, wave + tear);
+        ctx.lineTo(width, height + wave + tear * 0.6);
+        ctx.quadraticCurveTo(width * 0.8, height + wave + tear * 0.2, width * 0.5, height + wave * 0.3);
+        ctx.quadraticCurveTo(width * 0.2, height, 0, height);
         ctx.closePath();
 
         const grad = ctx.createLinearGradient(0, 0, width, height);
-        grad.addColorStop(0, "rgba(248,113,113,0.9)");
-        grad.addColorStop(0.4, "rgba(30,64,175,0.9)");
-        grad.addColorStop(0.7, "rgba(241,245,249,0.95)");
-        grad.addColorStop(1, "rgba(34,197,94,0.9)");
+        grad.addColorStop(0, "rgba(248,113,113,0.95)");
+        grad.addColorStop(0.33, "rgba(30,64,175,0.95)");
+        grad.addColorStop(0.66, "rgba(241,245,249,0.98)");
+        grad.addColorStop(1, "rgba(34,197,94,0.95)");
         ctx.fillStyle = grad;
         ctx.fill();
 
-        // emblème simple
-        ctx.fillStyle = "rgba(15,23,42,0.8)";
+        // bord brûlé
+        ctx.strokeStyle = "rgba(15,23,42,0.85)";
+        ctx.lineWidth = 3;
+        ctx.setLineDash([8, 6]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // emblème simple au centre
+        ctx.save();
+        ctx.translate(width * 0.55, height * 0.45);
+        const emblemGrad = ctx.createRadialGradient(0, 0, 0, 0, 0, 20);
+        emblemGrad.addColorStop(0, "rgba(15,23,42,0.9)");
+        emblemGrad.addColorStop(1, "rgba(15,23,42,0.3)");
+        ctx.fillStyle = emblemGrad;
         ctx.beginPath();
-        ctx.arc(width * 0.6, height * 0.4, 16, 0, Math.PI * 2);
+        ctx.arc(0, 0, 20, 0, Math.PI * 2);
         ctx.fill();
 
-        ctx.fillStyle = "rgba(250,204,21,0.85)";
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = "rgba(250,204,21,0.9)";
         ctx.beginPath();
-        ctx.moveTo(width * 0.6, height * 0.25);
-        ctx.lineTo(width * 0.55, height * 0.47);
-        ctx.lineTo(width * 0.65, height * 0.47);
-        ctx.closePath();
-        ctx.fill();
+        ctx.moveTo(-10, 8);
+        ctx.lineTo(0, -12);
+        ctx.lineTo(10, 8);
+        ctx.stroke();
+        ctx.restore();
 
         ctx.restore();
       }
@@ -410,6 +448,7 @@
       drawFlag(w * 0.82, true);
     }
 
+    // --- Braises ---
     function drawEmbers(dt) {
       for (const e of embers) {
         e.y -= e.speed * dt;
@@ -427,7 +466,8 @@
       }
     }
 
-    function drawBirds(dt, time) {
+    // --- Oiseaux (silhouettes en V) ---
+    function drawBirds(dt) {
       for (const b of birds) {
         b.x += b.speed * dt * b.dir + camOffsetX * 0.02;
         b.phase += dt * 6;
@@ -438,13 +478,14 @@
           resetBird(b, true);
         }
 
-        const flap = Math.sin(b.phase) * 4 * b.scale;
+        const flap = Math.sin(b.phase) * 5 * b.scale;
         ctx.save();
         ctx.translate(b.x + camOffsetX * 0.1, b.y + camOffsetY * 0.1);
         ctx.scale(b.dir, 1);
 
-        ctx.strokeStyle = "rgba(249,250,251,0.9)";
-        ctx.lineWidth = 1.2 * b.scale;
+        ctx.strokeStyle = "rgba(15,23,42,0.9)";
+        ctx.lineWidth = 2 * b.scale;
+        ctx.lineCap = "round";
         ctx.beginPath();
         ctx.moveTo(0, 0);
         ctx.lineTo(-10 * b.scale, flap);
@@ -455,6 +496,7 @@
       }
     }
 
+    // --- Avions plus détaillés ---
     function drawPlanes(dt) {
       for (const p of planes) {
         p.x += p.speed * dt * p.dir + camOffsetX * 0.03;
@@ -467,166 +509,274 @@
 
         ctx.save();
         ctx.translate(p.x + camOffsetX * 0.15, p.y + camOffsetY * 0.1);
-        ctx.scale(p.dir, 1);
-        ctx.rotate(-0.1);
+        ctx.scale(p.dir * p.scale, p.scale);
+        ctx.rotate(-0.12);
 
         // trainée
-        ctx.strokeStyle = "rgba(148,163,184,0.35)";
-        ctx.lineWidth = 4 * p.scale;
+        ctx.strokeStyle = "rgba(148,163,184,0.4)";
+        ctx.lineWidth = 5;
+        ctx.lineCap = "round";
         ctx.beginPath();
-        ctx.moveTo(-60 * p.scale, 6 * p.scale);
-        ctx.lineTo(-5 * p.scale, 6 * p.scale);
+        ctx.moveTo(-80, 10);
+        ctx.lineTo(-10, 10);
         ctx.stroke();
 
-        // corps de l'avion
-        ctx.fillStyle = "rgba(249,250,251,0.95)";
+        // fuselage
+        const bodyGrad = ctx.createLinearGradient(-50, -10, 35, 10);
+        bodyGrad.addColorStop(0, "rgba(15,23,42,0.9)");
+        bodyGrad.addColorStop(1, "rgba(249,250,251,0.95)");
+        ctx.fillStyle = bodyGrad;
         ctx.beginPath();
-        ctx.moveTo(0, 0);
-        ctx.lineTo(-40 * p.scale, -8 * p.scale);
-        ctx.lineTo(-40 * p.scale, 8 * p.scale);
+        ctx.moveTo(35, 0);
+        ctx.quadraticCurveTo(40, -2, 35, -8);
+        ctx.lineTo(-40, -12);
+        ctx.quadraticCurveTo(-58, -8, -60, 0);
+        ctx.quadraticCurveTo(-58, 8, -40, 12);
+        ctx.lineTo(35, 8);
+        ctx.quadraticCurveTo(40, 2, 35, 0);
         ctx.closePath();
         ctx.fill();
 
-        // aile
+        // cockpit
+        ctx.fillStyle = "rgba(96,165,250,0.9)";
         ctx.beginPath();
-        ctx.moveTo(-16 * p.scale, -2 * p.scale);
-        ctx.lineTo(-32 * p.scale, -18 * p.scale);
-        ctx.lineTo(-26 * p.scale, -2 * p.scale);
+        ctx.ellipse(8, -4, 12, 8, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // aile principale
+        ctx.fillStyle = "rgba(15,23,42,0.9)";
+        ctx.beginPath();
+        ctx.moveTo(-10, -2);
+        ctx.lineTo(-50, -25);
+        ctx.lineTo(-18, -6);
         ctx.closePath();
+        ctx.fill();
+
+        // aile arrière
+        ctx.beginPath();
+        ctx.moveTo(-34, 4);
+        ctx.lineTo(-52, 18);
+        ctx.lineTo(-38, 6);
+        ctx.closePath();
+        ctx.fill();
+
+        // extrémités lumineuses (positions)
+        ctx.fillStyle = "rgba(252,211,77,0.9)";
+        ctx.beginPath();
+        ctx.arc(35, 2, 3.3, 0, Math.PI * 2);
         ctx.fill();
 
         ctx.restore();
       }
     }
 
+    // --- Soldats plus "anime" (silhouettes détaillées) ---
     function drawSoldiers(time) {
       const baseY = h * 0.77 + camOffsetY * 0.15;
-      const scale = Math.min(w, h) / 750;
+      const scale = Math.min(w, h) / 700;
 
       function drawSoldier(side) {
-        const x = side < 0 ? w * 0.28 : w * 0.72;
+        const x = side < 0 ? w * 0.27 : w * 0.73;
         const flip = side < 0 ? 1 : -1;
 
         ctx.save();
         ctx.translate(x + camOffsetX * 0.3, baseY);
         ctx.scale(flip * scale, scale);
+        ctx.lineJoin = "round";
+        ctx.lineCap = "round";
 
         // ombre au sol
         ctx.fillStyle = "rgba(15,23,42,0.85)";
         ctx.beginPath();
-        ctx.ellipse(0, 10, 55, 18, 0, 0, Math.PI * 2);
+        ctx.ellipse(0, 10, 65, 20, 0, 0, Math.PI * 2);
         ctx.fill();
 
-        // jambes
+        // jambes (formes courbes)
         ctx.fillStyle = "#020617";
-        ctx.fillRect(-18, -80, 14, 70);
-        ctx.fillRect(4, -80, 14, 70);
+        ctx.beginPath();
+        ctx.moveTo(-20, -80);
+        ctx.quadraticCurveTo(-18, -25, -24, -15);
+        ctx.lineTo(0, -15);
+        ctx.quadraticCurveTo(-2, -50, -4, -80);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.moveTo(6, -80);
+        ctx.quadraticCurveTo(8, -25, 6, -15);
+        ctx.lineTo(32, -15);
+        ctx.quadraticCurveTo(24, -55, 20, -80);
+        ctx.closePath();
+        ctx.fill();
 
         // bottes
         ctx.fillStyle = "#020617";
-        ctx.fillRect(-22, -18, 22, 12);
-        ctx.fillRect(4, -18, 22, 12);
+        ctx.beginPath();
+        ctx.moveTo(-30, -15);
+        ctx.lineTo(4, -15);
+        ctx.lineTo(0, -4);
+        ctx.lineTo(-32, -4);
+        ctx.closePath();
+        ctx.fill();
 
-        // manteau
-        const coatGrad = ctx.createLinearGradient(-30, -140, 40, -40);
+        ctx.beginPath();
+        ctx.moveTo(6, -15);
+        ctx.lineTo(38, -15);
+        ctx.lineTo(34, -4);
+        ctx.lineTo(4, -4);
+        ctx.closePath();
+        ctx.fill();
+
+        // manteau long
+        const coatGrad = ctx.createLinearGradient(-40, -150, 50, -40);
         coatGrad.addColorStop(0, "#020617");
         coatGrad.addColorStop(1, "#0f172a");
         ctx.fillStyle = coatGrad;
         ctx.beginPath();
-        ctx.moveTo(-30, -140);
-        ctx.lineTo(36, -140);
-        ctx.lineTo(26, -40);
-        ctx.lineTo(-20, -40);
+        ctx.moveTo(-40, -150);
+        ctx.quadraticCurveTo(-60, -90, -38, -40);
+        ctx.lineTo(44, -40);
+        ctx.quadraticCurveTo(40, -95, 34, -150);
         ctx.closePath();
         ctx.fill();
 
+        // plis (lignes fines)
+        ctx.strokeStyle = "rgba(30,64,175,0.35)";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(-20, -140);
+        ctx.lineTo(-10, -60);
+        ctx.moveTo(12, -140);
+        ctx.lineTo(6, -60);
+        ctx.stroke();
+
         // ceinture
         ctx.fillStyle = "#111827";
-        ctx.fillRect(-28, -90, 60, 10);
+        ctx.fillRect(-38, -100, 80, 11);
 
-        // épaules / col
+        // épaulettes
         ctx.fillStyle = "#020617";
         ctx.beginPath();
-        ctx.moveTo(-32, -140);
-        ctx.lineTo(38, -140);
-        ctx.lineTo(26, -120);
-        ctx.lineTo(-20, -120);
+        ctx.moveTo(-42, -150);
+        ctx.lineTo(40, -150);
+        ctx.quadraticCurveTo(30, -132, 18, -126);
+        ctx.lineTo(-18, -126);
+        ctx.quadraticCurveTo(-33, -132, -42, -150);
         ctx.closePath();
         ctx.fill();
 
         // tête
         ctx.fillStyle = "#020617";
         ctx.beginPath();
-        ctx.arc(4, -155, 18, 0, Math.PI * 2);
+        ctx.ellipse(4, -162, 18, 20, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // cheveux côté
+        ctx.fillStyle = "#020617";
+        ctx.beginPath();
+        ctx.moveTo(14, -150);
+        ctx.quadraticCurveTo(24, -148, 22, -136);
+        ctx.quadraticCurveTo(8, -140, 6, -150);
+        ctx.closePath();
         ctx.fill();
 
         // casquette
         ctx.fillStyle = "#020617";
         ctx.beginPath();
-        ctx.moveTo(-18, -170);
-        ctx.lineTo(26, -170);
-        ctx.lineTo(22, -178);
-        ctx.lineTo(-14, -178);
+        ctx.moveTo(-20, -176);
+        ctx.lineTo(30, -176);
+        ctx.quadraticCurveTo(22, -186, -10, -186);
         ctx.closePath();
         ctx.fill();
-        ctx.fillRect(-6, -178, 24, 4);
 
-        // bras qui tient l'arme
+        ctx.fillRect(-6, -186, 28, 5); // bandeau
+
+        // visière
+        ctx.beginPath();
+        ctx.moveTo(-22, -172);
+        ctx.quadraticCurveTo(10, -168, 32, -172);
+        ctx.quadraticCurveTo(8, -178, -22, -172);
+        ctx.fill();
+
+        // bras avant (celui avec arme)
         ctx.strokeStyle = "#020617";
-        ctx.lineWidth = 8;
-        ctx.lineCap = "round";
+        ctx.lineWidth = 9;
         ctx.beginPath();
-        ctx.moveTo(-6, -120);
-        ctx.lineTo(36, -110);
-        ctx.lineTo(80, -104);
+        ctx.moveTo(-4, -122);
+        ctx.lineTo(40, -112);
+        ctx.lineTo(86, -104);
         ctx.stroke();
 
-        // bras en arrière
+        // bras arrière
         ctx.beginPath();
-        ctx.moveTo(-10, -120);
-        ctx.lineTo(-40, -110);
+        ctx.moveTo(-6, -124);
+        ctx.lineTo(-40, -112);
         ctx.stroke();
 
-        // arme
+        // arme (plus “pistolet long”)
         ctx.strokeStyle = "#020617";
         ctx.lineWidth = 7;
         ctx.beginPath();
-        ctx.moveTo(80, -104);
-        ctx.lineTo(115, -104);
+        ctx.moveTo(86, -104);
+        ctx.lineTo(130, -104);
         ctx.stroke();
 
         ctx.lineWidth = 4;
         ctx.beginPath();
-        ctx.moveTo(80, -108);
-        ctx.lineTo(102, -116);
+        ctx.moveTo(90, -108);
+        ctx.lineTo(104, -120);
         ctx.stroke();
 
         // bandoulière
-        ctx.strokeStyle = "rgba(148,163,184,0.6)";
+        ctx.strokeStyle = "rgba(148,163,184,0.7)";
         ctx.lineWidth = 3;
         ctx.beginPath();
-        ctx.moveTo(-32, -138);
-        ctx.lineTo(24, -72);
+        ctx.moveTo(-42, -146);
+        ctx.lineTo(20, -80);
         ctx.stroke();
 
-        // lueur poitrine
-        const glowGrad = ctx.createRadialGradient(0, -105, 0, 0, -105, 40);
-        glowGrad.addColorStop(0, "rgba(248,250,252,0.95)");
-        glowGrad.addColorStop(0.4, "rgba(251,191,36,0.9)");
+        // fusil dans le dos (silhouette)
+        ctx.strokeStyle = "#020617";
+        ctx.lineWidth = 7;
+        ctx.beginPath();
+        ctx.moveTo(-32, -150);
+        ctx.lineTo(-60, -210);
+        ctx.stroke();
+
+        // lueur poitrine style "fissure"
+        const glowGrad = ctx.createRadialGradient(0, -108, 0, 0, -108, 50);
+        glowGrad.addColorStop(0, "rgba(248,250,252,0.98)");
+        glowGrad.addColorStop(0.4, "rgba(251,191,36,0.95)");
         glowGrad.addColorStop(1, "rgba(248,113,113,0)");
         ctx.fillStyle = glowGrad;
         ctx.beginPath();
-        ctx.arc(0, -105, 40, 0, Math.PI * 2);
+        ctx.arc(0, -108, 48, 0, Math.PI * 2);
         ctx.fill();
 
-        // rythme tir (petit flash)
+        // fissures internes
+        ctx.strokeStyle = "rgba(250,250,250,0.9)";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(-6, -130);
+        ctx.lineTo(4, -118);
+        ctx.lineTo(-2, -104);
+        ctx.lineTo(12, -92);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(10, -128);
+        ctx.lineTo(20, -116);
+        ctx.lineTo(12, -100);
+        ctx.stroke();
+
+        // flash de tir
         const flash = Math.sin(time * 0.004 + side * 3) > 0.97;
         if (flash) {
           ctx.fillStyle = "rgba(252,211,77,0.95)";
           ctx.beginPath();
-          ctx.moveTo(118, -104);
-          ctx.lineTo(136, -98);
-          ctx.lineTo(132, -110);
+          ctx.moveTo(134, -104);
+          ctx.lineTo(152, -96);
+          ctx.lineTo(148, -112);
           ctx.closePath();
           ctx.fill();
         }
@@ -650,7 +800,7 @@
       drawBackground();
       drawFlags(time);
       drawPlanes(dt);
-      drawBirds(dt, time);
+      drawBirds(dt);
       drawEmbers(dt);
       drawSoldiers(time);
 
@@ -661,4 +811,3 @@
   </script>
 </body>
 </html>
-
