@@ -2,10 +2,10 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <title>Politaria – Geopolitical Strategy Sandbox</title>
+  <title>Politaria – Geopolitical Sandbox</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- Manifest PWA (si tu as déjà manifest.json, garde-le) -->
+  <!-- Manifest PWA (pour plus tard, quand tu voudras l’installer comme app) -->
   <link rel="manifest" href="manifest.json">
 
   <style>
@@ -17,54 +17,77 @@
 
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: radial-gradient(circle at top, #1e293b 0, #020617 55%, #000 100%);
-      color: #e5e7eb;
+      background: #030712;
+      color: #f9fafb;
       min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
       overflow: hidden;
     }
 
-    .page {
-      width: 100%;
-      max-width: 1200px;
-      padding: 24px 18px 40px;
-    }
-
-    header {
+    .scene {
+      position: relative;
+      min-height: 100vh;
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      margin-bottom: 18px;
-      gap: 12px;
+      justify-content: center;
+      padding: 24px;
+      isolation: isolate;
     }
 
-    .logo {
-      font-size: 1.1rem;
-      font-weight: 700;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: #e5e7eb;
+    /* Canvas de particules (braises / débris) */
+    #battlefield-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -2;
     }
 
-    .logo span {
-      color: #38bdf8;
+    /* Fond principal sombre + dégradés "guerre" */
+    .bg-war {
+      position: fixed;
+      inset: 0;
+      z-index: -3;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(239,68,68,0.25), transparent 55%),
+        radial-gradient(circle at 80% 70%, rgba(249,115,22,0.22), transparent 55%),
+        radial-gradient(circle at 50% 110%, rgba(15,23,42,1), #020617 60%, #000 100%);
+      filter: saturate(1.1);
     }
 
-    .pill {
-      font-size: 0.75rem;
-      padding: 4px 10px;
-      border-radius: 999px;
-      border: 1px solid #1f2937;
-      background: rgba(15,23,42,0.85);
+    /* Texture légère de bruit */
+    .noise-overlay {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: -1;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='2' numOctaves='3' stitchTiles='noStitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.07'/%3E%3C/svg%3E");
+      mix-blend-mode: soft-light;
+    }
+
+    .hero {
+      position: relative;
+      z-index: 2;
+      max-width: 960px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .badge {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      color: #9ca3af;
+      gap: 8px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.5);
+      background: rgba(15,23,42,0.85);
+      color: #e5e7eb;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      margin-bottom: 16px;
     }
 
-    .pill-dot {
+    .badge-dot {
       width: 7px;
       height: 7px;
       border-radius: 999px;
@@ -72,424 +95,561 @@
       box-shadow: 0 0 12px rgba(34,197,94,0.9);
     }
 
-    @media (max-width: 720px) {
-      header {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-    }
-
-    /* ---------- HERO ---------- */
-
-    .hero {
-      position: relative;
-      border-radius: 30px;
-      padding: 26px 24px 26px;
-      background: radial-gradient(circle at top, rgba(56,189,248,0.12), transparent 60%),
-                  linear-gradient(135deg, rgba(15,23,42,0.96), rgba(5,10,25,0.96));
-      border: 1px solid rgba(148,163,184,0.25);
-      box-shadow:
-        0 24px 60px rgba(0,0,0,0.85),
-        0 0 0 1px rgba(15,23,42,0.9);
-      overflow: hidden;
-      display: grid;
-      gap: 22px;
-    }
-
-    @media (min-width: 900px) {
-      .hero {
-        grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.2fr);
-        align-items: center;
-        padding: 32px 30px;
-      }
-    }
-
-    .hero-text h1 {
-      font-size: clamp(2.4rem, 3vw, 3.1rem);
-      line-height: 1.05;
+    h1 {
+      font-size: clamp(2.4rem, 4vw, 3.7rem);
+      letter-spacing: 0.02em;
       margin-bottom: 10px;
-      text-shadow: 0 0 18px rgba(15,23,42,0.8);
+      text-shadow:
+        0 0 18px rgba(15,23,42,0.8),
+        0 0 40px rgba(0,0,0,0.9);
     }
 
-    .hero-text h1 span {
-      background: linear-gradient(120deg, #f9fafb, #bfdbfe, #38bdf8);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
-
-    .hero-sub {
-      font-size: 0.98rem;
+    .subtitle {
+      font-size: 0.95rem;
       color: #cbd5f5;
-      margin-bottom: 18px;
+      max-width: 560px;
+      margin: 0 auto 26px;
     }
 
-    .hero-sub strong {
-      color: #e5e7eb;
-    }
-
-    .hero-actions {
+    .cta-row {
       display: flex;
+      justify-content: center;
+      gap: 12px;
       flex-wrap: wrap;
-      gap: 10px;
-      align-items: center;
-      margin-bottom: 10px;
+      margin-bottom: 26px;
     }
 
     .btn-primary {
       border-radius: 999px;
-      padding: 10px 20px;
-      font-size: 0.98rem;
       border: none;
+      padding: 10px 26px;
+      font-size: 1rem;
       cursor: pointer;
-      background: linear-gradient(120deg, #ec4899, #6366f1);
-      color: white;
+      background: linear-gradient(90deg, #ec4899, #6366f1);
+      color: #f9fafb;
       font-weight: 600;
+      box-shadow:
+        0 10px 30px rgba(236,72,153,0.5),
+        0 0 40px rgba(129,140,248,0.6);
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      box-shadow: 0 10px 30px rgba(59,130,246,0.8);
       transition: transform 0.08s ease, box-shadow 0.08s ease, filter 0.1s;
-      text-decoration: none;
-      white-space: nowrap;
     }
 
     .btn-primary:hover {
       transform: translateY(-1px);
-      box-shadow: 0 14px 40px rgba(59,130,246,1);
-      filter: brightness(1.05);
+      filter: brightness(1.04);
+      box-shadow:
+        0 14px 36px rgba(236,72,153,0.7),
+        0 0 52px rgba(129,140,248,0.9);
     }
 
     .btn-primary:active {
       transform: translateY(0);
-      box-shadow: 0 6px 18px rgba(59,130,246,0.7);
+      box-shadow:
+        0 7px 20px rgba(236,72,153,0.5),
+        0 0 30px rgba(129,140,248,0.7);
     }
 
-    .btn-secondary-text {
-      font-size: 0.85rem;
-      color: #9ca3af;
-    }
-
-    .btn-secondary-text span {
+    .btn-secondary {
+      border-radius: 999px;
+      padding: 9px 18px;
+      border: 1px solid rgba(148,163,184,0.6);
+      background: rgba(15,23,42,0.9);
       color: #e5e7eb;
-    }
-
-    .hero-footer {
-      font-size: 0.78rem;
-      color: #9ca3af;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: inline-flex;
       align-items: center;
-      margin-top: 8px;
+      gap: 6px;
+      transition: background 0.15s, transform 0.08s, box-shadow 0.08s;
     }
 
-    .hero-footer span.highlight {
-      color: #facc15;
+    .btn-secondary:hover {
+      background: rgba(15,23,42,1);
+      transform: translateY(-1px);
+      box-shadow: 0 8px 22px rgba(15,23,42,0.9);
     }
 
-    /* ---------- MAP PANEL ---------- */
-
-    .map-shell {
+    /* Carte du monde stylisée (demi-globe) */
+    .world-wrapper {
       position: relative;
-      border-radius: 24px;
-      overflow: hidden;
-      border: 1px solid rgba(148,163,184,0.4);
-      background: radial-gradient(circle at top, rgba(56,189,248,0.3), transparent 60%),
-                  radial-gradient(circle at bottom, rgba(129,140,248,0.3), transparent 55%),
-                  #020617;
-      padding: 10px;
-      box-shadow: inset 0 0 40px rgba(15,23,42,0.95);
-      transform-style: preserve-3d;
-      transition: transform 0.12s ease-out, box-shadow 0.12s ease-out;
-    }
-
-    .map-shell::before {
-      /* léger glow en bordure */
-      content: "";
-      position: absolute;
-      inset: -2px;
-      border-radius: inherit;
-      border: 1px solid rgba(96,165,250,0.4);
-      opacity: 0.7;
+      margin: 0 auto;
+      margin-top: 18px;
+      max-width: 900px;
+      aspect-ratio: 16 / 5;
       pointer-events: none;
     }
 
-    .map-inner {
-      aspect-ratio: 16 / 9;
-      width: 100%;
-      border-radius: 18px;
-      position: relative;
+    .world {
+      position: absolute;
+      inset: auto 0 0 50%;
+      transform: translateX(-50%);
+      width: 120%;
+      aspect-ratio: 2 / 1;
+      border-radius: 50% 50% 0 0;
       overflow: hidden;
       background:
-        /* continents stylisés */
-        radial-gradient(circle at 20% 45%, rgba(148,163,184,0.22), transparent 55%),
-        radial-gradient(circle at 55% 30%, rgba(129,140,248,0.25), transparent 55%),
-        radial-gradient(circle at 75% 60%, rgba(96,165,250,0.22), transparent 50%),
-        /* océan */
-        radial-gradient(circle at 50% 120%, #020617, #020617 40%, #000 100%);
+        radial-gradient(circle at 20% 40%, rgba(249,250,251,0.7) 0, transparent 40%),
+        radial-gradient(circle at 60% 35%, rgba(248,250,252,0.8) 0, transparent 45%),
+        radial-gradient(circle at 85% 55%, rgba(226,232,240,0.7) 0, transparent 40%),
+        radial-gradient(circle at 40% 70%, rgba(226,232,240,0.6) 0, transparent 50%),
+        radial-gradient(circle at 10% 80%, rgba(248,250,252,0.5) 0, transparent 40%);
+      mask-image: radial-gradient(circle at 50% -40%, transparent 55%, black 56%);
+      box-shadow:
+        0 -15px 40px rgba(15,23,42,1),
+        0 -35px 90px rgba(0,0,0,0.9);
+      opacity: 0.9;
+      transform-origin: center bottom;
+      animation: worldFloat 16s ease-in-out infinite alternate;
     }
 
-    /* grille de la "carte" */
-    .grid-overlay {
+    /* Grille + points pour simuler une carte */
+    .world::before {
+      content: "";
       position: absolute;
       inset: 0;
       background-image:
-        linear-gradient(to right, rgba(148,163,184,0.14) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(148,163,184,0.14) 1px, transparent 1px);
-      background-size: 40px 40px;
-      opacity: 0.55;
-      mix-blend-mode: screen;
-      pointer-events: none;
+        radial-gradient(circle at center, rgba(15,23,42,0.4) 0, transparent 55%),
+        repeating-linear-gradient(
+          to right,
+          rgba(15,23,42,0.08) 0,
+          rgba(15,23,42,0.08) 1px,
+          transparent 1px,
+          transparent 11px
+        ),
+        repeating-linear-gradient(
+          to top,
+          rgba(15,23,42,0.08) 0,
+          rgba(15,23,42,0.08) 1px,
+          transparent 1px,
+          transparent 11px
+        );
+      mix-blend-mode: multiply;
+      opacity: 0.7;
     }
 
-    .map-glow {
+    .world::after {
+      content: "";
       position: absolute;
-      inset: -20%;
+      inset: 0;
+      background-image:
+        radial-gradient(circle, rgba(220,38,38,0.55) 0, transparent 40%),
+        radial-gradient(circle at 30% 40%, rgba(249,115,22,0.7) 0, transparent 35%),
+        radial-gradient(circle at 70% 35%, rgba(234,179,8,0.6) 0, transparent 38%);
+      mix-blend-mode: screen;
+      opacity: 0.35;
+    }
+
+    @keyframes worldFloat {
+      0%   { transform: translateX(-50%) translateY(0) scale(1); }
+      100% { transform: translateX(-50%) translateY(8px) scale(1.03); }
+    }
+
+    /* Drapeaux brûlés stylisés (silhouettes) */
+    .flag {
+      position: absolute;
+      width: 70px;
+      height: 110px;
+      border-radius: 6px;
       background:
-        radial-gradient(circle at 20% 20%, rgba(56,189,248,0.18), transparent 55%),
-        radial-gradient(circle at 80% 70%, rgba(236,72,153,0.16), transparent 55%);
+        linear-gradient(135deg, rgba(239,68,68,1), rgba(127,29,29,1));
+      box-shadow:
+        0 0 22px rgba(239,68,68,0.7),
+        -8px 14px 30px rgba(0,0,0,0.9);
+      transform-origin: bottom left;
+      opacity: 0.8;
+      filter: saturate(1.3);
+    }
+
+    .flag::after {
+      content: "";
+      position: absolute;
+      inset: -15px -8px auto auto;
+      background: radial-gradient(circle, rgba(249,115,22,0.9), transparent 60%);
       mix-blend-mode: screen;
+      opacity: 0.8;
+      filter: blur(3px);
+    }
+
+    .flag.p1 {
+      left: 12%;
+      bottom: 26%;
+      transform: rotate(-11deg) skewX(-8deg);
+    }
+    .flag.p2 {
+      right: 14%;
+      bottom: 22%;
+      transform: rotate(9deg) skewX(6deg);
+      background: linear-gradient(135deg, rgba(59,130,246,1), rgba(30,64,175,1));
+    }
+
+    /* Silhouettes de fumée */
+    .smoke {
+      position: absolute;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(15,23,42,0.2), transparent 60%);
+      filter: blur(20px);
       opacity: 0.9;
+      mix-blend-mode: screen;
+      animation: smokeDrift 22s ease-in-out infinite alternate;
+    }
+
+    .smoke.s1 {
+      left: 8%;
+      bottom: 35%;
+    }
+    .smoke.s2 {
+      right: 5%;
+      bottom: 38%;
+      animation-delay: -7s;
+    }
+
+    @keyframes smokeDrift {
+      0% {
+        transform: translate3d(0,0,0) scale(1);
+        opacity: 0.65;
+      }
+      100% {
+        transform: translate3d(20px,-30px,0) scale(1.15);
+        opacity: 0.45;
+      }
+    }
+
+    .hint {
+      font-size: 0.8rem;
+      color: #9ca3af;
+      margin-top: 6px;
+    }
+
+    /* Easter egg : zone cliquable invisible */
+    #secret-hotspot {
+      position: fixed;
+      width: 80px;
+      height: 80px;
+      bottom: 18px;
+      right: 18px;
+      border: none;
+      background: transparent;
+      cursor: default;
+      outline: none;
+      /* Optionnel : aide visuelle si tu veux tester plus facilement
+      border: 1px dashed rgba(148,163,184,0.4);
+      */
+    }
+
+    #secret-hotspot:focus-visible {
+      outline: 1px dashed rgba(96,165,250,0.7);
+      outline-offset: 2px;
+    }
+
+    /* Mini interface secrète */
+    .secret-panel {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      width: 280px;
+      max-width: calc(100% - 32px);
+      background: radial-gradient(circle at top, #020617, #020617 40%, #020617 100%);
+      border-radius: 16px;
+      border: 1px solid rgba(148,163,184,0.6);
+      box-shadow:
+        0 18px 45px rgba(15,23,42,0.95),
+        0 0 40px rgba(59,130,246,0.5);
+      padding: 14px 14px 12px;
+      color: #e5e7eb;
+      font-size: 0.85rem;
+      transform-origin: bottom right;
+      transform: scale(0.8) translateY(12px);
+      opacity: 0;
       pointer-events: none;
+      transition: opacity 0.18s ease, transform 0.18s ease;
+      z-index: 20;
     }
 
-    /* points lumineux = villes / hotspots */
-    .city {
-      position: absolute;
-      width: 10px;
-      height: 10px;
-      border-radius: 999px;
-      background: #facc15;
-      box-shadow:
-        0 0 8px rgba(250,204,21,0.9),
-        0 0 18px rgba(251,191,36,0.9);
-      opacity: 0.85;
-      animation: pulse 2.4s ease-in-out infinite;
+    .secret-panel.open {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+      pointer-events: auto;
     }
 
-    .city.city-blue {
-      background: #38bdf8;
-      box-shadow:
-        0 0 10px rgba(56,189,248,0.9),
-        0 0 22px rgba(59,130,246,0.9);
-      animation-duration: 3s;
-    }
-
-    .city.city-red {
-      background: #fb7185;
-      box-shadow:
-        0 0 10px rgba(248,113,113,0.9),
-        0 0 22px rgba(248,113,113,0.9);
-      animation-duration: 2.1s;
-    }
-
-    @keyframes pulse {
-      0%, 100% {
-        transform: scale(0.9);
-        opacity: 0.7;
-      }
-      50% {
-        transform: scale(1.4);
-        opacity: 1;
-      }
-    }
-
-    /* légendes de carte */
-
-    .map-ui {
-      position: absolute;
-      bottom: 10px;
-      left: 10px;
-      right: 10px;
+    .secret-header {
       display: flex;
       justify-content: space-between;
-      align-items: flex-end;
-      font-size: 0.75rem;
-      color: #cbd5f5;
-      pointer-events: none;
-    }
-
-    .map-ui-left {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .legend-line {
-      display: flex;
       align-items: center;
-      gap: 6px;
+      margin-bottom: 6px;
+      gap: 8px;
     }
 
-    .legend-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 999px;
-      background: #facc15;
-      box-shadow: 0 0 8px rgba(250,204,21,0.8);
-    }
-    .legend-dot.blue {
-      background: #38bdf8;
-      box-shadow: 0 0 8px rgba(56,189,248,0.8);
-    }
-    .legend-dot.red {
-      background: #fb7185;
-      box-shadow: 0 0 8px rgba(248,113,113,0.8);
+    .secret-title {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: #9ca3af;
     }
 
-    .mini-coords {
-      padding: 4px 8px;
+    .secret-close {
+      border: none;
       border-radius: 999px;
       background: rgba(15,23,42,0.9);
-      border: 1px solid rgba(148,163,184,0.4);
-      pointer-events: none;
+      color: #9ca3af;
+      width: 22px;
+      height: 22px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 0.75rem;
     }
 
-    @media (max-width: 900px) {
-      .hero {
-        border-radius: 0;
-        box-shadow: none;
-        border-left: none;
-        border-right: none;
-      }
-      .page {
-        padding: 16px 0 30px;
-      }
+    .secret-close:hover {
+      background: rgba(30,64,175,0.9);
+      color: #e5e7eb;
     }
 
+    .secret-row {
+      margin-bottom: 8px;
+    }
+
+    .secret-label {
+      font-size: 0.78rem;
+      color: #9ca3af;
+      margin-bottom: 2px;
+    }
+
+    .secret-select,
+    .secret-button {
+      width: 100%;
+      border-radius: 10px;
+      border: 1px solid rgba(55,65,81,0.9);
+      background: rgba(15,23,42,0.96);
+      color: #e5e7eb;
+      padding: 6px 8px;
+      font-size: 0.8rem;
+      outline: none;
+    }
+
+    .secret-select:focus,
+    .secret-button:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 1px rgba(37,99,235,0.6);
+    }
+
+    .secret-button {
+      margin-top: 4px;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .gift {
+      margin-top: 4px;
+      font-size: 0.8rem;
+      color: #bbf7d0;
+    }
+
+    @media (max-width: 640px) {
+      h1 {
+        font-size: 2.2rem;
+      }
+      .subtitle {
+        font-size: 0.9rem;
+      }
+      .world-wrapper {
+        max-width: 100%;
+      }
+    }
   </style>
 
   <script>
-    // Service worker (PWA) – ne change rien si tu as déjà service-worker.js
+    // Enregistrement du service worker pour la PWA (plus tard)
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => {
         navigator.serviceWorker
           .register("service-worker.js")
-          .catch(err => console.log("SW error", err));
+          .catch(err => console.log("Service worker error:", err));
       });
     }
-
-    // Effet parallax sur la map
-    window.addEventListener("DOMContentLoaded", () => {
-      const shell = document.querySelector(".map-shell");
-      const coords = document.querySelector(".mini-coords");
-
-      if (!shell) return;
-
-      function handleMove(e) {
-        const rect = shell.getBoundingClientRect();
-        const x = (e.clientX - rect.left) / rect.width - 0.5;  // -0.5 / 0.5
-        const y = (e.clientY - rect.top) / rect.height - 0.5;
-
-        const rotateX = y * -8; // léger tilt
-        const rotateY = x * 8;
-
-        shell.style.transform =
-          `rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(0)`;
-        shell.style.boxShadow =
-          `0 26px 60px rgba(0,0,0,0.9), 0 0 40px rgba(56,189,248,0.3)`;
-
-        if (coords) {
-          const lon = Math.round((x + 0.5) * 360 - 180);
-          const lat = Math.round((0.5 - y) * 180 - 90);
-          coords.textContent = `LAT ${lat}°, LON ${lon}°`;
-        }
-      }
-
-      function reset() {
-        shell.style.transform = "rotateX(0deg) rotateY(0deg)";
-        shell.style.boxShadow = "inset 0 0 40px rgba(15,23,42,0.95)";
-      }
-
-      shell.addEventListener("mousemove", handleMove);
-      shell.addEventListener("mouseleave", reset);
-    });
   </script>
 </head>
 <body>
-  <div class="page">
-    <header>
-      <div class="logo">
-        <span>Politaria</span> • Geopolitical Sandbox
-      </div>
-      <div class="pill">
-        <span class="pill-dot"></span>
-        Alpha build – work in progress
-      </div>
-    </header>
+  <div class="bg-war"></div>
+  <canvas id="battlefield-canvas"></canvas>
+  <div class="noise-overlay"></div>
 
-    <section class="hero">
-      <!-- Texte gauche -->
-      <div class="hero-text">
-        <h1>
-          Welcome to <span>Politaria</span>
-        </h1>
-        <p class="hero-sub">
-          The new <strong>geopolitical strategy experience</strong>.  
-          Shape your nation, forge alliances, and test your doctrines
-          on a living world map.
-        </p>
-
-        <div class="hero-actions">
-          <a href="game.html" class="btn-primary">
-            Enter Politaria
-            <span>→</span>
-          </a>
-          <div class="btn-secondary-text">
-            or scroll later to explore the full site
-          </div>
-        </div>
-
-        <div class="hero-footer">
-          <span class="highlight">Sandbox</span> simulation •
-          Single-player for now •
-          Built for web & mobile
-        </div>
+  <div class="scene">
+    <div class="hero">
+      <div class="badge">
+        <span class="badge-dot"></span>
+        GEOPOLITICAL SANDBOX · ALPHA
       </div>
 
-      <!-- Carte interactive droite -->
-      <div class="map-shell">
-        <div class="map-inner">
-          <div class="grid-overlay"></div>
-          <div class="map-glow"></div>
+      <h1>Welcome to Politaria</h1>
 
-          <!-- Quelques "villes" / hotspots -->
-          <!-- positions en % (left/top) = continents stylisés -->
-          <div class="city city-blue" style="left: 22%; top: 42%; animation-delay: 0.1s;"></div>
-          <div class="city" style="left: 34%; top: 35%; animation-delay: 0.6s;"></div>
-          <div class="city city-red" style="left: 41%; top: 52%; animation-delay: 0.2s;"></div>
+      <p class="subtitle">
+        Shape your nation in a world on fire. Balance economy, war and diplomacy
+        on a living, unstable map.
+      </p>
 
-          <div class="city city-blue" style="left: 58%; top: 38%; animation-delay: 0.9s;"></div>
-          <div class="city" style="left: 64%; top: 47%; animation-delay: 1.4s;"></div>
-          <div class="city city-red" style="left: 72%; top: 60%; animation-delay: 0.4s;"></div>
+      <div class="cta-row">
+        <!-- Change "game.html" par la page de ton jeu / site principal -->
+        <button class="btn-primary" type="button" onclick="window.location.href='game.html'">
+          Enter Politaria
+          <span>➜</span>
+        </button>
 
-          <div class="city" style="left: 49%; top: 70%; animation-delay: 1.1s;"></div>
-          <div class="city city-blue" style="left: 30%; top: 62%; animation-delay: 1.8s;"></div>
-
-          <!-- UI de carte -->
-          <div class="map-ui">
-            <div class="map-ui-left">
-              <div class="legend-line">
-                <span class="legend-dot"></span>
-                <span>Major cities</span>
-              </div>
-              <div class="legend-line">
-                <span class="legend-dot blue"></span>
-                <span>Allied blocs</span>
-              </div>
-              <div class="legend-line">
-                <span class="legend-dot red"></span>
-                <span>Tension zones</span>
-              </div>
-            </div>
-            <div class="mini-coords">
-              LAT 12°, LON 34°
-            </div>
-          </div>
-        </div>
+        <button class="btn-secondary" type="button" onclick="alert('Plus tard : mini trailer, tutoriel ou patch notes.')">
+          Quick overview
+        </button>
       </div>
-    </section>
+
+      <p class="hint">
+        (Certains secrets de la carte ne s’affichent qu’aux commandants assez curieux…)
+      </p>
+
+      <div class="world-wrapper" aria-hidden="true">
+        <div class="world"></div>
+        <div class="smoke s1"></div>
+        <div class="smoke s2"></div>
+        <div class="flag p1"></div>
+        <div class="flag p2"></div>
+      </div>
+    </div>
   </div>
+
+  <!-- Hotspot invisible pour l’easter egg -->
+  <button id="secret-hotspot" aria-label="Hidden control area"></button>
+
+  <!-- Mini interface secrète -->
+  <div id="secret-panel" class="secret-panel" aria-hidden="true">
+    <div class="secret-header">
+      <div class="secret-title">Black Channel • Secret</div>
+      <button class="secret-close" type="button" id="secret-close">✕</button>
+    </div>
+    <div class="secret-row">
+      <div class="secret-label">Doctrine cachée</div>
+      <select id="secret-doctrine" class="secret-select">
+        <option value="shadow-economy">Shadow Economy</option>
+        <option value="iron-veil">Iron Veil</option>
+        <option value="glass-diplomacy">Glass Diplomacy</option>
+        <option value="scorched-frontier">Scorched Frontier</option>
+      </select>
+    </div>
+    <div class="secret-row">
+      <div class="secret-label">Action</div>
+      <button class="secret-button" type="button" id="secret-activate">
+        Arm hidden bonus
+      </button>
+      <div id="secret-gift" class="gift" style="display:none;"></div>
+    </div>
+  </div>
+
+  <script>
+    // --- Canvas de braises / débris animés ---
+    const canvas = document.getElementById("battlefield-canvas");
+    const ctx = canvas.getContext("2d");
+    let particles = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resizeCanvas();
+    window.addEventListener("resize", resizeCanvas);
+
+    function createParticle() {
+      const fromBottom = Math.random() < 0.7;
+      const x = Math.random() * canvas.width;
+      const y = fromBottom ? canvas.height + 10 : Math.random() * canvas.height;
+      const speedY = fromBottom ? - (0.3 + Math.random() * 0.5) : - (0.1 + Math.random() * 0.3);
+
+      return {
+        x,
+        y,
+        vx: (Math.random() - 0.5) * 0.3,
+        vy: speedY,
+        radius: 1 + Math.random() * 2,
+        alpha: 0.4 + Math.random() * 0.4,
+        life: 40 + Math.random() * 80,
+        color: Math.random() < 0.6 ? "255,140,66" : "248,250,252"
+      };
+    }
+
+    for (let i = 0; i < 160; i++) {
+      particles.push(createParticle());
+    }
+
+    function updateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.globalCompositeOperation = "lighter";
+
+      particles.forEach(p => {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.life -= 1;
+        p.alpha -= 0.004;
+
+        ctx.beginPath();
+        ctx.fillStyle = `rgba(${p.color},${Math.max(p.alpha,0)})`;
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      particles = particles.filter(p => p.life > 0 && p.alpha > 0 && p.y > -20);
+
+      while (particles.length < 160) {
+        particles.push(createParticle());
+      }
+
+      requestAnimationFrame(updateParticles);
+    }
+
+    updateParticles();
+
+    // --- Easter egg : double-clic sur zone invisible ---
+    const hotspot = document.getElementById("secret-hotspot");
+    const panel = document.getElementById("secret-panel");
+    const closeBtn = document.getElementById("secret-close");
+    const giftLabel = document.getElementById("secret-gift");
+    const doctrineSelect = document.getElementById("secret-doctrine");
+    const activateBtn = document.getElementById("secret-activate");
+
+    hotspot.addEventListener("dblclick", () => {
+      const open = panel.classList.toggle("open");
+      panel.setAttribute("aria-hidden", open ? "false" : "true");
+    });
+
+    closeBtn.addEventListener("click", () => {
+      panel.classList.remove("open");
+      panel.setAttribute("aria-hidden", "true");
+    });
+
+    activateBtn.addEventListener("click", () => {
+      const value = doctrineSelect.value;
+      let text;
+
+      switch (value) {
+        case "shadow-economy":
+          text = "Secret gift unlocked : +5% revenus cachés au lancement du jeu 👁️";
+          break;
+        case "iron-veil":
+          text = "Secret gift unlocked : skin spécial ‘Iron Banner’ pour ton État 🛡️";
+          break;
+        case "glass-diplomacy":
+          text = "Secret gift unlocked : événement rare ‘Ceasefire Mirage’ ☮️";
+          break;
+        case "scorched-frontier":
+          text = "Secret gift unlocked : doctrine bonus ‘Frontière brûlée’ 🔥";
+          break;
+        default:
+          text = "Something shifted in the shadows of Politaria…";
+      }
+
+      giftLabel.textContent = text;
+      giftLabel.style.display = "block";
+    });
+  </script>
 </body>
 </html>
