@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Mini Pax – Zone de jeu</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="manifest" href="manifest.json">
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #020617;
+      color: #e5e7eb;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+    }
+    .page {
+      max-width: 960px;
+      width: 100%;
+      padding: 18px 16px 32px;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+      gap: 10px;
+    }
+    a.back {
+      font-size: 0.9rem;
+      text-decoration: none;
+      color: #9ca3af;
+      padding: 6px 9px;
+      border-radius: 999px;
+      border: 1px solid #374151;
+    }
+    a.back:hover {
+      background: #020617;
+      color: #e5e7eb;
+    }
+    .card {
+      background: #020617;
+      border-radius: 16px;
+      padding: 16px;
+      border: 1px solid #111827;
+      box-shadow: 0 14px 32px rgba(0,0,0,0.65);
+    }
+    h1 {
+      margin: 0 0 8px;
+      font-size: 1.3rem;
+    }
+    p {
+      margin: 0 0 10px;
+      font-size: 0.95rem;
+      color: #d1d5db;
+    }
+    .placeholder {
+      margin-top: 14px;
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px dashed #374151;
+      font-size: 0.9rem;
+      color: #9ca3af;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <div>
+        <div style="font-size:0.8rem; color:#9ca3af;">Mini Pax</div>
+        <div style="font-size:1rem; font-weight:600;">Zone de jeu</div>
+      </div>
+      <a href="index.html" class="back">← Retour à l’accueil</a>
+    </header>
+
+    <div class="card">
+      <h1>Zone de jeu</h1>
+      <p>
+        Ici, tu intégreras plus tard le moteur de jeu : les ressources, les boutons d’actions,
+        le journal d’événements, etc.
+      </p>
+      <div class="placeholder">
+        Pour l’instant, c’est une zone vide prévue pour accueillir le code du jeu.<br>
+        Quand tu seras prêt, on prendra le code du mini-jeu (gestion d’État) et on le collera ici.
+      </div>
+    </div>
+  </div>
+</body>
+</html>
