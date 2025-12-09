@@ -15,12 +15,12 @@
     body {
       background: #000;
       overflow: hidden;
-      font-family: 'Inter', sans-serif;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       color: #fff;
     }
 
-    /* --- Zone d'animation 3D --- */
-    canvas#stars {
+    /* --- Canvas de l'univers --- */
+    canvas#space {
       position: fixed;
       inset: 0;
       width: 100%;
@@ -37,7 +37,7 @@
       justify-content: center;
       align-items: center;
       text-align: center;
-      backdrop-filter: blur(2px);
+      pointer-events: none; /* le canvas garde les interactions souris */
     }
 
     h1 {
@@ -47,137 +47,233 @@
       background: linear-gradient(90deg, #ffffff, #a2d2ff, #ffffff);
       -webkit-background-clip: text;
       color: transparent;
-      animation: glow 4s ease-in-out infinite;
+      text-shadow: 0 0 30px rgba(255, 255, 255, 0.8);
+      animation: titleGlow 4s ease-in-out infinite;
     }
 
-    @keyframes glow {
-      0% { text-shadow: 0 0 15px #a2d2ff; }
-      50% { text-shadow: 0 0 30px #65c4ff; }
-      100% { text-shadow: 0 0 15px #a2d2ff; }
+    @keyframes titleGlow {
+      0% { text-shadow: 0 0 20px #7cc4ff; }
+      50% { text-shadow: 0 0 40px #c4f0ff; }
+      100% { text-shadow: 0 0 20px #7cc4ff; }
     }
 
     .subtitle {
-      font-size: 1.4rem;
-      opacity: 0.8;
-      margin-top: 10px;
+      font-size: 1.3rem;
+      opacity: 0.85;
+      margin-top: 12px;
+    }
+
+    .btn-wrapper {
+      margin-top: 40px;
+      pointer-events: auto; /* pour cliquer sur le bouton */
     }
 
     .btn {
-      margin-top: 40px;
-      padding: 18px 45px;
-      border-radius: 40px;
-      font-size: 1.3rem;
+      padding: 16px 42px;
+      border-radius: 999px;
+      border: 2px solid rgba(255, 255, 255, 0.6);
+      background: radial-gradient(circle at 0% 0%, #38bdf8 0, #000 55%);
+      color: #f9fafb;
+      font-size: 1.2rem;
+      font-weight: 600;
       cursor: pointer;
-      background: rgba(255, 255, 255, 0.1);
-      border: 2px solid rgba(255, 255, 255, 0.4);
-      backdrop-filter: blur(6px);
-      transition: 0.3s ease;
+      box-shadow: 0 0 25px rgba(56, 189, 248, 0.6);
+      transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
     }
 
     .btn:hover {
-      background: rgba(255, 255, 255, 0.25);
-      transform: scale(1.05);
+      transform: translateY(-2px) scale(1.03);
+      box-shadow: 0 0 40px rgba(56, 189, 248, 0.9);
+      background: radial-gradient(circle at 100% 0%, #38bdf8 0, #020617 60%);
     }
 
     .alpha {
-      position: absolute;
-      top: 50px;
-      right: 100px;
+      position: fixed;
+      top: 40px;
+      right: 80px;
       font-size: 1.5rem;
       color: #ffe066;
-      font-weight: bold;
+      font-weight: 800;
       transform: rotate(-15deg);
+      text-shadow: 0 0 10px rgba(255, 224, 102, 0.8);
+    }
+
+    /* petit texte bas de page si tu veux ajouter mentions */
+    .footer {
+      position: fixed;
+      bottom: 20px;
+      width: 100%;
+      text-align: center;
+      font-size: 0.75rem;
+      opacity: 0.6;
     }
   </style>
 </head>
 
 <body>
+  <!-- Univers animé -->
+  <canvas id="space"></canvas>
 
-  <canvas id="stars"></canvas>
-
+  <!-- Badge Alpha -->
   <div class="alpha">Alpha!</div>
 
+  <!-- Contenu principal -->
   <div class="main">
     <h1>Welcome to Pax Historia</h1>
-    <p class="subtitle">A cosmic alternate-history sandbox</p>
-    <button class="btn" onclick="startGame()">Get Started →</button>
+    <p class="subtitle">An alternate history sandbox in a boundless universe</p>
+    <div class="btn-wrapper">
+      <button class="btn" onclick="startGame()">Get Started →</button>
+    </div>
+  </div>
+
+  <div class="footer">
+    This universe is procedural and ever-changing.
   </div>
 
 <script>
-/* ==============================
-   ⭐ GÉNÉRATION DES ÉTOILES / PLANÈTES
-   ============================== */
-const canvas = document.getElementById("stars");
+/* ===================================================
+   🌌 UNIVERS : MILLIERS D'ÉTOILES + GALAXIE DE PLANÈTES
+   =================================================== */
+const canvas = document.getElementById("space");
 const ctx = canvas.getContext("2d");
 
-let w, h;
+let w, h, centerX, centerY;
+
 function resize() {
   w = canvas.width = window.innerWidth;
   h = canvas.height = window.innerHeight;
+  centerX = w / 2;
+  centerY = h * 0.65; // galaxie en bas comme sur ton modèle
 }
 resize();
 window.addEventListener("resize", resize);
 
-const planets = [];
-const count = 1500; // ⭐ TU PEUX AUGMENTER SI TU VEUX
+/* --- Fond : milliers d'étoiles / petites planètes --- */
+const stars = [];
+const STAR_COUNT = 2000; // ici tu as vraiment "tout plein"
 
-for (let i = 0; i < count; i++) {
-  planets.push({
+for (let i = 0; i < STAR_COUNT; i++) {
+  stars.push({
     x: Math.random() * w,
     y: Math.random() * h,
-    size: Math.random() * 2 + 0.5,
-    speed: Math.random() * 0.2 + 0.05,
-    color: Math.random() > 0.98 
-      ? "rgba(160,200,255,0.9)"       // petites planètes lumineuses
-      : "rgba(255,255,255,0.6)"       // étoiles normales
+    size: Math.random() * 1.5 + 0.3,
+    baseAlpha: Math.random() * 0.7 + 0.2,
+    twinkleSpeed: Math.random() * 0.02 + 0.005
   });
 }
 
+/* --- Immense galaxie : centaines de planètes en orbite --- */
+const planets = [];
+const PLANET_COUNT = 260;
+
+for (let i = 0; i < PLANET_COUNT; i++) {
+  const radius = (Math.random() ** 1.8) * Math.min(w, h) * 0.55 + 40; // plus dense au centre
+  planets.push({
+    orbitRadius: radius,
+    angle: Math.random() * Math.PI * 2,
+    speed: (Math.random() * 0.0006 + 0.0002) * (Math.random() < 0.5 ? 1 : -1),
+    size: Math.random() * 4 + 1,
+    hue: 200 + Math.random() * 80, // teintes bleu / violet
+    saturation: 50 + Math.random() * 40,
+    lightness: 60 + Math.random() * 20
+  });
+}
+
+/* --- Effet de "halo" de l'univers --- */
+function drawGalaxyCore() {
+  const gradient = ctx.createRadialGradient(
+    centerX, centerY, 20,
+    centerX, centerY, Math.min(w, h) * 0.7
+  );
+  gradient.addColorStop(0, "rgba(255,255,255,0.22)");
+  gradient.addColorStop(0.3, "rgba(120,180,255,0.12)");
+  gradient.addColorStop(1, "rgba(0,0,0,0)");
+
+  ctx.fillStyle = gradient;
+  ctx.beginPath();
+  ctx.arc(centerX, centerY, Math.min(w, h) * 0.75, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+/* --- Interaction souris : léger tilt de la galaxie --- */
 let mouseX = 0, mouseY = 0;
-document.addEventListener("mousemove", e => {
+document.addEventListener("mousemove", (e) => {
   mouseX = e.clientX;
   mouseY = e.clientY;
 });
 
+/* --- Animation principale --- */
+let time = 0;
+
 function animate() {
+  time += 1;
+
   ctx.clearRect(0, 0, w, h);
 
-  planets.forEach(p => {
-    // effet parallax léger selon la position de la souris
-    const dx = (mouseX - w / 2) * 0.00003;
-    const dy = (mouseY - h / 2) * 0.00003;
+  // fond noir profond
+  const bgGradient = ctx.createRadialGradient(
+    centerX, centerY, 0,
+    centerX, centerY, Math.max(w, h)
+  );
+  bgGradient.addColorStop(0, "#020617");
+  bgGradient.addColorStop(1, "#000000");
+  ctx.fillStyle = bgGradient;
+  ctx.fillRect(0, 0, w, h);
 
-    p.x += dx * p.size;
-    p.y += dy * p.size;
+  // étoiles de fond
+  for (let i = 0; i < stars.length; i++) {
+    const s = stars[i];
+    const twinkle = Math.sin(time * s.twinkleSpeed + i) * 0.3;
+    const alpha = Math.max(0, Math.min(1, s.baseAlpha + twinkle));
 
-    // scintillement
-    const flicker = (Math.random() - 0.5) * 0.3;
-    const finalSize = p.size + flicker;
+    // léger parallax avec la souris
+    const parallaxX = (mouseX - w / 2) * 0.0004 * s.size;
+    const parallaxY = (mouseY - h / 2) * 0.0004 * s.size;
 
     ctx.beginPath();
-    ctx.arc(p.x, p.y, finalSize, 0, Math.PI * 2);
-    ctx.fillStyle = p.color;
+    ctx.arc(s.x + parallaxX, s.y + parallaxY, s.size, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(255,255,255,${alpha})`;
     ctx.fill();
+  }
 
-    // déplacement infini
-    if (p.x < 0) p.x = w;
-    if (p.x > w) p.x = 0;
-    if (p.y < 0) p.y = h;
-    if (p.y > h) p.y = 0;
-  });
+  // halo de la galaxie
+  drawGalaxyCore();
+
+  // galaxies / planètes en orbite
+  const tiltX = (mouseX - w / 2) * 0.0006;
+  const tiltY = (mouseY - h / 2) * 0.0004;
+
+  for (let i = 0; i < planets.length; i++) {
+    const p = planets[i];
+    p.angle += p.speed;
+
+    // on simule un léger "tilt" 3D
+    const cos = Math.cos(p.angle);
+    const sin = Math.sin(p.angle);
+    const x = centerX + cos * p.orbitRadius * (1 + tiltX);
+    const y = centerY + sin * p.orbitRadius * (0.5 + tiltY); // écrasé pour effet disque
+
+    // profondeur : plus bas = plus clair
+    const depthFactor = (sin + 1) / 2; // 0 à 1
+    const size = p.size * (0.6 + depthFactor * 0.9);
+
+    ctx.beginPath();
+    ctx.arc(x, y, size, 0, Math.PI * 2);
+    ctx.fillStyle = `hsl(${p.hue}, ${p.saturation}%, ${p.lightness - depthFactor * 20}%)`;
+    ctx.fill();
+  }
 
   requestAnimationFrame(animate);
 }
 animate();
 
-/* ==============================
-   ⭐ ACTION DU BOUTON
-   ============================== */
+/* ==========================
+   🚀 Bouton "Get Started"
+   ========================== */
 function startGame() {
-  alert("Chargement du monde cosmique...");
-  // Tu remplaceras par une redirection quand tu voudras
+  // Remplace ceci par ta vraie navigation plus tard
+  alert("Bientôt : zoom dans une planète de Pax Historia…");
 }
 </script>
-
 </body>
 </html>
