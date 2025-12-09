@@ -1,156 +1,338 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<title>Politaria – Welcome</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <title>Politaria – Geopolitical Strategy</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Politaria – the new geopolitical strategy experience on web and mobile.">
+  <link rel="manifest" href="manifest.json" />
 
-<style>
-  body {
-    margin: 0;
-    overflow: hidden;
-    font-family: system-ui, sans-serif;
-    background: #000;
-    color: white;
-  }
-
-  #overlay {
-    position: absolute;
-    z-index: 10;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-  }
-
-  h1 {
-    font-size: 3.3rem;
-    margin-bottom: 10px;
-    text-shadow: 0 0 15px #fff;
-  }
-
-  p {
-    font-size: 1.2rem;
-    margin-bottom: 30px;
-    opacity: 0.8;
-  }
-
-  #enterBtn {
-    padding: 14px 38px;
-    font-size: 1.2rem;
-    border-radius: 40px;
-    border: 2px solid #fff;
-    background: transparent;
-    color: #fff;
-    cursor: pointer;
-    pointer-events: auto;
-    transition: 0.3s;
-  }
-
-  #enterBtn:hover {
-    background: rgba(255,255,255,0.15);
-    transform: scale(1.05);
-  }
-</style>
-</head>
-<body>
-
-<!-- Conteneur 3D -->
-<canvas id="world"></canvas>
-
-<!-- Interface -->
-<div id="overlay">
-  <h1>Welcome to Politaria</h1>
-  <p>The new geopolitical strategy experience.</p>
-  <button id="enterBtn" onclick="location.href='index.html'">
-    Enter Politaria →
-  </button>
-</div>
-
-<!-- Bibliothèque Three.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-
-<script>
-/* ========= SCÈNE ========= */
-const canvas = document.getElementById("world");
-const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-renderer.setSize(window.innerWidth, window.innerHeight);
-
-const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 2000);
-camera.position.z = 320;
-
-/* ========= LUMIÈRES ========= */
-const light = new THREE.AmbientLight(0xffffff, 1);
-scene.add(light);
-
-/* ========= CARTE DU MONDE (flat + glow) ========= */
-const loader = new THREE.TextureLoader();
-loader.load("https://raw.githubusercontent.com/datasets/geo-boundaries-world-110m/master/world.png", texture => {
-    const geometry = new THREE.PlaneGeometry(600, 300);
-    const material = new THREE.MeshBasicMaterial({
-        map: texture,
-        transparent: true,
-        opacity: 0.9
-    });
-
-    worldMap = new THREE.Mesh(geometry, material);
-    worldMap.position.set(0, 0, 0);
-    scene.add(worldMap);
-
-    // Glow
-    const glow = new THREE.Mesh(
-      geometry,
-      new THREE.MeshBasicMaterial({
-        color: 0x44aaff,
-        transparent: true,
-        opacity: 0.15
-      })
-    );
-    glow.scale.set(1.1, 1.15, 1);
-    scene.add(glow);
-});
-
-/* ========= POINTS LUMINEUX (villes / zones actives) ========= */
-function createPoint(x, y) {
-    const dot = new THREE.Mesh(
-        new THREE.CircleGeometry(2, 12),
-        new THREE.MeshBasicMaterial({ color: 0x55aaff })
-    );
-    dot.position.set(x, y, 1);
-    scene.add(dot);
-}
-createPoint(-100, 30);
-createPoint(80, -20);
-createPoint(0, 60);
-createPoint(150, 10);
-
-/* ========= ANIMATION ========= */
-function animate() {
-    requestAnimationFrame(animate);
-
-    if (worldMap) {
-        worldMap.rotation.z += 0.0006;
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
-    renderer.render(scene, camera);
-}
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #020617 0, #020617 30%, #000 100%);
+      color: #e5e7eb;
+      min-height: 100vh;
+      overflow: hidden;
+    }
 
-animate();
+    .scene {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background:
+        radial-gradient(circle at 10% 20%, rgba(148,163,184,0.25) 0, transparent 55%),
+        radial-gradient(circle at 80% 10%, rgba(59,130,246,0.35) 0, transparent 55%),
+        radial-gradient(circle at 50% 100%, rgba(15,23,42,1) 0, #020617 60%);
+      overflow: hidden;
+    }
 
-/* ========= RESPONSIVE ========= */
-window.addEventListener("resize", () => {
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-});
-</script>
+    /* Petites étoiles en fond */
+    .stars {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        radial-gradient(1px 1px at 10% 20%, rgba(248,250,252,0.9), transparent),
+        radial-gradient(1px 1px at 30% 80%, rgba(248,250,252,0.6), transparent),
+        radial-gradient(1px 1px at 70% 30%, rgba(248,250,252,0.8), transparent),
+        radial-gradient(1px 1px at 90% 60%, rgba(248,250,252,0.7), transparent),
+        radial-gradient(1px 1px at 40% 40%, rgba(248,250,252,0.7), transparent),
+        radial-gradient(1px 1px at 60% 70%, rgba(248,250,252,0.6), transparent);
+      opacity: 0.45;
+      z-index: 0;
+    }
 
+    .content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      padding: 0 16px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 999px;
+      padding: 4px 10px;
+      border: 1px solid rgba(148,163,184,0.45);
+      background: rgba(15,23,42,0.85);
+      font-size: 0.75rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #9ca3af;
+      margin-bottom: 14px;
+    }
+
+    .badge-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: #22c55e;
+      box-shadow: 0 0 14px rgba(34,197,94,0.9);
+    }
+
+    h1 {
+      font-size: clamp(2.3rem, 5vw, 3.4rem);
+      margin-bottom: 10px;
+      text-shadow: 0 0 22px rgba(248,250,252,0.35);
+    }
+
+    .subtitle {
+      font-size: 0.95rem;
+      color: #9ca3af;
+      margin-bottom: 26px;
+    }
+
+    .cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 26px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      background: linear-gradient(90deg, #3b82f6, #ec4899);
+      color: #f9fafb;
+      font-weight: 600;
+      font-size: 0.95rem;
+      text-decoration: none;
+      cursor: pointer;
+      box-shadow: 0 10px 30px rgba(59,130,246,0.6);
+      transition: transform 0.08s ease, box-shadow 0.08s ease;
+    }
+
+    .cta span {
+      font-size: 1.1rem;
+    }
+
+    .cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 40px rgba(59,130,246,0.8);
+    }
+
+    .cta:active {
+      transform: translateY(0);
+      box-shadow: 0 6px 18px rgba(59,130,246,0.6);
+    }
+
+    /* Carte du monde stylisée */
+    .world-wrapper {
+      position: absolute;
+      inset-inline: 0;
+      bottom: -120px;
+      height: 55vh;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      pointer-events: none; /* le clic passe quand même sur le bouton */
+      z-index: 1;
+    }
+
+    .world {
+      position: relative;
+      width: min(1100px, 100%);
+      aspect-ratio: 16 / 7;
+      border-radius: 32px;
+      overflow: hidden;
+      background:
+        linear-gradient(to bottom, rgba(15,23,42,0) 0%, rgba(15,23,42,0.7) 65%, rgba(15,23,42,1) 100%);
+      border: 1px solid rgba(148,163,184,0.25);
+      box-shadow:
+        0 30px 80px rgba(0,0,0,0.9),
+        0 0 40px rgba(37,99,235,0.5);
+      transform-origin: center;
+      transform: translateY(40px) scale(1.05);
+    }
+
+    /* Grille + “continents” abstraits */
+    .world-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 20% 30%, rgba(59,130,246,0.3) 0, transparent 55%),
+        radial-gradient(circle at 60% 40%, rgba(16,185,129,0.3) 0, transparent 55%),
+        radial-gradient(circle at 80% 70%, rgba(234,88,12,0.35) 0, transparent 55%),
+        radial-gradient(circle at 35% 75%, rgba(147,51,234,0.3) 0, transparent 55%),
+        repeating-linear-gradient(
+          to right,
+          rgba(148,163,184,0.15) 0,
+          rgba(148,163,184,0.15) 1px,
+          transparent 1px,
+          transparent 14px
+        ),
+        repeating-linear-gradient(
+          to bottom,
+          rgba(148,163,184,0.15) 0,
+          rgba(148,163,184,0.15) 1px,
+          transparent 1px,
+          transparent 14px
+        );
+      opacity: 0.9;
+    }
+
+    /* Patchs de “continents” */
+    .continent {
+      position: absolute;
+      background: radial-gradient(circle at 30% 30%, rgba(248,250,252,0.9) 0, rgba(148,163,184,0.1) 45%, transparent 70%);
+      filter: blur(1px);
+      opacity: 0.45;
+    }
+
+    .continent.c1 { left: 6%;  top: 28%; width: 26%; height: 32%; }
+    .continent.c2 { left: 32%; top: 22%; width: 20%; height: 26%; }
+    .continent.c3 { left: 54%; top: 30%; width: 22%; height: 30%; }
+    .continent.c4 { left: 74%; top: 35%; width: 20%; height: 24%; }
+    .continent.c5 { left: 18%; top: 54%; width: 18%; height: 22%; }
+    .continent.c6 { left: 60%; top: 55%; width: 18%; height: 20%; }
+
+    /* Villes interactives */
+    .city {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: #facc15;
+      box-shadow: 0 0 16px rgba(250,204,21,0.9);
+      cursor: pointer;
+      pointer-events: auto;
+      transform: translate(-50%, -50%);
+    }
+
+    .city::after {
+      content: attr(data-label);
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(15,23,42,0.9);
+      padding: 3px 7px;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      color: #e5e7eb;
+      opacity: 0;
+      pointer-events: none;
+      white-space: nowrap;
+      border: 1px solid rgba(148,163,184,0.4);
+      transition: opacity 0.12s ease, transform 0.12s ease;
+    }
+
+    .city:hover::after {
+      opacity: 1;
+      transform: translateY(-50%) translateX(3px);
+    }
+
+    @keyframes cityPulse {
+      0%, 100% {
+        box-shadow: 0 0 10px rgba(250,204,21,0.7);
+        transform: translate(-50%, -50%) scale(1);
+      }
+      50% {
+        box-shadow: 0 0 22px rgba(250,204,21,1);
+        transform: translate(-50%, -50%) scale(1.15);
+      }
+    }
+
+    .city.pulse {
+      animation: cityPulse 2.4s ease-in-out infinite;
+    }
+
+    /* Responsif */
+    @media (max-width: 768px) {
+      .world-wrapper {
+        bottom: -150px;
+        height: 60vh;
+      }
+      .world {
+        border-radius: 22px;
+      }
+      .subtitle {
+        padding: 0 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="scene">
+    <div class="stars"></div>
+
+    <div class="content">
+      <div class="badge">
+        <span class="badge-dot"></span>
+        GEOPOLITICAL SANDBOX · ALPHA
+      </div>
+
+      <h1>Welcome to Politaria</h1>
+      <p class="subtitle">
+        The new geopolitical strategy experience.<br>
+        Shape your nation, forge alliances, and test your doctrines on a living world map.
+      </p>
+
+      <!-- Quand ton vrai jeu sera prêt, change href="game.html" ou autre -->
+      <a href="game.html" class="cta">
+        Enter Politaria
+        <span>→</span>
+      </a>
+    </div>
+
+    <!-- Carte du monde stylisée et interactive -->
+    <div class="world-wrapper">
+      <div class="world" id="world">
+        <div class="world-bg"></div>
+
+        <!-- “Blocs de continents” abstraits -->
+        <div class="continent c1"></div>
+        <div class="continent c2"></div>
+        <div class="continent c3"></div>
+        <div class="continent c4"></div>
+        <div class="continent c5"></div>
+        <div class="continent c6"></div>
+
+        <!-- Villes / points stratégiques (interactifs) -->
+        <div class="city pulse" style="left: 18%; top: 38%;" data-label="Northern Coalition"></div>
+        <div class="city" style="left: 32%; top: 46%;" data-label="Central Union"></div>
+        <div class="city" style="left: 46%; top: 34%;" data-label="Imperial League"></div>
+        <div class="city" style="left: 61%; top: 44%;" data-label="Eastern Pact"></div>
+        <div class="city" style="left: 78%; top: 40%;" data-label="Southern Block"></div>
+        <div class="city" style="left: 40%; top: 60%;" data-label="Maritime Republics"></div>
+        <div class="city" style="left: 67%; top: 63%;" data-label="Island Federations"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Petit effet “parallax” sur la carte du monde
+    (function () {
+      const world = document.getElementById("world");
+      if (!world) return;
+
+      function handleMove(evt) {
+        const w = window.innerWidth;
+        const h = window.innerHeight;
+        const x = (evt.clientX ?? (evt.touches && evt.touches[0].clientX) ?? w / 2) / w - 0.5;
+        const y = (evt.clientY ?? (evt.touches && evt.touches[0].clientY) ?? h / 2) / h - 0.5;
+
+        const translateX = x * 20;   // -10px à +10px environ
+        const translateY = y * -12;  // inverse pour effet profondeur
+
+        world.style.transform =
+          `translateY(40px) translate(${translateX}px, ${translateY}px) scale(1.05)`;
+      }
+
+      window.addEventListener("mousemove", handleMove);
+      window.addEventListener("touchmove", handleMove, { passive: true });
+    })();
+  </script>
 </body>
 </html>
