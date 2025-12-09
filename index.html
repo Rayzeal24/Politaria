@@ -5,9 +5,6 @@
   <title>Politaria – Geopolitical Sandbox</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- Manifest pour plus tard (PWA) -->
-  <link rel="manifest" href="manifest.json">
-
   <style>
     * {
       box-sizing: border-box;
@@ -15,452 +12,584 @@
       padding: 0;
     }
 
+    :root {
+      --bg-top: #020617;
+      --bg-bottom: #020617;
+      --accent: #ec4899;
+      --accent-2: #6366f1;
+      --text-main: #f9fafb;
+      --text-sub: #cbd5f5;
+    }
+
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background:
-        radial-gradient(circle at top, #0f172a 0, #020617 60%, #000 100%);
-      color: #e5e7eb;
+      background: radial-gradient(circle at top, #1f2937 0, #020617 55%, #000 100%);
+      color: var(--text-main);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .landing-root {
+      position: relative;
       min-height: 100vh;
       display: flex;
+      flex-direction: column;
+      align-items: center;
       justify-content: center;
-    }
-
-    .page {
-      max-width: 1100px;
-      width: 100%;
       padding: 32px 16px 40px;
+      isolation: isolate;
     }
 
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 24px;
+    /* Petit champ de particules (points lumineux) */
+    .stars {
+      position: fixed;
+      inset: 0;
+      background-image:
+        radial-gradient(1px 1px at 10% 20%, rgba(255,255,255,0.35) 0, transparent 60%),
+        radial-gradient(1px 1px at 80% 80%, rgba(255,255,255,0.3) 0, transparent 60%),
+        radial-gradient(1px 1px at 30% 70%, rgba(255,255,255,0.25) 0, transparent 60%),
+        radial-gradient(1px 1px at 60% 10%, rgba(255,255,255,0.28) 0, transparent 60%);
+      opacity: 0.9;
+      z-index: -2;
+      animation: twinkle 22s linear infinite alternate;
     }
 
-    .logo {
-      font-size: 1.35rem;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
+    @keyframes twinkle {
+      0% { transform: translate3d(0,0,0) scale(1); opacity: 0.9; }
+      100% { transform: translate3d(-20px, 10px, 0) scale(1.02); opacity: 0.75; }
     }
 
-    .logo-sub {
-      font-size: 0.8rem;
-      color: #9ca3af;
-    }
-
-    .alpha-pill {
-      font-size: 0.75rem;
-      padding: 4px 10px;
-      border-radius: 999px;
-      border: 1px solid #4b5563;
-      background: rgba(15,23,42,0.9);
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .alpha-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 999px;
-      background: #22c55e;
-      box-shadow: 0 0 12px rgba(34,197,94,0.9);
-    }
-
-    main {
-      margin-top: 12px;
-    }
-
-    .hero {
+    .hero-shell {
+      max-width: 960px;
+      width: 100%;
       text-align: center;
-      margin-bottom: 26px;
+      margin-bottom: 40px;
+      position: relative;
+      z-index: 1;
     }
 
-    .hero-badge {
+    .badge-row {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      padding: 4px 12px;
+      padding: 4px 10px;
       border-radius: 999px;
-      background: rgba(15,23,42,0.9);
-      border: 1px solid #1f2937;
+      border: 1px solid rgba(148,163,184,0.4);
+      background: radial-gradient(circle at top left, rgba(56,189,248,0.2), transparent 60%);
+      backdrop-filter: blur(10px);
       font-size: 0.75rem;
-      letter-spacing: 0.16em;
       text-transform: uppercase;
-      color: #9ca3af;
-      margin-bottom: 14px;
+      letter-spacing: 0.18em;
+      color: #e5e7eb;
+      margin-bottom: 16px;
     }
 
-    .hero-badge-dot {
+    .badge-dot {
       width: 7px;
       height: 7px;
       border-radius: 999px;
       background: #22c55e;
-      box-shadow: 0 0 10px rgba(34,197,94,0.8);
+      box-shadow: 0 0 14px rgba(34,197,94,0.9);
     }
 
-    .hero h1 {
-      font-size: clamp(2.4rem, 4vw, 3.2rem);
+    h1.hero-title {
+      font-size: clamp(2.4rem, 4vw, 3.4rem);
       margin-bottom: 10px;
+      text-shadow: 0 0 30px rgba(0,0,0,0.7);
     }
 
     .hero-sub {
-      max-width: 620px;
-      margin: 0 auto;
       font-size: 0.98rem;
-      color: #d1d5db;
+      color: var(--text-sub);
+      max-width: 640px;
+      margin: 0 auto 24px;
     }
 
     .hero-actions {
-      margin-top: 22px;
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
       gap: 12px;
+      margin-bottom: 18px;
     }
 
     .btn {
       border-radius: 999px;
       border: none;
-      padding: 10px 20px;
-      font-size: 0.95rem;
+      padding: 9px 20px;
+      font-size: 0.98rem;
       cursor: pointer;
       font-weight: 500;
       display: inline-flex;
       align-items: center;
       gap: 8px;
       text-decoration: none;
-      transition: transform 0.06s ease, box-shadow 0.06s ease, background 0.15s, opacity 0.15s;
+      transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.15s, opacity 0.15s;
       white-space: nowrap;
     }
 
     .btn-primary {
-      color: #fff;
-      background: linear-gradient(90deg, #ec4899, #6366f1);
-      box-shadow: 0 10px 30px rgba(236,72,153,0.45);
+      background: radial-gradient(circle at top left, var(--accent) 0, var(--accent-2) 55%, #0f172a 100%);
+      color: white;
+      box-shadow: 0 10px 28px rgba(129,140,248,0.7);
     }
 
     .btn-primary:hover {
       transform: translateY(-1px);
-      box-shadow: 0 14px 36px rgba(236,72,153,0.7);
-      opacity: 0.97;
+      box-shadow: 0 14px 40px rgba(129,140,248,0.9);
     }
 
     .btn-secondary {
-      background: rgba(15,23,42,0.95);
-      color: #e5e7eb;
-      border: 1px solid #374151;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.55);
+      background: rgba(15,23,42,0.9);
+      color: var(--text-sub);
+      border: 1px solid rgba(148,163,184,0.6);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.65);
     }
 
     .btn-secondary:hover {
-      transform: translateY(-1px);
       background: rgba(15,23,42,1);
+      color: #e5e7eb;
+      transform: translateY(-1px);
     }
 
-    .hero-hint {
-      margin-top: 10px;
+    .hero-note {
       font-size: 0.78rem;
       color: #9ca3af;
+      margin-top: 4px;
     }
 
-    /* --- Carte du monde stylisée --- */
+    /* --- Carte du monde “en guerre” --- */
 
     .world-wrapper {
-      margin-top: 30px;
+      max-width: 1040px;
+      width: 100%;
       position: relative;
-      display: flex;
-      justify-content: center;
-      pointer-events: none; /* tout le fond reste décoratif */
+      margin: 0 auto;
+      padding: 0 4px;
+      z-index: 1;
     }
 
     .world-card {
       position: relative;
-      width: min(900px, 100%);
-      aspect-ratio: 16 / 7;
-      border-radius: 32px;
+      border-radius: 40px;
       overflow: hidden;
-      border: 1px solid rgba(148,163,184,0.5);
+      padding: 30px 18px 32px;
       background:
-        radial-gradient(circle at 15% 20%, rgba(248,113,113,0.18) 0, transparent 45%),
-        radial-gradient(circle at 70% 80%, rgba(59,130,246,0.25) 0, transparent 55%),
-        radial-gradient(circle at 40% 65%, rgba(234,179,8,0.18) 0, transparent 55%),
-        #020617;
+        radial-gradient(circle at top left, rgba(248,113,113,0.25), transparent 52%),
+        radial-gradient(circle at bottom right, rgba(129,140,248,0.36), transparent 55%),
+        radial-gradient(circle at center, rgba(15,23,42,0.9), rgba(2,6,23,0.98));
+      border: 1px solid rgba(15,23,42,0.9);
       box-shadow:
-        0 22px 60px rgba(0,0,0,0.9),
-        0 0 50px rgba(59,130,246,0.25);
-      mask-image: radial-gradient(circle at 50% 0%, transparent 0, black 34%);
+        0 22px 60px rgba(0,0,0,0.85),
+        inset 0 0 0 1px rgba(148,163,184,0.2);
+      backdrop-filter: blur(18px);
     }
 
     .world-grid {
       position: absolute;
       inset: 0;
       background-image:
-        linear-gradient(to right, rgba(148,163,184,0.12) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(148,163,184,0.12) 1px, transparent 1px);
-      background-size: 32px 32px;
-      opacity: 0.75;
-    }
-
-    .world-glow {
-      position: absolute;
-      inset: 30% 10% -20%;
-      background:
-        radial-gradient(circle at 50% 0%, rgba(15,23,42,0) 0, rgba(15,23,42,0.9) 55%, #020617 100%),
-        radial-gradient(circle at 50% 100%, rgba(15,23,42,0.9) 0, #020617 60%);
+        linear-gradient(to right, rgba(148,163,184,0.13) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(148,163,184,0.13) 1px, transparent 1px);
+      background-size: 40px 40px;
+      opacity: 0.7;
+      pointer-events: none;
       mix-blend-mode: screen;
-      opacity: 0.6;
     }
 
-    /* “zones de conflit” floues */
-    .conflict-zone {
-      position: absolute;
-      width: 120px;
-      height: 120px;
-      border-radius: 999px;
-      filter: blur(22px);
-      opacity: 0.65;
-    }
-
-    .zone-red {
-      background: #f97373;
-    }
-
-    .zone-blue {
-      background: #38bdf8;
-    }
-
-    .zone-yellow {
-      background: #eab308;
-    }
-
-    .zone-1 { top: 22%; left: 18%; }
-    .zone-2 { top: 55%; left: 40%; }
-    .zone-3 { top: 35%; right: 12%; }
-
-    /* --- Unités : tanks, avions, navires --- */
-
-    .units-layer {
+    .world-fog {
       position: absolute;
       inset: 0;
+      background:
+        radial-gradient(circle at 18% 20%, rgba(15,23,42,0.4) 0, transparent 55%),
+        radial-gradient(circle at 70% 70%, rgba(15,23,42,0.9) 0, transparent 60%);
+      mix-blend-mode: soft-light;
+      pointer-events: none;
     }
+
+    .world-inner {
+      position: relative;
+      height: 280px;
+      max-height: 55vh;
+      border-radius: 32px;
+      overflow: hidden;
+    }
+
+    /* Unités stylisées */
 
     .unit {
       position: absolute;
       border-radius: 999px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.7rem;
-      color: #e5e7eb;
-      text-shadow: 0 0 6px rgba(0,0,0,0.9);
-      box-shadow: 0 0 18px rgba(0,0,0,0.8);
+      box-shadow: 0 0 22px rgba(0,0,0,0.7);
       opacity: 0.95;
-      animation: floatUnit 10s ease-in-out infinite alternate;
+      transform-origin: center;
     }
 
-    .unit-label {
-      font-size: 0.6rem;
-      margin-left: 4px;
-      opacity: 0.8;
-    }
-
-    .unit-tank {
-      background: linear-gradient(135deg, #b91c1c, #ef4444);
-      padding: 4px 10px;
-    }
-
-    .unit-plane {
-      background: linear-gradient(135deg, #1d4ed8, #38bdf8);
-      padding: 4px 11px;
-    }
-
-    .unit-ship {
-      background: linear-gradient(135deg, #0f766e, #22c55e);
-      padding: 4px 12px;
-    }
-
-    .unit-artillery {
-      background: linear-gradient(135deg, #854d0e, #eab308);
-      padding: 4px 12px;
-    }
-
-    /* Positions spécifiques */
-    .unit-tank.t1 { bottom: 18%; left: 20%; animation-delay: -2s; }
-    .unit-tank.t2 { bottom: 26%; left: 33%; animation-delay: -5s; }
-    .unit-plane.p1 { top: 22%; left: 48%; animation-delay: -3s; }
-    .unit-plane.p2 { top: 30%; right: 22%; animation-delay: -6s; }
-    .unit-ship.s1 { bottom: 16%; right: 18%; animation-delay: -4s; }
-    .unit-artillery.a1 { bottom: 30%; right: 33%; animation-delay: -1s; }
-
-    @keyframes floatUnit {
-      0%   { transform: translate3d(0, 0, 0); }
-      50%  { transform: translate3d(4px, -6px, 0); }
-      100% { transform: translate3d(-4px, 3px, 0); }
-    }
-
-    /* petits points lumineux sur la carte */
-    .city-dot {
+    .unit::before,
+    .unit::after {
+      content: "";
       position: absolute;
+      border-radius: 999px;
+    }
+
+    .unit.tank {
+      width: 40px;
+      height: 18px;
+      background: linear-gradient(to right, #b91c1c, #fecaca);
+      bottom: 18%;
+      left: 18%;
+      animation: tank-drift 18s linear infinite alternate;
+    }
+
+    .unit.tank::before {
+      width: 22px;
+      height: 6px;
+      background: #fecaca;
+      top: 4px;
+      right: -18px;
+      box-shadow: 0 0 10px rgba(252,165,165,0.9);
+    }
+
+    .unit.tank::after {
       width: 6px;
       height: 6px;
+      background: #111827;
+      bottom: -4px;
+      left: 6px;
+      box-shadow: 12px 0 0 #111827, 24px 0 0 #111827;
+    }
+
+    .unit.plane {
+      width: 30px;
+      height: 10px;
+      background: linear-gradient(to right, #38bdf8, #e0f2fe);
+      top: 22%;
+      left: 55%;
+      transform: rotate(-8deg);
+      animation: plane-flight 26s linear infinite;
+    }
+
+    .unit.plane::before {
+      width: 26px;
+      height: 5px;
+      background: rgba(191,219,254,0.95);
+      top: 2px;
+      left: 2px;
+      transform: rotate(-12deg);
+    }
+
+    .unit.plane::after {
+      width: 10px;
+      height: 4px;
+      background: rgba(191,219,254,0.85);
+      top: 6px;
+      left: 10px;
+    }
+
+    .unit.bomber {
+      width: 36px;
+      height: 12px;
+      background: linear-gradient(to right, #f97316, #fed7aa);
+      top: 12%;
+      right: 18%;
+      transform: rotate(6deg);
+      animation: bomber-sweep 30s linear infinite;
+    }
+
+    .unit.bomber::before {
+      width: 32px;
+      height: 6px;
+      background: rgba(254,215,170,0.95);
+      top: 2px;
+      left: 2px;
+    }
+
+    .unit.bomber::after {
+      width: 18px;
+      height: 3px;
+      background: rgba(254,215,170,0.8);
+      top: 7px;
+      left: 9px;
+    }
+
+    .unit.ship {
+      width: 46px;
+      height: 14px;
+      background: linear-gradient(to right, #0ea5e9, #e0f2fe);
+      bottom: 10%;
+      right: 26%;
+      border-radius: 24px 24px 12px 12px;
+      animation: ship-cruise 32s linear infinite alternate;
+    }
+
+    .unit.ship::before {
+      width: 16px;
+      height: 10px;
+      background: #020617;
+      top: -8px;
+      left: 6px;
+      border-radius: 4px 4px 0 0;
+    }
+
+    .unit.ship::after {
+      width: 2px;
+      height: 16px;
+      background: #e5e7eb;
+      top: -16px;
+      left: 12px;
+    }
+
+    .flash {
+      position: absolute;
+      width: 20px;
+      height: 20px;
       border-radius: 999px;
-      background: #facc15;
-      box-shadow: 0 0 10px rgba(250,204,21,0.9);
-      opacity: 0.8;
-      animation: pulseCity 3.2s ease-in-out infinite;
+      background: radial-gradient(circle at center, #fee2e2 0, #f97316 40%, transparent 70%);
+      mix-blend-mode: screen;
+      opacity: 0.0;
+      animation: shell-flash 3.6s ease-out infinite;
     }
 
-    .city-1 { top: 42%; left: 28%; }
-    .city-2 { top: 50%; left: 46%; animation-delay: -1s; }
-    .city-3 { top: 37%; right: 28%; animation-delay: -2s; }
-    .city-4 { bottom: 26%; left: 38%; animation-delay: -1.7s; }
-    .city-5 { bottom: 20%; right: 26%; animation-delay: -0.7s; }
+    .flash.f1 { top: 40%; left: 38%; animation-delay: 0.4s; }
+    .flash.f2 { top: 58%; left: 64%; animation-delay: 1.2s; }
+    .flash.f3 { top: 32%; left: 72%; animation-delay: 2.1s; }
 
-    @keyframes pulseCity {
-      0%, 100% { transform: scale(1); opacity: 0.7; }
-      50% { transform: scale(1.35); opacity: 1; }
+    @keyframes tank-drift {
+      0%   { transform: translate3d(0,0,0); }
+      100% { transform: translate3d(110px,-10px,0); }
     }
 
-    footer {
-      margin-top: 24px;
-      font-size: 0.75rem;
-      color: #6b7280;
+    @keyframes plane-flight {
+      0%   { transform: translate3d(0,0,0) rotate(-8deg); opacity: 0; }
+      10%  { opacity: 1; }
+      90%  { opacity: 1; }
+      100% { transform: translate3d(-260px,40px,0) rotate(-3deg); opacity: 0; }
+    }
+
+    @keyframes bomber-sweep {
+      0%   { transform: translate3d(0,0,0) rotate(6deg); opacity: 0; }
+      5%   { opacity: 1; }
+      85%  { opacity: 1; }
+      100% { transform: translate3d(-280px,30px,0) rotate(2deg); opacity: 0; }
+    }
+
+    @keyframes ship-cruise {
+      0%   { transform: translate3d(0,0,0); }
+      100% { transform: translate3d(120px,4px,0); }
+    }
+
+    @keyframes shell-flash {
+      0%   { opacity: 0; transform: scale(0.4); }
+      10%  { opacity: 1; transform: scale(1); }
+      40%  { opacity: 0.4; transform: scale(1.4); }
+      100% { opacity: 0; transform: scale(1.8); }
+    }
+
+    /* Texte sous la carte */
+
+    .world-caption {
+      margin-top: 12px;
+      font-size: 0.82rem;
+      color: #9ca3af;
       text-align: center;
     }
 
+    /* Easter egg : mini panneau caché */
+
+    #egg-trigger {
+      position: fixed;
+      top: 18px;
+      right: 22px;
+      width: 18px;
+      height: 18px;
+      background: transparent;
+      border: none;
+      padding: 0;
+      cursor: default;
+      opacity: 0;
+      z-index: 20;
+    }
+
+    #secret-panel {
+      position: fixed;
+      bottom: 16px;
+      right: 16px;
+      max-width: 260px;
+      background: rgba(15,23,42,0.98);
+      border-radius: 14px;
+      border: 1px solid rgba(148,163,184,0.5);
+      padding: 10px 12px;
+      font-size: 0.78rem;
+      color: #e5e7eb;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.9);
+      transform: translateY(130%);
+      opacity: 0;
+      pointer-events: none;
+      transition: transform 0.2s ease-out, opacity 0.2s ease-out;
+      z-index: 30;
+    }
+
+    #secret-panel.open {
+      transform: translateY(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    #secret-panel strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 0.8rem;
+    }
+
+    #secret-close {
+      border: none;
+      background: transparent;
+      color: #9ca3af;
+      font-size: 0.8rem;
+      cursor: pointer;
+      padding: 0;
+      margin-top: 6px;
+      text-decoration: underline;
+    }
+
     @media (max-width: 768px) {
-      .page {
-        padding-top: 20px;
-      }
-      header {
-        flex-direction: column;
-        align-items: flex-start;
-      }
       .world-card {
-        border-radius: 24px;
+        border-radius: 30px;
+        padding-inline: 12px;
+      }
+      .world-inner {
+        height: 220px;
       }
     }
   </style>
-
-  <script>
-    // Service worker (pour plus tard, quand tu auras un vrai service-worker.js)
-    if ("serviceWorker" in navigator) {
-      window.addEventListener("load", () => {
-        navigator.serviceWorker
-          .register("service-worker.js")
-          .catch(() => {});
-      });
-    }
-  </script>
 </head>
 <body>
-  <div class="page">
-    <header>
-      <div>
-        <div class="logo">Politaria</div>
-        <div class="logo-sub">Geopolitical strategy sandbox</div>
+  <div class="stars"></div>
+
+  <div class="landing-root">
+    <div class="hero-shell">
+      <div class="badge-row">
+        <span class="badge-dot"></span>
+        <span>Geopolitical sandbox · Alpha</span>
       </div>
-      <div class="alpha-pill">
-        <span class="alpha-dot"></span>
-        <span>ALPHA BUILD</span>
+
+      <h1 class="hero-title">Welcome to Politaria</h1>
+      <p class="hero-sub">
+        Shape your nation in a world on fire. Balance economy, war and diplomacy
+        on a living, unstable map.
+      </p>
+
+      <div class="hero-actions">
+        <a href="game.html" class="btn btn-primary">
+          <span>Enter Politaria</span>
+          <span>→</span>
+        </a>
+        <button class="btn btn-secondary" type="button" onclick="scrollToOverview()">
+          Quick overview
+        </button>
       </div>
-    </header>
 
-    <main>
-      <section class="hero">
-        <div class="hero-badge">
-          <span class="hero-badge-dot"></span>
-          <span>GEOPOLITICAL SANDBOX · ALPHA</span>
-        </div>
+      <div class="hero-note">
+        (Certains secrets de la carte ne s’affichent qu’aux commandants assez curieux…)
+      </div>
+    </div>
 
-        <h1>Welcome to Politaria</h1>
-
-        <p class="hero-sub">
-          Shape your nation in a world on fire. Balance economy, war and diplomacy
-          on a living, unstable map.
-        </p>
-
-        <div class="hero-actions">
-          <a href="game.html" class="btn btn-primary">
-            Enter Politaria →
-          </a>
-          <a href="#overview" class="btn btn-secondary">
-            Quick overview
-          </a>
-        </div>
-
-        <p class="hero-hint">
-          Certains mouvements ne sont visibles qu’aux commandants assez curieux pour regarder la carte de près…
-        </p>
-      </section>
-
-      <!-- Carte / fond interactif avec tanks, avions, navires -->
-      <section class="world-wrapper">
-        <div class="world-card">
+    <!-- Carte du monde stylisée avec tanks / avions / navires -->
+    <div class="world-wrapper" id="overview">
+      <div class="world-card" id="worldCard">
+        <div class="world-inner">
           <div class="world-grid"></div>
-          <div class="world-glow"></div>
+          <div class="world-fog"></div>
 
-          <!-- zones de conflit -->
-          <div class="conflict-zone zone-red zone-1"></div>
-          <div class="conflict-zone zone-blue zone-2"></div>
-          <div class="conflict-zone zone-yellow zone-3"></div>
+          <!-- Unités -->
+          <div class="unit tank"></div>
+          <div class="unit plane"></div>
+          <div class="unit bomber"></div>
+          <div class="unit ship"></div>
 
-          <!-- unités -->
-          <div class="units-layer">
-            <div class="unit unit-tank t1">
-              🛡️
-              <span class="unit-label">Tank battalion</span>
-            </div>
-            <div class="unit unit-tank t2">
-              🛡️
-              <span class="unit-label">Armored line</span>
-            </div>
-
-            <div class="unit unit-plane p1">
-              ✈️
-              <span class="unit-label">Air strike</span>
-            </div>
-            <div class="unit unit-plane p2">
-              ✈️
-              <span class="unit-label">Recon flight</span>
-            </div>
-
-            <div class="unit unit-ship s1">
-              🚢
-              <span class="unit-label">Naval group</span>
-            </div>
-
-            <div class="unit unit-artillery a1">
-              🎯
-              <span class="unit-label">Artillery zone</span>
-            </div>
-
-            <!-- villes / points lumineux -->
-            <div class="city-dot city-1"></div>
-            <div class="city-dot city-2"></div>
-            <div class="city-dot city-3"></div>
-            <div class="city-dot city-4"></div>
-            <div class="city-dot city-5"></div>
-          </div>
+          <!-- Impacts / explosions légers -->
+          <div class="flash f1"></div>
+          <div class="flash f2"></div>
+          <div class="flash f3"></div>
         </div>
-      </section>
+      </div>
 
-      <section id="overview" style="margin-top:26px; font-size:0.9rem; color:#d1d5db;">
-        <p>
-          Politaria est pensé comme un bac à sable géopolitique : chaque point lumineux peut devenir
-          un futur conflit, un accord commercial ou une base stratégique. L’écran d’accueil sert
-          juste de mise en bouche avant de rentrer dans le vrai jeu.
-        </p>
-      </section>
-    </main>
-
-    <footer>
-      Politaria – prototype personnel. Le jeu, le site et la carte évolueront en même temps.
-    </footer>
+      <p class="world-caption">
+        Une carte abstraite du monde : chaque lueur représente un front, une flotte ou une ville.
+        Les conflits bougent lentement en arrière-plan pendant que tu prépares ta stratégie.
+      </p>
+    </div>
   </div>
+
+  <!-- Easter egg : double-clic dans le coin pour ouvrir un mini panneau -->
+  <button id="egg-trigger" aria-hidden="true"></button>
+
+  <div id="secret-panel">
+    <strong>Hidden dev console · Politaria</strong>
+    Tu as trouvé un des premiers easter eggs. Plus tard, on pourra y cacher un vrai cadeau
+    (skin, scénario spécial, code bonus…).
+    <button id="secret-close">Fermer</button>
+  </div>
+
+  <script>
+    // Parallax léger sur la carte et les unités
+    (function () {
+      const worldCard = document.getElementById("worldCard");
+      const units = document.querySelectorAll(".unit");
+
+      function onMove(e) {
+        const x = (e.clientX / window.innerWidth - 0.5);
+        const y = (e.clientY / window.innerHeight - 0.5);
+
+        const translateX = x * 18;
+        const translateY = y * 12;
+
+        if (worldCard) {
+          worldCard.style.transform =
+            `translate3d(${translateX}px, ${translateY}px, 0)`;
+        }
+        units.forEach((u, idx) => {
+          const depth = (idx + 1) * 3;
+          u.style.transform +=
+            ` translate3d(${x * depth}px, ${y * depth}px, 0)`;
+        });
+      }
+
+      // On met un léger throttling pour ne pas charger le CPU
+      let ticking = false;
+      window.addEventListener("mousemove", (e) => {
+        if (!ticking) {
+          window.requestAnimationFrame(() => {
+            onMove(e);
+            ticking = false;
+          });
+          ticking = true;
+        }
+      });
+    })();
+
+    function scrollToOverview() {
+      const el = document.getElementById("overview");
+      if (!el) return;
+      el.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+
+    // Easter egg : double-clic dans le coin ouvre le panneau secret
+    (function () {
+      const trigger = document.getElementById("egg-trigger");
+      const panel = document.getElementById("secret-panel");
+      const close = document.getElementById("secret-close");
+
+      if (!trigger || !panel) return;
+
+      trigger.addEventListener("dblclick", () => {
+        panel.classList.toggle("open");
+      });
+
+      if (close) {
+        close.addEventListener("click", () => panel.classList.remove("open"));
+      }
+    })();
+  </script>
 </body>
 </html>
