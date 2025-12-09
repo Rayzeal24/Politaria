@@ -5,7 +5,7 @@
   <title>Politaria – Geopolitical Sandbox</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- Manifest PWA (pour plus tard, quand tu voudras l’installer comme app) -->
+  <!-- Manifest pour plus tard (PWA) -->
   <link rel="manifest" href="manifest.json">
 
   <style>
@@ -17,77 +17,52 @@
 
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: #030712;
-      color: #f9fafb;
-      min-height: 100vh;
-      overflow: hidden;
-    }
-
-    .scene {
-      position: relative;
+      background:
+        radial-gradient(circle at top, #0f172a 0, #020617 60%, #000 100%);
+      color: #e5e7eb;
       min-height: 100vh;
       display: flex;
-      align-items: center;
       justify-content: center;
-      padding: 24px;
-      isolation: isolate;
     }
 
-    /* Canvas de particules (braises / débris) */
-    #battlefield-canvas {
-      position: fixed;
-      inset: 0;
+    .page {
+      max-width: 1100px;
       width: 100%;
-      height: 100%;
-      z-index: -2;
+      padding: 32px 16px 40px;
     }
 
-    /* Fond principal sombre + dégradés "guerre" */
-    .bg-war {
-      position: fixed;
-      inset: 0;
-      z-index: -3;
-      background:
-        radial-gradient(circle at 20% 20%, rgba(239,68,68,0.25), transparent 55%),
-        radial-gradient(circle at 80% 70%, rgba(249,115,22,0.22), transparent 55%),
-        radial-gradient(circle at 50% 110%, rgba(15,23,42,1), #020617 60%, #000 100%);
-      filter: saturate(1.1);
-    }
-
-    /* Texture légère de bruit */
-    .noise-overlay {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: -1;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='2' numOctaves='3' stitchTiles='noStitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.07'/%3E%3C/svg%3E");
-      mix-blend-mode: soft-light;
-    }
-
-    .hero {
-      position: relative;
-      z-index: 2;
-      max-width: 960px;
-      width: 100%;
-      text-align: center;
-    }
-
-    .badge {
-      display: inline-flex;
+    header {
+      display: flex;
+      justify-content: space-between;
       align-items: center;
-      gap: 8px;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .logo {
+      font-size: 1.35rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .logo-sub {
+      font-size: 0.8rem;
+      color: #9ca3af;
+    }
+
+    .alpha-pill {
+      font-size: 0.75rem;
       padding: 4px 10px;
       border-radius: 999px;
-      border: 1px solid rgba(148,163,184,0.5);
-      background: rgba(15,23,42,0.85);
-      color: #e5e7eb;
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.18em;
-      margin-bottom: 16px;
+      border: 1px solid #4b5563;
+      background: rgba(15,23,42,0.9);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
     }
 
-    .badge-dot {
+    .alpha-dot {
       width: 7px;
       height: 7px;
       border-radius: 999px;
@@ -95,561 +70,397 @@
       box-shadow: 0 0 12px rgba(34,197,94,0.9);
     }
 
-    h1 {
-      font-size: clamp(2.4rem, 4vw, 3.7rem);
-      letter-spacing: 0.02em;
-      margin-bottom: 10px;
-      text-shadow:
-        0 0 18px rgba(15,23,42,0.8),
-        0 0 40px rgba(0,0,0,0.9);
+    main {
+      margin-top: 12px;
     }
 
-    .subtitle {
-      font-size: 0.95rem;
-      color: #cbd5f5;
-      max-width: 560px;
-      margin: 0 auto 26px;
-    }
-
-    .cta-row {
-      display: flex;
-      justify-content: center;
-      gap: 12px;
-      flex-wrap: wrap;
+    .hero {
+      text-align: center;
       margin-bottom: 26px;
     }
 
-    .btn-primary {
-      border-radius: 999px;
-      border: none;
-      padding: 10px 26px;
-      font-size: 1rem;
-      cursor: pointer;
-      background: linear-gradient(90deg, #ec4899, #6366f1);
-      color: #f9fafb;
-      font-weight: 600;
-      box-shadow:
-        0 10px 30px rgba(236,72,153,0.5),
-        0 0 40px rgba(129,140,248,0.6);
+    .hero-badge {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      transition: transform 0.08s ease, box-shadow 0.08s ease, filter 0.1s;
+      padding: 4px 12px;
+      border-radius: 999px;
+      background: rgba(15,23,42,0.9);
+      border: 1px solid #1f2937;
+      font-size: 0.75rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #9ca3af;
+      margin-bottom: 14px;
+    }
+
+    .hero-badge-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: #22c55e;
+      box-shadow: 0 0 10px rgba(34,197,94,0.8);
+    }
+
+    .hero h1 {
+      font-size: clamp(2.4rem, 4vw, 3.2rem);
+      margin-bottom: 10px;
+    }
+
+    .hero-sub {
+      max-width: 620px;
+      margin: 0 auto;
+      font-size: 0.98rem;
+      color: #d1d5db;
+    }
+
+    .hero-actions {
+      margin-top: 22px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .btn {
+      border-radius: 999px;
+      border: none;
+      padding: 10px 20px;
+      font-size: 0.95rem;
+      cursor: pointer;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      transition: transform 0.06s ease, box-shadow 0.06s ease, background 0.15s, opacity 0.15s;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      color: #fff;
+      background: linear-gradient(90deg, #ec4899, #6366f1);
+      box-shadow: 0 10px 30px rgba(236,72,153,0.45);
     }
 
     .btn-primary:hover {
       transform: translateY(-1px);
-      filter: brightness(1.04);
-      box-shadow:
-        0 14px 36px rgba(236,72,153,0.7),
-        0 0 52px rgba(129,140,248,0.9);
-    }
-
-    .btn-primary:active {
-      transform: translateY(0);
-      box-shadow:
-        0 7px 20px rgba(236,72,153,0.5),
-        0 0 30px rgba(129,140,248,0.7);
+      box-shadow: 0 14px 36px rgba(236,72,153,0.7);
+      opacity: 0.97;
     }
 
     .btn-secondary {
-      border-radius: 999px;
-      padding: 9px 18px;
-      border: 1px solid rgba(148,163,184,0.6);
-      background: rgba(15,23,42,0.9);
+      background: rgba(15,23,42,0.95);
       color: #e5e7eb;
-      font-size: 0.9rem;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: background 0.15s, transform 0.08s, box-shadow 0.08s;
+      border: 1px solid #374151;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.55);
     }
 
     .btn-secondary:hover {
-      background: rgba(15,23,42,1);
       transform: translateY(-1px);
-      box-shadow: 0 8px 22px rgba(15,23,42,0.9);
+      background: rgba(15,23,42,1);
     }
 
-    /* Carte du monde stylisée (demi-globe) */
-    .world-wrapper {
-      position: relative;
-      margin: 0 auto;
-      margin-top: 18px;
-      max-width: 900px;
-      aspect-ratio: 16 / 5;
-      pointer-events: none;
-    }
-
-    .world {
-      position: absolute;
-      inset: auto 0 0 50%;
-      transform: translateX(-50%);
-      width: 120%;
-      aspect-ratio: 2 / 1;
-      border-radius: 50% 50% 0 0;
-      overflow: hidden;
-      background:
-        radial-gradient(circle at 20% 40%, rgba(249,250,251,0.7) 0, transparent 40%),
-        radial-gradient(circle at 60% 35%, rgba(248,250,252,0.8) 0, transparent 45%),
-        radial-gradient(circle at 85% 55%, rgba(226,232,240,0.7) 0, transparent 40%),
-        radial-gradient(circle at 40% 70%, rgba(226,232,240,0.6) 0, transparent 50%),
-        radial-gradient(circle at 10% 80%, rgba(248,250,252,0.5) 0, transparent 40%);
-      mask-image: radial-gradient(circle at 50% -40%, transparent 55%, black 56%);
-      box-shadow:
-        0 -15px 40px rgba(15,23,42,1),
-        0 -35px 90px rgba(0,0,0,0.9);
-      opacity: 0.9;
-      transform-origin: center bottom;
-      animation: worldFloat 16s ease-in-out infinite alternate;
-    }
-
-    /* Grille + points pour simuler une carte */
-    .world::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background-image:
-        radial-gradient(circle at center, rgba(15,23,42,0.4) 0, transparent 55%),
-        repeating-linear-gradient(
-          to right,
-          rgba(15,23,42,0.08) 0,
-          rgba(15,23,42,0.08) 1px,
-          transparent 1px,
-          transparent 11px
-        ),
-        repeating-linear-gradient(
-          to top,
-          rgba(15,23,42,0.08) 0,
-          rgba(15,23,42,0.08) 1px,
-          transparent 1px,
-          transparent 11px
-        );
-      mix-blend-mode: multiply;
-      opacity: 0.7;
-    }
-
-    .world::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background-image:
-        radial-gradient(circle, rgba(220,38,38,0.55) 0, transparent 40%),
-        radial-gradient(circle at 30% 40%, rgba(249,115,22,0.7) 0, transparent 35%),
-        radial-gradient(circle at 70% 35%, rgba(234,179,8,0.6) 0, transparent 38%);
-      mix-blend-mode: screen;
-      opacity: 0.35;
-    }
-
-    @keyframes worldFloat {
-      0%   { transform: translateX(-50%) translateY(0) scale(1); }
-      100% { transform: translateX(-50%) translateY(8px) scale(1.03); }
-    }
-
-    /* Drapeaux brûlés stylisés (silhouettes) */
-    .flag {
-      position: absolute;
-      width: 70px;
-      height: 110px;
-      border-radius: 6px;
-      background:
-        linear-gradient(135deg, rgba(239,68,68,1), rgba(127,29,29,1));
-      box-shadow:
-        0 0 22px rgba(239,68,68,0.7),
-        -8px 14px 30px rgba(0,0,0,0.9);
-      transform-origin: bottom left;
-      opacity: 0.8;
-      filter: saturate(1.3);
-    }
-
-    .flag::after {
-      content: "";
-      position: absolute;
-      inset: -15px -8px auto auto;
-      background: radial-gradient(circle, rgba(249,115,22,0.9), transparent 60%);
-      mix-blend-mode: screen;
-      opacity: 0.8;
-      filter: blur(3px);
-    }
-
-    .flag.p1 {
-      left: 12%;
-      bottom: 26%;
-      transform: rotate(-11deg) skewX(-8deg);
-    }
-    .flag.p2 {
-      right: 14%;
-      bottom: 22%;
-      transform: rotate(9deg) skewX(6deg);
-      background: linear-gradient(135deg, rgba(59,130,246,1), rgba(30,64,175,1));
-    }
-
-    /* Silhouettes de fumée */
-    .smoke {
-      position: absolute;
-      width: 220px;
-      height: 220px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(15,23,42,0.2), transparent 60%);
-      filter: blur(20px);
-      opacity: 0.9;
-      mix-blend-mode: screen;
-      animation: smokeDrift 22s ease-in-out infinite alternate;
-    }
-
-    .smoke.s1 {
-      left: 8%;
-      bottom: 35%;
-    }
-    .smoke.s2 {
-      right: 5%;
-      bottom: 38%;
-      animation-delay: -7s;
-    }
-
-    @keyframes smokeDrift {
-      0% {
-        transform: translate3d(0,0,0) scale(1);
-        opacity: 0.65;
-      }
-      100% {
-        transform: translate3d(20px,-30px,0) scale(1.15);
-        opacity: 0.45;
-      }
-    }
-
-    .hint {
-      font-size: 0.8rem;
-      color: #9ca3af;
-      margin-top: 6px;
-    }
-
-    /* Easter egg : zone cliquable invisible */
-    #secret-hotspot {
-      position: fixed;
-      width: 80px;
-      height: 80px;
-      bottom: 18px;
-      right: 18px;
-      border: none;
-      background: transparent;
-      cursor: default;
-      outline: none;
-      /* Optionnel : aide visuelle si tu veux tester plus facilement
-      border: 1px dashed rgba(148,163,184,0.4);
-      */
-    }
-
-    #secret-hotspot:focus-visible {
-      outline: 1px dashed rgba(96,165,250,0.7);
-      outline-offset: 2px;
-    }
-
-    /* Mini interface secrète */
-    .secret-panel {
-      position: fixed;
-      right: 24px;
-      bottom: 24px;
-      width: 280px;
-      max-width: calc(100% - 32px);
-      background: radial-gradient(circle at top, #020617, #020617 40%, #020617 100%);
-      border-radius: 16px;
-      border: 1px solid rgba(148,163,184,0.6);
-      box-shadow:
-        0 18px 45px rgba(15,23,42,0.95),
-        0 0 40px rgba(59,130,246,0.5);
-      padding: 14px 14px 12px;
-      color: #e5e7eb;
-      font-size: 0.85rem;
-      transform-origin: bottom right;
-      transform: scale(0.8) translateY(12px);
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.18s ease, transform 0.18s ease;
-      z-index: 20;
-    }
-
-    .secret-panel.open {
-      opacity: 1;
-      transform: scale(1) translateY(0);
-      pointer-events: auto;
-    }
-
-    .secret-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 6px;
-      gap: 8px;
-    }
-
-    .secret-title {
-      font-size: 0.8rem;
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
-      color: #9ca3af;
-    }
-
-    .secret-close {
-      border: none;
-      border-radius: 999px;
-      background: rgba(15,23,42,0.9);
-      color: #9ca3af;
-      width: 22px;
-      height: 22px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      font-size: 0.75rem;
-    }
-
-    .secret-close:hover {
-      background: rgba(30,64,175,0.9);
-      color: #e5e7eb;
-    }
-
-    .secret-row {
-      margin-bottom: 8px;
-    }
-
-    .secret-label {
+    .hero-hint {
+      margin-top: 10px;
       font-size: 0.78rem;
       color: #9ca3af;
-      margin-bottom: 2px;
     }
 
-    .secret-select,
-    .secret-button {
-      width: 100%;
-      border-radius: 10px;
-      border: 1px solid rgba(55,65,81,0.9);
-      background: rgba(15,23,42,0.96);
+    /* --- Carte du monde stylisée --- */
+
+    .world-wrapper {
+      margin-top: 30px;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      pointer-events: none; /* tout le fond reste décoratif */
+    }
+
+    .world-card {
+      position: relative;
+      width: min(900px, 100%);
+      aspect-ratio: 16 / 7;
+      border-radius: 32px;
+      overflow: hidden;
+      border: 1px solid rgba(148,163,184,0.5);
+      background:
+        radial-gradient(circle at 15% 20%, rgba(248,113,113,0.18) 0, transparent 45%),
+        radial-gradient(circle at 70% 80%, rgba(59,130,246,0.25) 0, transparent 55%),
+        radial-gradient(circle at 40% 65%, rgba(234,179,8,0.18) 0, transparent 55%),
+        #020617;
+      box-shadow:
+        0 22px 60px rgba(0,0,0,0.9),
+        0 0 50px rgba(59,130,246,0.25);
+      mask-image: radial-gradient(circle at 50% 0%, transparent 0, black 34%);
+    }
+
+    .world-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(to right, rgba(148,163,184,0.12) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(148,163,184,0.12) 1px, transparent 1px);
+      background-size: 32px 32px;
+      opacity: 0.75;
+    }
+
+    .world-glow {
+      position: absolute;
+      inset: 30% 10% -20%;
+      background:
+        radial-gradient(circle at 50% 0%, rgba(15,23,42,0) 0, rgba(15,23,42,0.9) 55%, #020617 100%),
+        radial-gradient(circle at 50% 100%, rgba(15,23,42,0.9) 0, #020617 60%);
+      mix-blend-mode: screen;
+      opacity: 0.6;
+    }
+
+    /* “zones de conflit” floues */
+    .conflict-zone {
+      position: absolute;
+      width: 120px;
+      height: 120px;
+      border-radius: 999px;
+      filter: blur(22px);
+      opacity: 0.65;
+    }
+
+    .zone-red {
+      background: #f97373;
+    }
+
+    .zone-blue {
+      background: #38bdf8;
+    }
+
+    .zone-yellow {
+      background: #eab308;
+    }
+
+    .zone-1 { top: 22%; left: 18%; }
+    .zone-2 { top: 55%; left: 40%; }
+    .zone-3 { top: 35%; right: 12%; }
+
+    /* --- Unités : tanks, avions, navires --- */
+
+    .units-layer {
+      position: absolute;
+      inset: 0;
+    }
+
+    .unit {
+      position: absolute;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
       color: #e5e7eb;
-      padding: 6px 8px;
-      font-size: 0.8rem;
-      outline: none;
+      text-shadow: 0 0 6px rgba(0,0,0,0.9);
+      box-shadow: 0 0 18px rgba(0,0,0,0.8);
+      opacity: 0.95;
+      animation: floatUnit 10s ease-in-out infinite alternate;
     }
 
-    .secret-select:focus,
-    .secret-button:focus {
-      border-color: #3b82f6;
-      box-shadow: 0 0 0 1px rgba(37,99,235,0.6);
+    .unit-label {
+      font-size: 0.6rem;
+      margin-left: 4px;
+      opacity: 0.8;
     }
 
-    .secret-button {
-      margin-top: 4px;
-      cursor: pointer;
+    .unit-tank {
+      background: linear-gradient(135deg, #b91c1c, #ef4444);
+      padding: 4px 10px;
+    }
+
+    .unit-plane {
+      background: linear-gradient(135deg, #1d4ed8, #38bdf8);
+      padding: 4px 11px;
+    }
+
+    .unit-ship {
+      background: linear-gradient(135deg, #0f766e, #22c55e);
+      padding: 4px 12px;
+    }
+
+    .unit-artillery {
+      background: linear-gradient(135deg, #854d0e, #eab308);
+      padding: 4px 12px;
+    }
+
+    /* Positions spécifiques */
+    .unit-tank.t1 { bottom: 18%; left: 20%; animation-delay: -2s; }
+    .unit-tank.t2 { bottom: 26%; left: 33%; animation-delay: -5s; }
+    .unit-plane.p1 { top: 22%; left: 48%; animation-delay: -3s; }
+    .unit-plane.p2 { top: 30%; right: 22%; animation-delay: -6s; }
+    .unit-ship.s1 { bottom: 16%; right: 18%; animation-delay: -4s; }
+    .unit-artillery.a1 { bottom: 30%; right: 33%; animation-delay: -1s; }
+
+    @keyframes floatUnit {
+      0%   { transform: translate3d(0, 0, 0); }
+      50%  { transform: translate3d(4px, -6px, 0); }
+      100% { transform: translate3d(-4px, 3px, 0); }
+    }
+
+    /* petits points lumineux sur la carte */
+    .city-dot {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: #facc15;
+      box-shadow: 0 0 10px rgba(250,204,21,0.9);
+      opacity: 0.8;
+      animation: pulseCity 3.2s ease-in-out infinite;
+    }
+
+    .city-1 { top: 42%; left: 28%; }
+    .city-2 { top: 50%; left: 46%; animation-delay: -1s; }
+    .city-3 { top: 37%; right: 28%; animation-delay: -2s; }
+    .city-4 { bottom: 26%; left: 38%; animation-delay: -1.7s; }
+    .city-5 { bottom: 20%; right: 26%; animation-delay: -0.7s; }
+
+    @keyframes pulseCity {
+      0%, 100% { transform: scale(1); opacity: 0.7; }
+      50% { transform: scale(1.35); opacity: 1; }
+    }
+
+    footer {
+      margin-top: 24px;
+      font-size: 0.75rem;
+      color: #6b7280;
       text-align: center;
     }
 
-    .gift {
-      margin-top: 4px;
-      font-size: 0.8rem;
-      color: #bbf7d0;
-    }
-
-    @media (max-width: 640px) {
-      h1 {
-        font-size: 2.2rem;
+    @media (max-width: 768px) {
+      .page {
+        padding-top: 20px;
       }
-      .subtitle {
-        font-size: 0.9rem;
+      header {
+        flex-direction: column;
+        align-items: flex-start;
       }
-      .world-wrapper {
-        max-width: 100%;
+      .world-card {
+        border-radius: 24px;
       }
     }
   </style>
 
   <script>
-    // Enregistrement du service worker pour la PWA (plus tard)
+    // Service worker (pour plus tard, quand tu auras un vrai service-worker.js)
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => {
         navigator.serviceWorker
           .register("service-worker.js")
-          .catch(err => console.log("Service worker error:", err));
+          .catch(() => {});
       });
     }
   </script>
 </head>
 <body>
-  <div class="bg-war"></div>
-  <canvas id="battlefield-canvas"></canvas>
-  <div class="noise-overlay"></div>
-
-  <div class="scene">
-    <div class="hero">
-      <div class="badge">
-        <span class="badge-dot"></span>
-        GEOPOLITICAL SANDBOX · ALPHA
+  <div class="page">
+    <header>
+      <div>
+        <div class="logo">Politaria</div>
+        <div class="logo-sub">Geopolitical strategy sandbox</div>
       </div>
-
-      <h1>Welcome to Politaria</h1>
-
-      <p class="subtitle">
-        Shape your nation in a world on fire. Balance economy, war and diplomacy
-        on a living, unstable map.
-      </p>
-
-      <div class="cta-row">
-        <!-- Change "game.html" par la page de ton jeu / site principal -->
-        <button class="btn-primary" type="button" onclick="window.location.href='game.html'">
-          Enter Politaria
-          <span>➜</span>
-        </button>
-
-        <button class="btn-secondary" type="button" onclick="alert('Plus tard : mini trailer, tutoriel ou patch notes.')">
-          Quick overview
-        </button>
+      <div class="alpha-pill">
+        <span class="alpha-dot"></span>
+        <span>ALPHA BUILD</span>
       </div>
+    </header>
 
-      <p class="hint">
-        (Certains secrets de la carte ne s’affichent qu’aux commandants assez curieux…)
-      </p>
+    <main>
+      <section class="hero">
+        <div class="hero-badge">
+          <span class="hero-badge-dot"></span>
+          <span>GEOPOLITICAL SANDBOX · ALPHA</span>
+        </div>
 
-      <div class="world-wrapper" aria-hidden="true">
-        <div class="world"></div>
-        <div class="smoke s1"></div>
-        <div class="smoke s2"></div>
-        <div class="flag p1"></div>
-        <div class="flag p2"></div>
-      </div>
-    </div>
+        <h1>Welcome to Politaria</h1>
+
+        <p class="hero-sub">
+          Shape your nation in a world on fire. Balance economy, war and diplomacy
+          on a living, unstable map.
+        </p>
+
+        <div class="hero-actions">
+          <a href="game.html" class="btn btn-primary">
+            Enter Politaria →
+          </a>
+          <a href="#overview" class="btn btn-secondary">
+            Quick overview
+          </a>
+        </div>
+
+        <p class="hero-hint">
+          Certains mouvements ne sont visibles qu’aux commandants assez curieux pour regarder la carte de près…
+        </p>
+      </section>
+
+      <!-- Carte / fond interactif avec tanks, avions, navires -->
+      <section class="world-wrapper">
+        <div class="world-card">
+          <div class="world-grid"></div>
+          <div class="world-glow"></div>
+
+          <!-- zones de conflit -->
+          <div class="conflict-zone zone-red zone-1"></div>
+          <div class="conflict-zone zone-blue zone-2"></div>
+          <div class="conflict-zone zone-yellow zone-3"></div>
+
+          <!-- unités -->
+          <div class="units-layer">
+            <div class="unit unit-tank t1">
+              🛡️
+              <span class="unit-label">Tank battalion</span>
+            </div>
+            <div class="unit unit-tank t2">
+              🛡️
+              <span class="unit-label">Armored line</span>
+            </div>
+
+            <div class="unit unit-plane p1">
+              ✈️
+              <span class="unit-label">Air strike</span>
+            </div>
+            <div class="unit unit-plane p2">
+              ✈️
+              <span class="unit-label">Recon flight</span>
+            </div>
+
+            <div class="unit unit-ship s1">
+              🚢
+              <span class="unit-label">Naval group</span>
+            </div>
+
+            <div class="unit unit-artillery a1">
+              🎯
+              <span class="unit-label">Artillery zone</span>
+            </div>
+
+            <!-- villes / points lumineux -->
+            <div class="city-dot city-1"></div>
+            <div class="city-dot city-2"></div>
+            <div class="city-dot city-3"></div>
+            <div class="city-dot city-4"></div>
+            <div class="city-dot city-5"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="overview" style="margin-top:26px; font-size:0.9rem; color:#d1d5db;">
+        <p>
+          Politaria est pensé comme un bac à sable géopolitique : chaque point lumineux peut devenir
+          un futur conflit, un accord commercial ou une base stratégique. L’écran d’accueil sert
+          juste de mise en bouche avant de rentrer dans le vrai jeu.
+        </p>
+      </section>
+    </main>
+
+    <footer>
+      Politaria – prototype personnel. Le jeu, le site et la carte évolueront en même temps.
+    </footer>
   </div>
-
-  <!-- Hotspot invisible pour l’easter egg -->
-  <button id="secret-hotspot" aria-label="Hidden control area"></button>
-
-  <!-- Mini interface secrète -->
-  <div id="secret-panel" class="secret-panel" aria-hidden="true">
-    <div class="secret-header">
-      <div class="secret-title">Black Channel • Secret</div>
-      <button class="secret-close" type="button" id="secret-close">✕</button>
-    </div>
-    <div class="secret-row">
-      <div class="secret-label">Doctrine cachée</div>
-      <select id="secret-doctrine" class="secret-select">
-        <option value="shadow-economy">Shadow Economy</option>
-        <option value="iron-veil">Iron Veil</option>
-        <option value="glass-diplomacy">Glass Diplomacy</option>
-        <option value="scorched-frontier">Scorched Frontier</option>
-      </select>
-    </div>
-    <div class="secret-row">
-      <div class="secret-label">Action</div>
-      <button class="secret-button" type="button" id="secret-activate">
-        Arm hidden bonus
-      </button>
-      <div id="secret-gift" class="gift" style="display:none;"></div>
-    </div>
-  </div>
-
-  <script>
-    // --- Canvas de braises / débris animés ---
-    const canvas = document.getElementById("battlefield-canvas");
-    const ctx = canvas.getContext("2d");
-    let particles = [];
-
-    function resizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    }
-    resizeCanvas();
-    window.addEventListener("resize", resizeCanvas);
-
-    function createParticle() {
-      const fromBottom = Math.random() < 0.7;
-      const x = Math.random() * canvas.width;
-      const y = fromBottom ? canvas.height + 10 : Math.random() * canvas.height;
-      const speedY = fromBottom ? - (0.3 + Math.random() * 0.5) : - (0.1 + Math.random() * 0.3);
-
-      return {
-        x,
-        y,
-        vx: (Math.random() - 0.5) * 0.3,
-        vy: speedY,
-        radius: 1 + Math.random() * 2,
-        alpha: 0.4 + Math.random() * 0.4,
-        life: 40 + Math.random() * 80,
-        color: Math.random() < 0.6 ? "255,140,66" : "248,250,252"
-      };
-    }
-
-    for (let i = 0; i < 160; i++) {
-      particles.push(createParticle());
-    }
-
-    function updateParticles() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.globalCompositeOperation = "lighter";
-
-      particles.forEach(p => {
-        p.x += p.vx;
-        p.y += p.vy;
-        p.life -= 1;
-        p.alpha -= 0.004;
-
-        ctx.beginPath();
-        ctx.fillStyle = `rgba(${p.color},${Math.max(p.alpha,0)})`;
-        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        ctx.fill();
-      });
-
-      particles = particles.filter(p => p.life > 0 && p.alpha > 0 && p.y > -20);
-
-      while (particles.length < 160) {
-        particles.push(createParticle());
-      }
-
-      requestAnimationFrame(updateParticles);
-    }
-
-    updateParticles();
-
-    // --- Easter egg : double-clic sur zone invisible ---
-    const hotspot = document.getElementById("secret-hotspot");
-    const panel = document.getElementById("secret-panel");
-    const closeBtn = document.getElementById("secret-close");
-    const giftLabel = document.getElementById("secret-gift");
-    const doctrineSelect = document.getElementById("secret-doctrine");
-    const activateBtn = document.getElementById("secret-activate");
-
-    hotspot.addEventListener("dblclick", () => {
-      const open = panel.classList.toggle("open");
-      panel.setAttribute("aria-hidden", open ? "false" : "true");
-    });
-
-    closeBtn.addEventListener("click", () => {
-      panel.classList.remove("open");
-      panel.setAttribute("aria-hidden", "true");
-    });
-
-    activateBtn.addEventListener("click", () => {
-      const value = doctrineSelect.value;
-      let text;
-
-      switch (value) {
-        case "shadow-economy":
-          text = "Secret gift unlocked : +5% revenus cachés au lancement du jeu 👁️";
-          break;
-        case "iron-veil":
-          text = "Secret gift unlocked : skin spécial ‘Iron Banner’ pour ton État 🛡️";
-          break;
-        case "glass-diplomacy":
-          text = "Secret gift unlocked : événement rare ‘Ceasefire Mirage’ ☮️";
-          break;
-        case "scorched-frontier":
-          text = "Secret gift unlocked : doctrine bonus ‘Frontière brûlée’ 🔥";
-          break;
-        default:
-          text = "Something shifted in the shadows of Politaria…";
-      }
-
-      giftLabel.textContent = text;
-      giftLabel.style.display = "block";
-    });
-  </script>
 </body>
 </html>
