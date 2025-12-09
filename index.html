@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <title>Politaria – Stellar Sandbox</title>
+  <title>Politaria – Bac à Sable Stellaire</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <style>
@@ -105,18 +105,18 @@
 
   <canvas id="space"></canvas>
 
-  <div class="alpha">Alpha!</div>
+  <div class="alpha">Alpha !</div>
 
   <div class="main">
-    <h1>Welcome to Politaria</h1>
-    <p class="subtitle">An alternate history sandbox among the stars</p>
+    <h1>Bienvenue sur Politaria</h1>
+    <p class="subtitle">Un bac à sable d'histoire alternative parmi les étoiles</p>
     <div class="btn-wrap">
-      <button class="btn" onclick="startGame()">Get Started →</button>
+      <button class="btn" onclick="startGame()">Commencer →</button>
     </div>
   </div>
 
   <div class="footer">
-    Build your own system. Rewrite its history.
+    Construisez votre propre système. Réécrivez son histoire.
   </div>
 
 <script>
@@ -231,7 +231,7 @@ function initFarPlanets() {
       const dx = x - cx;
       const dy = y - cy;
       dist = Math.sqrt(dx * dx + dy * dy);
-    } while (dist < exclusionRadius); // on évite la zone du système
+    } while (dist < exclusionRadius);
 
     farPlanets.push({
       x,
@@ -294,160 +294,7 @@ function drawOrbits() {
 }
 
 /* -----------------------
-   🎨 Dessin des planètes avec dégradés
------------------------- */
-function drawShadedPlanet(x, y, radius, baseColor, glowFactor = 0.5) {
-  // direction de la lumière (depuis le soleil)
-  const dx = cx - x;
-  const dy = cy - y;
-  const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-  const lx = dx / dist;
-  const ly = dy / dist;
-
-  const highlightX = x + lx * radius * 0.5;
-  const highlightY = y + ly * radius * 0.5;
-
-  const gradient = ctx.createRadialGradient(
-    highlightX, highlightY, radius * 0.1,
-    x, y, radius * 1.1
-  );
-
-  gradient.addColorStop(0, lightenColor(baseColor, 0.35));
-  gradient.addColorStop(0.4, baseColor);
-  gradient.addColorStop(1, darkenColor(baseColor, 0.35));
-
-  ctx.fillStyle = gradient;
-  ctx.beginPath();
-  ctx.arc(x, y, radius, 0, Math.PI * 2);
-  ctx.fill();
-
-  if (glowFactor > 0) {
-    const glowGradient = ctx.createRadialGradient(
-      x, y, radius,
-      x, y, radius * 2.3
-    );
-    glowGradient.addColorStop(0, hexToRgba(baseColor, 0.4 * glowFactor));
-    glowGradient.addColorStop(1, "rgba(0,0,0,0)");
-
-    ctx.fillStyle = glowGradient;
-    ctx.beginPath();
-    ctx.arc(x, y, radius * 2.3, 0, Math.PI * 2);
-    ctx.fill();
-  }
-}
-
-/* Utilitaires couleur */
-function hexToRgba(hex, alpha) {
-  const c = hex.replace("#", "");
-  const bigint = parseInt(c, 16);
-  const r = (bigint >> 16) & 255;
-  const g = (bigint >> 8) & 255;
-  const b = bigint & 255;
-  return `rgba(${r},${g},${b},${alpha})`;
-}
-
-function lightenColor(hex, amount) {
-  const c = hex.replace("#", "");
-  const bigint = parseInt(c, 16);
-  let r = (bigint >> 16) & 255;
-  let g = (bigint >> 8) & 255;
-  let b = bigint & 255;
-  r = Math.min(255, r + 255 * amount);
-  g = Math.min(255, g + 255 * amount);
-  b = Math.min(255, b + 255 * amount);
-  return "#" + ((1 << 24) + (r << 16) + (g << 8) + (b | 0)).toString(16).slice(1);
-}
-
-function darkenColor(hex, amount) {
-  const c = hex.replace("#", "");
-  const bigint = parseInt(c, 16);
-  let r = (bigint >> 16) & 255;
-  let g = (bigint >> 8) & 255;
-  let b = bigint & 255;
-  r = Math.max(0, r - 255 * amount);
-  g = Math.max(0, g - 255 * amount);
-  b = Math.max(0, b - 255 * amount);
-  return "#" + ((1 << 24) + (r << 16) + (g << 8) + (b | 0)).toString(16).slice(1);
-}
-
-/* -----------------------
-   🔁 Animation
------------------------- */
-let t = 0;
-function animate() {
-  t += 1;
-
-  // fond léger bleu nuit
-  ctx.fillStyle = "#020012";
-  ctx.fillRect(0, 0, w, h);
-
-  // étoiles
-  for (let i = 0; i < stars.length; i++) {
-    const s = stars[i];
-    const alpha = s.baseAlpha + Math.sin(t * s.speed + i) * 0.25;
-
-    ctx.beginPath();
-    ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(255,255,255,${alpha})`;
-    ctx.fill();
-  }
-
-  // planètes lointaines (derrière le système)
-  farPlanets.forEach(fp => {
-    fp.rotation += fp.rotationSpeed;
-    drawShadedPlanet(fp.x, fp.y, fp.size, `hsl(${fp.hue}, ${fp.saturation}%, ${fp.lightness}%)`, fp.glow);
-  });
-
-  // orbites
-  drawOrbits();
-
-  // petits corps
-  smallBodies.forEach(b => {
-    b.angle += b.speed;
-    const x = cx + Math.cos(b.angle) * b.orbit.rx;
-    const y = cy + Math.sin(b.angle) * b.orbit.ry;
-
-    ctx.beginPath();
-    ctx.arc(x, y, b.size, 0, Math.PI * 2);
-    ctx.fillStyle = `hsl(${b.hue}, 55%, ${b.lightness}%)`;
-    ctx.fill();
-  });
-
-  // grosses planètes
-  planets.forEach(p => {
-    p.angle += p.speed;
-    const x = cx + Math.cos(p.angle) * p.orbit.rx;
-    const y = cy + Math.sin(p.angle) * p.orbit.ry;
-
-    drawShadedPlanet(x, y, p.size, p.baseColor, 0.4);
-
-    if (p.ring) {
-      ctx.save();
-      ctx.translate(x, y);
-      ctx.rotate(-0.4);
-      const ringGrad = ctx.createLinearGradient(-p.size * 2, 0, p.size * 2, 0);
-      ringGrad.addColorStop(0, "rgba(255,255,255,0)");
-      ringGrad.addColorStop(0.3, "rgba(230,230,230,0.7)");
-      ringGrad.addColorStop(0.7, "rgba(230,230,230,0.7)");
-      ringGrad.addColorStop(1, "rgba(255,255,255,0)");
-      ctx.strokeStyle = ringGrad;
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.ellipse(0, 0, p.size * 2, p.size * 0.9, 0, 0, Math.PI * 2);
-      ctx.stroke();
-      ctx.restore();
-    }
-  });
-
-  // soleil par-dessus
-  drawSun();
-
-  requestAnimationFrame(animate);
-}
-animate();
-
-/* -----------------------
-   🚀 Bouton "Get Started"
+   🚀 Bouton "Commencer"
 ------------------------ */
 function startGame() {
   alert("Bientôt : entrée dans une planète de Politaria…");
