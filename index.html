@@ -214,33 +214,59 @@ for (let i = 0; i < 220; i++) {
 
 /* -----------------------
    🌍 Planètes lointaines hors système
+   - Moins nombreuses
+   - Mieux espacées
+   - Réparties sans gros amas
 ------------------------ */
 const farPlanets = [];
-const FAR_PLANET_COUNT = 35;
+const FAR_PLANET_COUNT = 22;        // un peu moins de planètes
+const FAR_PLANET_MIN_DIST = 70;     // distance minimale entre deux planètes lointaines
 
 function initFarPlanets() {
   farPlanets.length = 0;
-  const maxOrbit = orbits.length ? orbits[orbits.length - 1].rx : Math.min(w, h) * 0.4;
-  const exclusionRadius = maxOrbit + 120;
+  const maxOrbit = orbits.length
+    ? orbits[orbits.length - 1].rx
+    : Math.min(w, h) * 0.4;
+
+  const exclusionRadius = maxOrbit + 100; // zone protégée autour du système
 
   for (let i = 0; i < FAR_PLANET_COUNT; i++) {
-    let x, y, dist;
+    let x, y, distToCenter, ok, guard = 0;
+
+    // on cherche une position :
+    // - en dehors du système
+    // - pas trop proche des autres planètes lointaines
     do {
       x = Math.random() * w;
       y = Math.random() * h;
+
       const dx = x - cx;
       const dy = y - cy;
-      dist = Math.sqrt(dx * dx + dy * dy);
-    } while (dist < exclusionRadius); // on évite la zone du système
+      distToCenter = Math.sqrt(dx * dx + dy * dy);
+
+      ok = distToCenter > exclusionRadius;
+
+      if (ok) {
+        ok = farPlanets.every(p => {
+          const dx2 = x - p.x;
+          const dy2 = y - p.y;
+          const d = Math.sqrt(dx2 * dx2 + dy2 * dy2);
+          return d > FAR_PLANET_MIN_DIST;
+        });
+      }
+
+      guard++;
+      if (guard > 200) break; // sécurité au cas où
+    } while (!ok);
 
     farPlanets.push({
       x,
       y,
-      size: Math.random() * 18 + 8,
+      size: Math.random() * 14 + 6,            // un peu plus petits
       hue: 180 + Math.random() * 160,
-      saturation: 40 + Math.random() * 40,
+      saturation: 35 + Math.random() * 35,     // couleurs un peu plus douces
       lightness: 40 + Math.random() * 20,
-      glow: Math.random() * 0.4 + 0.3,
+      glow: Math.random() * 0.35 + 0.25,
       rotation: Math.random() * Math.PI * 2,
       rotationSpeed: (Math.random() * 0.0004 + 0.0001) * (Math.random() < 0.5 ? -1 : 1)
     });
