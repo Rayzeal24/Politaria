@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <title>Pax Historia – Stellar Sandbox</title>
+  <title>Politaria – Bac à sable stellaire</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <style>
@@ -37,6 +37,7 @@
       align-items: center;
       text-align: center;
       pointer-events: none;
+      transition: transform 0.3s ease, opacity 0.3s ease;
     }
 
     h1 {
@@ -53,6 +54,7 @@
       font-size: 1.3rem;
       opacity: 0.85;
       margin-top: 10px;
+      transition: opacity 0.3s ease, transform 0.3s ease;
     }
 
     .btn-wrap {
@@ -97,6 +99,222 @@
       text-align: center;
       font-size: 0.75rem;
       opacity: 0.6;
+      transition: opacity 0.3s ease;
+    }
+
+    .footer.guest {
+      opacity: 0.9;
+    }
+
+    /* ===========================
+       MODALE D'AUTHENTIFICATION
+       =========================== */
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 20;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .modal-backdrop.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-card {
+      background: radial-gradient(circle at top left, #101827, #050816 55%, #02010a 100%);
+      color: #f9fafb;
+      border-radius: 22px;
+      max-width: 960px;
+      width: min(92%, 960px);
+      padding: 32px 40px;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.85);
+      display: flex;
+      gap: 40px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    @media (max-width: 800px) {
+      .modal-card {
+        flex-direction: column;
+        padding: 24px 20px 28px;
+        gap: 24px;
+      }
+    }
+
+    .modal-left {
+      flex: 1.1;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .modal-right {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      justify-content: center;
+    }
+
+    .modal-title {
+      font-size: 2.1rem;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+    }
+
+    .modal-subtitle {
+      font-size: 0.98rem;
+      opacity: 0.78;
+      line-height: 1.5;
+      max-width: 360px;
+    }
+
+    .modal-logo {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 20%, #fef3c7, #f97316 35%, #1e293b 60%, #020617 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 10px;
+      box-shadow: 0 0 25px rgba(248, 250, 252, 0.25);
+    }
+
+    .modal-logo span {
+      font-size: 30px;
+      filter: drop-shadow(0 0 4px rgba(15, 23, 42, 0.8));
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 16px;
+      right: 20px;
+      border: none;
+      background: transparent;
+      color: rgba(248, 250, 252, 0.7);
+      font-size: 1.4rem;
+      cursor: pointer;
+      padding: 4px;
+      line-height: 1;
+      transition: transform 0.15s ease, color 0.15s ease;
+    }
+
+    .modal-close:hover {
+      transform: scale(1.1);
+      color: #fff;
+    }
+
+    .auth-btn {
+      width: 100%;
+      padding: 14px 18px;
+      border-radius: 999px;
+      border: 1px solid rgba(248, 250, 252, 0.22);
+      background: rgba(15, 23, 42, 0.8);
+      color: #f9fafb;
+      font-size: 1rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      cursor: pointer;
+      transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+
+    .auth-btn:hover {
+      background: radial-gradient(circle at 0 0, #1d4ed8, #020617 70%);
+      transform: translateY(-1px);
+      box-shadow: 0 0 22px rgba(59, 130, 246, 0.55);
+      border-color: rgba(191, 219, 254, 0.9);
+    }
+
+    .auth-btn.secondary {
+      background: rgba(15, 23, 42, 0.6);
+    }
+
+    .auth-btn-icon {
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      background: #ffffff;
+      color: #1f2937;
+      font-weight: 700;
+    }
+
+    .auth-btn-icon.guest {
+      background: rgba(15, 23, 42, 1);
+      color: #e5e7eb;
+      border: 1px solid rgba(148, 163, 184, 0.8);
+    }
+
+    .legal-text {
+      margin-top: 10px;
+      font-size: 0.8rem;
+      opacity: 0.7;
+      max-width: 380px;
+      line-height: 1.5;
+    }
+
+    .legal-text a {
+      color: #bfdbfe;
+      text-decoration: underline;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 2px;
+      cursor: pointer;
+    }
+
+    .modal-orbit {
+      position: absolute;
+      right: -40px;
+      bottom: -40px;
+      width: 210px;
+      height: 210px;
+      border-radius: 50%;
+      border: 1px dashed rgba(148, 163, 184, 0.35);
+      opacity: 0.7;
+    }
+
+    .modal-orbit::before,
+    .modal-orbit::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+    }
+
+    .modal-orbit::before {
+      width: 18px;
+      height: 18px;
+      background: radial-gradient(circle at 30% 20%, #a5b4fc, #4338ca);
+      top: 22%;
+      left: 10%;
+      box-shadow: 0 0 16px rgba(129, 140, 248, 0.8);
+    }
+
+    .modal-orbit::after {
+      width: 11px;
+      height: 11px;
+      background: radial-gradient(circle at 30% 20%, #f97316, #b45309);
+      bottom: 18%;
+      right: 14%;
+      box-shadow: 0 0 10px rgba(251, 146, 60, 0.9);
+    }
+
+    .main.guest-active {
+      transform: translateY(-10px);
     }
   </style>
 </head>
@@ -105,28 +323,62 @@
 
   <canvas id="space"></canvas>
 
-  <div class="alpha">Alpha!</div>
+  <div class="alpha">Alpha !</div>
 
-  <div class="main">
-    <h1>Welcome to Pax Historia</h1>
-    <p class="subtitle">An alternate history sandbox among the stars</p>
+  <div class="main" id="hero">
+    <h1>Bienvenue sur Politaria</h1>
+    <p class="subtitle">Un bac à sable d'histoire alternative parmi les étoiles</p>
     <div class="btn-wrap">
-      <button class="btn" onclick="startGame()">Get Started →</button>
+      <button class="btn" onclick="startGame()">Commencer →</button>
     </div>
   </div>
 
-  <div class="footer">
-    Build your own system. Rewrite its history.
+  <div class="footer" id="footer">
+    Construisez votre propre système. Réécrivez son histoire.
+  </div>
+
+  <!-- =========
+       MODALE
+       ========= -->
+  <div id="auth-modal" class="modal-backdrop" onclick="backdropClick(event)">
+    <div class="modal-card">
+      <button class="modal-close" onclick="closeModal()">×</button>
+
+      <div class="modal-left">
+        <div class="modal-logo">
+          <span>🌐</span>
+        </div>
+        <div class="modal-title">Créer votre compte Politaria</div>
+        <p class="modal-subtitle">
+          Sauvegardez vos systèmes stellaires, suivez l'histoire de vos empires
+          et retrouvez vos parties depuis n'importe quel appareil.
+        </p>
+        <p class="legal-text">
+          En créant un compte, vous acceptez nos
+          <a>conditions d'utilisation</a> et notre
+          <a>politique de confidentialité</a>.
+        </p>
+      </div>
+
+      <div class="modal-right">
+        <button class="auth-btn" id="btn-google">
+          <span class="auth-btn-icon">G</span>
+          <span>Se connecter avec Google</span>
+        </button>
+
+        <button class="auth-btn secondary" id="btn-guest">
+          <span class="auth-btn-icon guest">🕶️</span>
+          <span>Continuer en invité</span>
+        </button>
+      </div>
+
+      <div class="modal-orbit"></div>
+    </div>
   </div>
 
 <script>
 /* ===========================================================
    🌌 SYSTÈME STELLAIRE ANIMÉ
-   - Fond étoilé
-   - Soleil central
-   - Orbites elliptiques
-   - Planètes améliorées (dégradés, lumière)
-   - Planètes lointaines hors système
    =========================================================== */
 
 const canvas = document.getElementById("space");
@@ -216,31 +468,51 @@ for (let i = 0; i < 220; i++) {
    🌍 Planètes lointaines hors système
 ------------------------ */
 const farPlanets = [];
-const FAR_PLANET_COUNT = 35;
+const FAR_PLANET_COUNT = 22;
+const FAR_PLANET_MIN_DIST = 70;
 
 function initFarPlanets() {
   farPlanets.length = 0;
-  const maxOrbit = orbits.length ? orbits[orbits.length - 1].rx : Math.min(w, h) * 0.4;
-  const exclusionRadius = maxOrbit + 120;
+  const maxOrbit = orbits.length
+    ? orbits[orbits.length - 1].rx
+    : Math.min(w, h) * 0.4;
+
+  const exclusionRadius = maxOrbit + 100;
 
   for (let i = 0; i < FAR_PLANET_COUNT; i++) {
-    let x, y, dist;
+    let x, y, distToCenter, ok, guard = 0;
+
     do {
       x = Math.random() * w;
       y = Math.random() * h;
+
       const dx = x - cx;
       const dy = y - cy;
-      dist = Math.sqrt(dx * dx + dy * dy);
-    } while (dist < exclusionRadius); // on évite la zone du système
+      distToCenter = Math.sqrt(dx * dx + dy * dy);
+
+      ok = distToCenter > exclusionRadius;
+
+      if (ok) {
+        ok = farPlanets.every(p => {
+          const dx2 = x - p.x;
+          const dy2 = y - p.y;
+          const d = Math.sqrt(dx2 * dx2 + dy2 * dy2);
+          return d > FAR_PLANET_MIN_DIST;
+        });
+      }
+
+      guard++;
+      if (guard > 200) break;
+    } while (!ok);
 
     farPlanets.push({
       x,
       y,
-      size: Math.random() * 18 + 8,
+      size: Math.random() * 14 + 6,
       hue: 180 + Math.random() * 160,
-      saturation: 40 + Math.random() * 40,
+      saturation: 35 + Math.random() * 35,
       lightness: 40 + Math.random() * 20,
-      glow: Math.random() * 0.4 + 0.3,
+      glow: Math.random() * 0.35 + 0.25,
       rotation: Math.random() * Math.PI * 2,
       rotationSpeed: (Math.random() * 0.0004 + 0.0001) * (Math.random() < 0.5 ? -1 : 1)
     });
@@ -294,10 +566,9 @@ function drawOrbits() {
 }
 
 /* -----------------------
-   🎨 Dessin des planètes avec dégradés
+   🎨 Planètes avec dégradés
 ------------------------ */
 function drawShadedPlanet(x, y, radius, baseColor, glowFactor = 0.5) {
-  // direction de la lumière (depuis le soleil)
   const dx = cx - x;
   const dy = cy - y;
   const dist = Math.sqrt(dx * dx + dy * dy) || 1;
@@ -336,7 +607,6 @@ function drawShadedPlanet(x, y, radius, baseColor, glowFactor = 0.5) {
   }
 }
 
-/* Utilitaires couleur */
 function hexToRgba(hex, alpha) {
   const c = hex.replace("#", "");
   const bigint = parseInt(c, 16);
@@ -377,7 +647,6 @@ let t = 0;
 function animate() {
   t += 1;
 
-  // fond léger bleu nuit
   ctx.fillStyle = "#020012";
   ctx.fillRect(0, 0, w, h);
 
@@ -392,10 +661,16 @@ function animate() {
     ctx.fill();
   }
 
-  // planètes lointaines (derrière le système)
+  // planètes lointaines
   farPlanets.forEach(fp => {
     fp.rotation += fp.rotationSpeed;
-    drawShadedPlanet(fp.x, fp.y, fp.size, `hsl(${fp.hue}, ${fp.saturation}%, ${fp.lightness}%)`, fp.glow);
+    drawShadedPlanet(
+      fp.x,
+      fp.y,
+      fp.size,
+      `hsl(${fp.hue}, ${fp.saturation}%, ${fp.lightness}%)`,
+      fp.glow
+    );
   });
 
   // orbites
@@ -439,7 +714,6 @@ function animate() {
     }
   });
 
-  // soleil par-dessus
   drawSun();
 
   requestAnimationFrame(animate);
@@ -447,11 +721,73 @@ function animate() {
 animate();
 
 /* -----------------------
-   🚀 Bouton "Get Started"
+   🚀 Ouverture / fermeture de la modale
 ------------------------ */
+const modal = document.getElementById("auth-modal");
+const hero = document.getElementById("hero");
+const footer = document.getElementById("footer");
+const subtitle = document.querySelector(".subtitle");
+const btnGoogle = document.getElementById("btn-google");
+const btnGuest = document.getElementById("btn-guest");
+
 function startGame() {
-  alert("Bientôt : entrée dans une planète de Pax Historia…");
+  modal.classList.add("show");
 }
+
+function closeModal() {
+  modal.classList.remove("show");
+}
+
+function backdropClick(event) {
+  if (event.target === modal) {
+    closeModal();
+  }
+}
+
+/* -----------------------
+   🔐 Actions des boutons
+------------------------ */
+
+// Google : pour l'instant, simple placeholder.
+// Tu peux remplacer l'URL par ta vraie route OAuth (ex: "/auth/google").
+function handleGoogleLogin() {
+  // Exemple : redirection vers une future page de login
+  // window.location.href = "/auth/google";
+  alert("Connexion Google sera branchée ici plus tard.");
+}
+
+// Invité : on ferme la modale, on passe en mode “invité”
+function continueAsGuest() {
+  closeModal();
+
+  if (subtitle) {
+    subtitle.textContent = "Mode invité : votre premier système Politaria est en préparation…";
+    subtitle.style.opacity = "1";
+    subtitle.style.transform = "translateY(0)";
+  }
+
+  if (hero) {
+    hero.classList.add("guest-active");
+  }
+
+  if (footer) {
+    footer.textContent = "Mode invité actif. Votre progression sera stockée localement.";
+    footer.classList.add("guest");
+  }
+
+  // Ici plus tard : initialiser la partie, charger une scène, etc.
+}
+
+// on connecte les boutons
+btnGoogle.addEventListener("click", handleGoogleLogin);
+btnGuest.addEventListener("click", continueAsGuest);
+
+// fermer avec Échap
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") {
+    closeModal();
+  }
+});
 </script>
 
 </body>
