@@ -37,6 +37,7 @@
       align-items: center;
       text-align: center;
       pointer-events: none;
+      transition: transform 0.3s ease, opacity 0.3s ease;
     }
 
     h1 {
@@ -53,6 +54,7 @@
       font-size: 1.3rem;
       opacity: 0.85;
       margin-top: 10px;
+      transition: opacity 0.3s ease, transform 0.3s ease;
     }
 
     .btn-wrap {
@@ -97,6 +99,11 @@
       text-align: center;
       font-size: 0.75rem;
       opacity: 0.6;
+      transition: opacity 0.3s ease;
+    }
+
+    .footer.guest {
+      opacity: 0.9;
     }
 
     /* ===========================
@@ -270,7 +277,6 @@
       cursor: pointer;
     }
 
-    /* petits éléments décoratifs dans la carte */
     .modal-orbit {
       position: absolute;
       right: -40px;
@@ -306,6 +312,10 @@
       right: 14%;
       box-shadow: 0 0 10px rgba(251, 146, 60, 0.9);
     }
+
+    .main.guest-active {
+      transform: translateY(-10px);
+    }
   </style>
 </head>
 
@@ -315,7 +325,7 @@
 
   <div class="alpha">Alpha !</div>
 
-  <div class="main">
+  <div class="main" id="hero">
     <h1>Bienvenue sur Politaria</h1>
     <p class="subtitle">Un bac à sable d'histoire alternative parmi les étoiles</p>
     <div class="btn-wrap">
@@ -323,7 +333,7 @@
     </div>
   </div>
 
-  <div class="footer">
+  <div class="footer" id="footer">
     Construisez votre propre système. Réécrivez son histoire.
   </div>
 
@@ -351,12 +361,12 @@
       </div>
 
       <div class="modal-right">
-        <button class="auth-btn">
+        <button class="auth-btn" id="btn-google">
           <span class="auth-btn-icon">G</span>
           <span>Se connecter avec Google</span>
         </button>
 
-        <button class="auth-btn secondary">
+        <button class="auth-btn secondary" id="btn-guest">
           <span class="auth-btn-icon guest">🕶️</span>
           <span>Continuer en invité</span>
         </button>
@@ -456,7 +466,6 @@ for (let i = 0; i < 220; i++) {
 
 /* -----------------------
    🌍 Planètes lointaines hors système
-   (version plus propre)
 ------------------------ */
 const farPlanets = [];
 const FAR_PLANET_COUNT = 22;
@@ -715,6 +724,11 @@ animate();
    🚀 Ouverture / fermeture de la modale
 ------------------------ */
 const modal = document.getElementById("auth-modal");
+const hero = document.getElementById("hero");
+const footer = document.getElementById("footer");
+const subtitle = document.querySelector(".subtitle");
+const btnGoogle = document.getElementById("btn-google");
+const btnGuest = document.getElementById("btn-guest");
 
 function startGame() {
   modal.classList.add("show");
@@ -729,6 +743,51 @@ function backdropClick(event) {
     closeModal();
   }
 }
+
+/* -----------------------
+   🔐 Actions des boutons
+------------------------ */
+
+// Google : pour l'instant, simple placeholder.
+// Tu peux remplacer l'URL par ta vraie route OAuth (ex: "/auth/google").
+function handleGoogleLogin() {
+  // Exemple : redirection vers une future page de login
+  // window.location.href = "/auth/google";
+  alert("Connexion Google sera branchée ici plus tard.");
+}
+
+// Invité : on ferme la modale, on passe en mode “invité”
+function continueAsGuest() {
+  closeModal();
+
+  if (subtitle) {
+    subtitle.textContent = "Mode invité : votre premier système Politaria est en préparation…";
+    subtitle.style.opacity = "1";
+    subtitle.style.transform = "translateY(0)";
+  }
+
+  if (hero) {
+    hero.classList.add("guest-active");
+  }
+
+  if (footer) {
+    footer.textContent = "Mode invité actif. Votre progression sera stockée localement.";
+    footer.classList.add("guest");
+  }
+
+  // Ici plus tard : initialiser la partie, charger une scène, etc.
+}
+
+// on connecte les boutons
+btnGoogle.addEventListener("click", handleGoogleLogin);
+btnGuest.addEventListener("click", continueAsGuest);
+
+// fermer avec Échap
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") {
+    closeModal();
+  }
+});
 </script>
 
 </body>
