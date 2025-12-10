@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+  <!-- Favicons -->
   <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
-<link rel="icon" type="image/svg+xml" href="/favicon.svg">
-<link rel="shortcut icon" href="/favicon.ico">
-<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-<link rel="manifest" href="/site.webmanifest">
-<meta name="apple-mobile-web-app-title" content="Politaria">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="apple-mobile-web-app-title" content="Politaria">
 
   <meta charset="UTF-8" />
   <title>Politaria – Bac à sable stellaire</title>
@@ -185,6 +186,7 @@
       max-width: 360px;
     }
 
+    /* === Logo avec favicon === */
     .modal-logo {
       width: 56px;
       height: 56px;
@@ -195,10 +197,14 @@
       justify-content: center;
       margin-bottom: 10px;
       box-shadow: 0 0 25px rgba(248, 250, 252, 0.25);
+      overflow: hidden;
     }
 
-    .modal-logo span {
-      font-size: 30px;
+    .modal-logo-img {
+      width: 70%;
+      height: 70%;
+      object-fit: contain;
+      display: block;
       filter: drop-shadow(0 0 4px rgba(15, 23, 42, 0.8));
     }
 
@@ -353,7 +359,8 @@
 
       <div class="modal-left">
         <div class="modal-logo">
-          <span>🌐</span>
+          <!-- Favicon dans le cercle -->
+          <img src="/favicon-96x96.png" alt="Logo Politaria" class="modal-logo-img" />
         </div>
         <div class="modal-title">Créer votre compte Politaria</div>
         <p class="modal-subtitle">
@@ -727,6 +734,8 @@ const subtitle = document.querySelector(".subtitle");
 const btnGoogle = document.getElementById("btn-google");
 const btnGuest = document.getElementById("btn-guest");
 
+const MODE_KEY = "politariaMode";
+
 function startGame() {
   modal.classList.add("show");
 }
@@ -745,18 +754,13 @@ function backdropClick(event) {
    🔐 Actions des boutons
 ------------------------ */
 
-// Google : pour l'instant, simple placeholder.
-// Tu peux remplacer l'URL par ta vraie route OAuth (ex: "/auth/google").
 function handleGoogleLogin() {
-  // Exemple : redirection vers une future page de login
+  // À brancher sur ta vraie route OAuth
   // window.location.href = "/auth/google";
   alert("Connexion Google sera branchée ici plus tard.");
 }
 
-// Invité : on ferme la modale, on passe en mode “invité”
-function continueAsGuest() {
-  closeModal();
-
+function applyGuestModeUI() {
   if (subtitle) {
     subtitle.textContent = "Mode invité : votre premier système Politaria est en préparation…";
     subtitle.style.opacity = "1";
@@ -771,13 +775,26 @@ function continueAsGuest() {
     footer.textContent = "Mode invité actif. Votre progression sera stockée localement.";
     footer.classList.add("guest");
   }
+}
 
-  // Ici plus tard : initialiser la partie, charger une scène, etc.
+// Invité : on ferme la modale, on passe en mode “invité”
+function continueAsGuest() {
+  closeModal();
+  localStorage.setItem(MODE_KEY, "guest");
+  applyGuestModeUI();
 }
 
 // on connecte les boutons
 btnGoogle.addEventListener("click", handleGoogleLogin);
 btnGuest.addEventListener("click", continueAsGuest);
+
+// au chargement, on regarde si le joueur était déjà en invité
+window.addEventListener("DOMContentLoaded", () => {
+  const mode = localStorage.getItem(MODE_KEY);
+  if (mode === "guest") {
+    applyGuestModeUI();
+  }
+});
 
 // fermer avec Échap
 document.addEventListener("keydown", (e) => {
