@@ -569,43 +569,107 @@ function drawOrbits() {
    🎨 Planètes avec dégradés
 ------------------------ */
 function drawShadedPlanet(x, y, radius, baseColor, glowFactor = 0.5) {
+  // direction de la lumière = depuis le soleil (cx, cy)
   const dx = cx - x;
   const dy = cy - y;
   const dist = Math.sqrt(dx * dx + dy * dy) || 1;
   const lx = dx / dist;
   const ly = dy / dist;
 
+  // point le plus éclairé
   const highlightX = x + lx * radius * 0.5;
   const highlightY = y + ly * radius * 0.5;
 
+  // on clip dans un disque pour avoir un bord net
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(x, y, radius, 0, Math.PI * 2);
+  ctx.clip();
+
+  // dégradé volume (jour -> nuit)
   const gradient = ctx.createRadialGradient(
     highlightX, highlightY, radius * 0.1,
     x, y, radius * 1.1
   );
-
   gradient.addColorStop(0, lightenColor(baseColor, 0.35));
-  gradient.addColorStop(0.4, baseColor);
-  gradient.addColorStop(1, darkenColor(baseColor, 0.35));
+  gradient.addColorStop(0.35, baseColor);
+  gradient.addColorStop(1, darkenColor(baseColor, 0.55));
 
   ctx.fillStyle = gradient;
+  ctx.fillRect(x - radius, y - radius, radius * 2, radius * 2);
+
+  // ---- TEXTURE ----
+  if (radius > 14) {
+    // planète gazeuse : bandes
+    ctx.globalAlpha = 0.22;
+    for (let i = -3; i <= 3; i++) {
+      ctx.beginPath();
+      ctx.ellipse(
+        x,
+        y + i * radius * 0.22,
+        radius * 1.4,
+        radius * 0.35,
+        0,
+        0,
+        Math.PI * 2
+      );
+      ctx.fillStyle = hexToRgba(lightenColor(baseColor, 0.12), 0.9);
+      ctx.fill();
+    }
+  } else {
+    // planète rocheuse : taches
+    ctx.globalAlpha = 0.35;
+    const patchCount = 5;
+    for (let i = 0; i < patchCount; i++) {
+      const rx = radius * (0.2 + Math.random() * 0.35);
+      const ry = rx * (0.6 + Math.random() * 0.4);
+      const px = x + (Math.random() * 2 - 1) * radius * 0.7;
+      const py = y + (Math.random() * 2 - 1) * radius * 0.7;
+
+      ctx.beginPath();
+      ctx.ellipse(
+        px,
+        py,
+        rx,
+        ry,
+        Math.random() * Math.PI,
+        0,
+        Math.PI * 2
+      );
+      ctx.fillStyle = hexToRgba(
+        darkenColor(baseColor, 0.2 + Math.random() * 0.15),
+        0.95
+      );
+      ctx.fill();
+    }
+  }
+
+  ctx.restore();
+  ctx.globalAlpha = 1;
+
+  // contour fin
   ctx.beginPath();
   ctx.arc(x, y, radius, 0, Math.PI * 2);
-  ctx.fill();
+  ctx.strokeStyle = hexToRgba(lightenColor(baseColor, 0.4), 0.9);
+  ctx.lineWidth = 1;
+  ctx.stroke();
 
+  // atmosphère / glow léger
   if (glowFactor > 0) {
     const glowGradient = ctx.createRadialGradient(
       x, y, radius,
-      x, y, radius * 2.3
+      x, y, radius * 1.7
     );
-    glowGradient.addColorStop(0, hexToRgba(baseColor, 0.4 * glowFactor));
+    glowGradient.addColorStop(0, hexToRgba(baseColor, 0.35 * glowFactor));
     glowGradient.addColorStop(1, "rgba(0,0,0,0)");
 
     ctx.fillStyle = glowGradient;
     ctx.beginPath();
-    ctx.arc(x, y, radius * 2.3, 0, Math.PI * 2);
+    ctx.arc(x, y, radius * 1.7, 0, Math.PI * 2);
     ctx.fill();
   }
 }
+
 
 function hexToRgba(hex, alpha) {
   const c = hex.replace("#", "");
