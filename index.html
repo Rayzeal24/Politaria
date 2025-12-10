@@ -444,7 +444,7 @@ for (let i = 0; i < mainOrbitCount; i++) {
     orbit,
     angle: Math.random() * Math.PI * 2,
     // rotation beaucoup plus lente
-    speed: (0.00012 + i * 0.00003),
+      speed: (0.00001 + i * 0.000005),
     size: cfg.size,
     baseColor: cfg.color,
     ring: i === 4
@@ -458,7 +458,7 @@ for (let i = 0; i < 220; i++) {
   smallBodies.push({
     orbit,
     angle: Math.random() * Math.PI * 2,
-    speed: (Math.random() * 0.00025 + 0.00003) * (Math.random() < 0.5 ? 1 : -1),
+    speed: (Math.random() * 0.00003 + 0.000005) * (Math.random() < 0.5 ? 1 : -1),
     size: Math.random() * 3 + 0.8,
     hue: 180 + Math.random() * 160,
     lightness: 40 + Math.random() * 30
