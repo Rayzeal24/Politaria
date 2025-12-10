@@ -256,8 +256,8 @@ function closeLegal(){ legalModal.classList.remove("show"); }
 
 function openLegal(type){
   const url = type==="conditions"
-    ? "/conditions-utilisation.html"
-    : "/politique-confidentialite.html";
+    ? "/legal/conditions-utilisation.html"
+    : "/legal/politique-confidentialite.html";
 
   fetch(url)
     .then(r=>r.text())
