@@ -14,7 +14,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
     body {
       background: #000;
@@ -32,6 +36,7 @@
     }
 
     .main {
+      position: relative;
       width: 100%;
       height: 100vh;
       display: flex;
@@ -40,36 +45,48 @@
       align-items: center;
       text-align: center;
       pointer-events: none;
-      transition: transform .3s ease;
+      transition: transform 0.3s ease, opacity 0.3s ease;
     }
 
     h1 {
       font-size: 4rem;
       font-weight: 900;
-      background: linear-gradient(90deg,#fff,#e5f0ff,#fff);
+      letter-spacing: 2px;
+      background: linear-gradient(90deg, #ffffff, #e5f0ff, #ffffff);
       -webkit-background-clip: text;
       color: transparent;
-      text-shadow: 0 0 25px rgba(255,255,255,.7);
+      text-shadow: 0 0 25px rgba(255,255,255,0.7);
     }
 
     .subtitle {
       font-size: 1.3rem;
-      opacity: .85;
+      opacity: 0.85;
       margin-top: 10px;
+      transition: opacity 0.3s ease, transform 0.3s ease;
     }
 
-    .btn-wrap { margin-top: 40px; pointer-events: auto; }
+    .btn-wrap {
+      margin-top: 40px;
+      pointer-events: auto;
+    }
 
     .btn {
       padding: 15px 40px;
       border-radius: 999px;
-      border: 2px solid rgba(255,255,255,.7);
-      background: radial-gradient(circle at 0% 0%, #38bdf8, #020617 55%);
+      border: 2px solid rgba(255,255,255,0.7);
+      background: radial-gradient(circle at 0% 0%, #38bdf8 0, #020617 55%);
       color: #fff;
       font-size: 1.2rem;
       font-weight: 600;
       cursor: pointer;
-      box-shadow: 0 0 25px rgba(56,189,248,.6);
+      box-shadow: 0 0 25px rgba(56,189,248,0.6);
+      transition: 0.25s;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px) scale(1.03);
+      box-shadow: 0 0 40px rgba(56,189,248,0.9);
+      background: radial-gradient(circle at 100% 0%, #38bdf8 0, #020617 60%);
     }
 
     .alpha {
@@ -80,6 +97,7 @@
       font-weight: 800;
       color: #ffe066;
       transform: rotate(-15deg);
+      text-shadow: 0 0 10px rgba(255,224,102,0.8);
     }
 
     .footer {
@@ -87,23 +105,30 @@
       bottom: 20px;
       width: 100%;
       text-align: center;
-      font-size: .75rem;
-      opacity: .6;
+      font-size: 0.75rem;
+      opacity: 0.6;
+      transition: opacity 0.3s ease;
     }
 
-    /* ===== MODALES ===== */
+    .footer.guest {
+      opacity: 0.9;
+    }
+
+    /* ===========================
+       MODALES
+       =========================== */
 
     .modal-backdrop {
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,.7);
+      background: rgba(0, 0, 0, 0.7);
       display: flex;
       align-items: center;
       justify-content: center;
+      z-index: 20;
       opacity: 0;
       pointer-events: none;
-      transition: .25s;
-      z-index: 20;
+      transition: opacity 0.25s ease;
     }
 
     .modal-backdrop.show {
@@ -112,164 +137,737 @@
     }
 
     .modal-card {
-      background: radial-gradient(circle at top left,#101827,#050816 55%,#02010a);
+      background: radial-gradient(circle at top left, #101827, #050816 55%, #02010a 100%);
+      color: #f9fafb;
       border-radius: 22px;
       max-width: 960px;
-      width: min(92%,960px);
+      width: min(92%, 960px);
       padding: 32px 40px;
-      color: #f9fafb;
-      position: relative;
-      box-shadow: 0 30px 80px rgba(0,0,0,.85);
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.85);
       display: flex;
       gap: 40px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    @media (max-width: 800px) {
+      .modal-card {
+        flex-direction: column;
+        padding: 24px 20px 28px;
+        gap: 24px;
+      }
+    }
+
+    .modal-left {
+      flex: 1.1;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .modal-right {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      justify-content: center;
+    }
+
+    .modal-title {
+      font-size: 2.1rem;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+    }
+
+    .modal-subtitle {
+      font-size: 0.98rem;
+      opacity: 0.78;
+      line-height: 1.5;
+      max-width: 360px;
+    }
+
+    /* === Logo avec favicon === */
+    .modal-logo {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 20%, #fef3c7, #f97316 35%, #1e293b 60%, #020617 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 10px;
+      box-shadow: 0 0 25px rgba(248, 250, 252, 0.25);
+      overflow: hidden;
+    }
+
+    .modal-logo-img {
+      width: 70%;
+      height: 70%;
+      object-fit: contain;
+      display: block;
+      filter: drop-shadow(0 0 4px rgba(15, 23, 42, 0.8));
     }
 
     .modal-close {
       position: absolute;
       top: 16px;
       right: 20px;
-      background: none;
       border: none;
-      color: #fff;
+      background: transparent;
+      color: rgba(248, 250, 252, 0.7);
       font-size: 1.4rem;
       cursor: pointer;
+      padding: 4px;
+      line-height: 1;
+      transition: transform 0.15s ease, color 0.15s ease;
     }
 
-    .modal-left { flex: 1.1; }
-    .modal-right { flex: 1; display: flex; flex-direction: column; gap: 16px; justify-content: center; }
-
-    .modal-title { font-size: 2.1rem; font-weight: 800; }
-
-    .modal-subtitle {
-      font-size: .98rem;
-      opacity: .78;
-      line-height: 1.5;
-      margin-top: 10px;
-      max-width: 360px;
-    }
-
-    .modal-logo {
-      width: 56px;
-      height: 56px;
-      border-radius: 50%;
-      background: radial-gradient(circle at 30% 20%, #fef3c7, #f97316 35%, #020617);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 10px;
-      overflow: hidden;
-    }
-
-    .modal-logo img {
-      width: 70%;
-      height: 70%;
-      object-fit: contain;
+    .modal-close:hover {
+      transform: scale(1.1);
+      color: #fff;
     }
 
     .auth-btn {
-      padding: 14px;
+      width: 100%;
+      padding: 14px 18px;
       border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.25);
-      background: rgba(15,23,42,.8);
-      color: #fff;
-      cursor: pointer;
+      border: 1px solid rgba(248, 250, 252, 0.22);
+      background: rgba(15, 23, 42, 0.8);
+      color: #f9fafb;
       font-size: 1rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      cursor: pointer;
+      transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease, border-color 0.2s ease;
     }
 
-    .auth-btn.secondary { background: rgba(15,23,42,.6); }
+    .auth-btn:hover {
+      background: radial-gradient(circle at 0 0, #1d4ed8, #020617 70%);
+      transform: translateY(-1px);
+      box-shadow: 0 0 22px rgba(59, 130, 246, 0.55);
+      border-color: rgba(191, 219, 254, 0.9);
+    }
+
+    .auth-btn.secondary {
+      background: rgba(15, 23, 42, 0.6);
+    }
+
+    .auth-btn-icon {
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      background: #ffffff;
+      color: #1f2937;
+      font-weight: 700;
+    }
+
+    .auth-btn-icon.guest {
+      background: rgba(15, 23, 42, 1);
+      color: #e5e7eb;
+      border: 1px solid rgba(148, 163, 184, 0.8);
+    }
 
     .legal-text {
-      margin-top: 12px;
-      font-size: .8rem;
-      opacity: .7;
+      margin-top: 10px;
+      font-size: 0.8rem;
+      opacity: 0.7;
+      max-width: 380px;
+      line-height: 1.5;
     }
 
     .legal-text a {
       color: #bfdbfe;
       text-decoration: underline;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 2px;
       cursor: pointer;
+    }
+
+    .modal-orbit {
+      position: absolute;
+      right: -40px;
+      bottom: -40px;
+      width: 210px;
+      height: 210px;
+      border-radius: 50%;
+      border: 1px dashed rgba(148, 163, 184, 0.35);
+      opacity: 0.7;
+    }
+
+    .modal-orbit::before,
+    .modal-orbit::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+    }
+
+    .modal-orbit::before {
+      width: 18px;
+      height: 18px;
+      background: radial-gradient(circle at 30% 20%, #a5b4fc, #4338ca);
+      top: 22%;
+      left: 10%;
+      box-shadow: 0 0 16px rgba(129, 140, 248, 0.8);
+    }
+
+    .modal-orbit::after {
+      width: 11px;
+      height: 11px;
+      background: radial-gradient(circle at 30% 20%, #f97316, #b45309);
+      bottom: 18%;
+      right: 14%;
+      box-shadow: 0 0 10px rgba(251, 146, 60, 0.9);
+    }
+
+    .main.guest-active {
+      transform: translateY(-10px);
     }
   </style>
 </head>
 
 <body>
 
-<canvas id="space"></canvas>
+  <canvas id="space"></canvas>
 
-<div class="alpha">Alpha !</div>
+  <div class="alpha">Alpha !</div>
 
-<div class="main" id="hero">
-  <h1>Bienvenue sur Politaria</h1>
-  <p class="subtitle">Un bac à sable d'histoire alternative parmi les étoiles</p>
-  <div class="btn-wrap">
-    <button class="btn" onclick="startGame()">Commencer →</button>
+  <div class="main" id="hero">
+    <h1>Bienvenue sur Politaria</h1>
+    <p class="subtitle">Un bac à sable d'histoire alternative parmi les étoiles</p>
+    <div class="btn-wrap">
+      <button class="btn" onclick="startGame()">Commencer →</button>
+    </div>
   </div>
-</div>
 
-<div class="footer">Construisez votre propre système. Réécrivez son histoire.</div>
+  <div class="footer" id="footer">
+    Construisez votre propre système. Réécrivez son histoire.
+  </div>
 
-<!-- ===== MODALE AUTH ===== -->
-<div id="auth-modal" class="modal-backdrop" onclick="if(event.target===this)closeAuth()">
-  <div class="modal-card">
-    <button class="modal-close" onclick="closeAuth()">×</button>
+  <!-- =========
+       MODALE AUTH
+       ========= -->
+  <div id="auth-modal" class="modal-backdrop" onclick="backdropClick(event)">
+    <div class="modal-card">
+      <button class="modal-close" onclick="closeModal()">×</button>
 
-    <div class="modal-left">
-      <div class="modal-logo">
-        <img src="/favicon-96x96.png" alt="Politaria">
+      <div class="modal-left">
+        <div class="modal-logo">
+          <!-- Favicon dans le cercle -->
+          <img src="/favicon-96x96.png" alt="Logo Politaria" class="modal-logo-img" />
+        </div>
+        <div class="modal-title">Créer votre compte Politaria</div>
+        <p class="modal-subtitle">
+          Sauvegardez vos systèmes stellaires, suivez l'histoire de vos empires
+          et retrouvez vos parties depuis n'importe quel appareil.
+        </p>
+        <p class="legal-text">
+          En créant un compte, vous acceptez nos
+          <a onclick="openLegal('conditions')">conditions d'utilisation</a>
+          et notre
+          <a onclick="openLegal('confidentialite')">politique de confidentialité</a>.
+        </p>
       </div>
-      <div class="modal-title">Créer votre compte Politaria</div>
-      <p class="modal-subtitle">
-        Sauvegardez vos systèmes stellaires, suivez l'histoire de vos empires
-        et retrouvez vos parties depuis n'importe quel appareil.
-      </p>
-      <p class="legal-text">
-        En créant un compte, vous acceptez nos
-        <a onclick="openLegal('conditions')">conditions d'utilisation</a>
-        et notre
-        <a onclick="openLegal('confidentialite')">politique de confidentialité</a>.
-      </p>
-    </div>
 
-    <div class="modal-right">
-      <button class="auth-btn">Se connecter avec Google</button>
-      <button class="auth-btn secondary" onclick="closeAuth()">Continuer en invité</button>
+      <div class="modal-right">
+        <button class="auth-btn" id="btn-google">
+          <span class="auth-btn-icon">G</span>
+          <span>Se connecter avec Google</span>
+        </button>
+
+        <button class="auth-btn secondary" id="btn-guest">
+          <span class="auth-btn-icon guest">🕶️</span>
+          <span>Continuer en invité</span>
+        </button>
+      </div>
+
+      <div class="modal-orbit"></div>
     </div>
   </div>
-</div>
 
-<!-- ===== MODALE LÉGALE ===== -->
-<div id="legal-modal" class="modal-backdrop" onclick="if(event.target===this)closeLegal()">
-  <div class="modal-card" style="max-width:800px;">
-    <button class="modal-close" onclick="closeLegal()">×</button>
-    <div id="legal-content" style="max-height:60vh; overflow:auto;"></div>
+  <!-- =========
+       MODALE LÉGALE
+       ========= -->
+  <div id="legal-modal" class="modal-backdrop" onclick="backdropLegalClick(event)">
+    <div class="modal-card" style="max-width:800px;">
+      <button class="modal-close" onclick="closeLegalModal()">×</button>
+      <div id="legal-content" style="max-height:60vh; overflow:auto;"></div>
+    </div>
   </div>
-</div>
 
 <script>
-const authModal = document.getElementById("auth-modal");
+/* ===========================================================
+   🌌 SYSTÈME STELLAIRE ANIMÉ
+   =========================================================== */
+
+const canvas = document.getElementById("space");
+const ctx = canvas.getContext("2d");
+
+let w, h, cx, cy;
+
+function resize() {
+  w = canvas.width = window.innerWidth;
+  h = canvas.height = window.innerHeight;
+  cx = w * 0.6;
+  cy = h * 0.5;
+}
+resize();
+window.addEventListener("resize", resize);
+
+/* -----------------------
+   🌟 Fond : ciel étoilé
+------------------------ */
+const stars = [];
+const STAR_COUNT = 2000;
+
+for (let i = 0; i < STAR_COUNT; i++) {
+  stars.push({
+    x: Math.random() * w,
+    y: Math.random() * h,
+    size: Math.random() * 1.4 + 0.2,
+    baseAlpha: Math.random() * 0.6 + 0.2,
+    speed: Math.random() * 0.02 + 0.005
+  });
+}
+
+/* -----------------------
+   🪐 Système de planètes
+------------------------ */
+const orbits = [];
+const planets = [];
+
+// Orbites principales
+const mainOrbitCount = 8;
+for (let i = 0; i < mainOrbitCount; i++) {
+  const rx = 80 + i * 55;
+  const ry = rx * 0.7;
+  orbits.push({ rx, ry });
+}
+
+// Config de base (teintes)
+const mainPlanetsConfig = [
+  { size: 8,  color: "#b0bec5" },
+  { size: 10, color: "#ffb74d" },
+  { size: 12, color: "#4fc3f7" },
+  { size: 11, color: "#a5d6a7" },
+  { size: 18, color: "#ffcc80" },
+  { size: 16, color: "#90caf9" },
+  { size: 14, color: "#ce93d8" },
+  { size: 20, color: "#80cbc4" }
+];
+
+for (let i = 0; i < mainOrbitCount; i++) {
+  const orbit = orbits[i];
+  const cfg = mainPlanetsConfig[i % mainPlanetsConfig.length];
+  planets.push({
+    orbit,
+    angle: Math.random() * Math.PI * 2,
+    speed: (0.0004 + i * 0.0001),
+    size: cfg.size,
+    baseColor: cfg.color,
+    ring: i === 4
+  });
+}
+
+// Petits corps sur les orbites
+const smallBodies = [];
+for (let i = 0; i < 80; i++) {
+  const orbit = orbits[Math.floor(Math.random() * orbits.length)];
+  smallBodies.push({
+    orbit,
+    angle: Math.random() * Math.PI * 2,
+    speed: (Math.random() * 0.0006 + 0.0001) * (Math.random() < 0.5 ? 1 : -1),
+    size: Math.random() * 3 + 0.8,
+    hue: 180 + Math.random() * 160,
+    lightness: 40 + Math.random() * 30
+  });
+}
+
+/* -----------------------
+   🌍 Planètes lointaines hors système
+------------------------ */
+const farPlanets = [];
+const FAR_PLANET_COUNT = 22;
+const FAR_PLANET_MIN_DIST = 70;
+
+function initFarPlanets() {
+  farPlanets.length = 0;
+  const maxOrbit = orbits.length
+    ? orbits[orbits.length - 1].rx
+    : Math.min(w, h) * 0.4;
+
+  const exclusionRadius = maxOrbit + 100;
+
+  for (let i = 0; i < FAR_PLANET_COUNT; i++) {
+    let x, y, distToCenter, ok, guard = 0;
+
+    do {
+      x = Math.random() * w;
+      y = Math.random() * h;
+
+      const dx = x - cx;
+      const dy = y - cy;
+      distToCenter = Math.sqrt(dx * dx + dy * dy);
+
+      ok = distToCenter > exclusionRadius;
+
+      if (ok) {
+        ok = farPlanets.every(p => {
+          const dx2 = x - p.x;
+          const dy2 = y - p.y;
+          const d = Math.sqrt(dx2 * dx2 + dy2 * dy2);
+          return d > FAR_PLANET_MIN_DIST;
+        });
+      }
+
+      guard++;
+      if (guard > 200) break;
+    } while (!ok);
+
+    farPlanets.push({
+      x,
+      y,
+      size: Math.random() * 14 + 6,
+      hue: 180 + Math.random() * 160,
+      saturation: 35 + Math.random() * 35,
+      lightness: 40 + Math.random() * 20,
+      glow: Math.random() * 0.35 + 0.25,
+      rotation: Math.random() * Math.PI * 2,
+      rotationSpeed: (Math.random() * 0.0004 + 0.0001) * (Math.random() < 0.5 ? -1 : 1)
+    });
+  }
+}
+initFarPlanets();
+
+/* -----------------------
+   ☀️ Soleil central
+------------------------ */
+function drawSun() {
+  const maxR = 55;
+  const gradient = ctx.createRadialGradient(cx, cy, 5, cx, cy, maxR);
+  gradient.addColorStop(0, "#fff3e0");
+  gradient.addColorStop(0.4, "#ffb74d");
+  gradient.addColorStop(1, "rgba(0,0,0,0)");
+
+  ctx.fillStyle = gradient;
+  ctx.beginPath();
+  ctx.arc(cx, cy, maxR, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.beginPath();
+  ctx.arc(cx, cy, 28, 0, Math.PI * 2);
+  ctx.fillStyle = "#ff6f00";
+  ctx.fill();
+
+  ctx.beginPath();
+  ctx.arc(cx, cy, 18, 0, Math.PI * 2);
+  ctx.fillStyle = "#ffcc80";
+  ctx.fill();
+}
+
+/* -----------------------
+   🌀 Orbites elliptiques
+------------------------ */
+function drawOrbits() {
+  ctx.lineWidth = 1;
+  ctx.strokeStyle = "rgba(255,255,255,0.18)";
+
+  orbits.forEach(o => {
+    ctx.beginPath();
+    for (let a = 0; a <= Math.PI * 2 + 0.1; a += 0.05) {
+      const x = cx + Math.cos(a) * o.rx;
+      const y = cy + Math.sin(a) * o.ry;
+      if (a === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+  });
+}
+
+/* -----------------------
+   🎨 Planètes avec dégradés
+------------------------ */
+function drawShadedPlanet(x, y, radius, baseColor, glowFactor = 0.5) {
+  const gradient = ctx.createRadialGradient(
+    x, y, radius * 0.6,
+    x, y, radius * 1.1
+  );
+
+  gradient.addColorStop(0, baseColor);
+  gradient.addColorStop(1, darkenColor(baseColor, 0.35));
+
+  ctx.fillStyle = gradient;
+  ctx.beginPath();
+  ctx.arc(x, y, radius, 0, Math.PI * 2);
+  ctx.fill();
+
+  if (glowFactor > 0) {
+    const glowGradient = ctx.createRadialGradient(
+      x, y, radius,
+      x, y, radius * 2.3
+    );
+    glowGradient.addColorStop(0, hexToRgba(baseColor, 0.35 * glowFactor));
+    glowGradient.addColorStop(1, "rgba(0,0,0,0)");
+
+    ctx.fillStyle = glowGradient;
+    ctx.beginPath();
+    ctx.arc(x, y, radius * 2.3, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+function hexToRgba(hex, alpha) {
+  const c = hex.replace("#", "");
+  const bigint = parseInt(c, 16);
+  const r = (bigint >> 16) & 255;
+  const g = (bigint >> 8) & 255;
+  const b = bigint & 255;
+  return `rgba(${r},${g},${b},${alpha})`;
+}
+
+function lightenColor(hex, amount) {
+  const c = hex.replace("#", "");
+  const bigint = parseInt(c, 16);
+  let r = (bigint >> 16) & 255;
+  let g = (bigint >> 8) & 255;
+  let b = bigint & 255;
+  r = Math.min(255, r + 255 * amount);
+  g = Math.min(255, g + 255 * amount);
+  b = Math.min(255, b + 255 * amount);
+  return "#" + ((1 << 24) + (r << 16) + (g << 8) + (b | 0)).toString(16).slice(1);
+}
+
+function darkenColor(hex, amount) {
+  const c = hex.replace("#", "");
+  const bigint = parseInt(c, 16);
+  let r = (bigint >> 16) & 255;
+  let g = (bigint >> 8) & 255;
+  let b = bigint & 255;
+  r = Math.max(0, r - 255 * amount);
+  g = Math.max(0, g - 255 * amount);
+  b = Math.max(0, b - 255 * amount);
+  return "#" + ((1 << 24) + (r << 16) + (g << 8) + (b | 0)).toString(16).slice(1);
+}
+
+/* -----------------------
+   🔁 Animation
+------------------------ */
+let t = 0;
+function animate() {
+  t += 1;
+
+  ctx.fillStyle = "#020012";
+  ctx.fillRect(0, 0, w, h);
+
+  // étoiles
+  for (let i = 0; i < stars.length; i++) {
+    const s = stars[i];
+    const alpha = s.baseAlpha + Math.sin(t * s.speed + i) * 0.25;
+
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(255,255,255,${alpha})`;
+    ctx.fill();
+  }
+
+  // planètes lointaines
+  farPlanets.forEach(fp => {
+    fp.rotation += fp.rotationSpeed;
+    drawShadedPlanet(
+      fp.x,
+      fp.y,
+      fp.size,
+      `hsl(${fp.hue}, ${fp.saturation}%, ${fp.lightness}%)`,
+      fp.glow
+    );
+  });
+
+  // orbites
+  drawOrbits();
+
+  // petits corps
+  smallBodies.forEach(b => {
+    b.angle += b.speed;
+    const x = cx + Math.cos(b.angle) * b.orbit.rx;
+    const y = cy + Math.sin(b.angle) * b.orbit.ry;
+
+    ctx.beginPath();
+    ctx.arc(x, y, b.size, 0, Math.PI * 2);
+    ctx.fillStyle = `hsl(${b.hue}, 55%, ${b.lightness}%)`;
+    ctx.fill();
+  });
+
+  // grosses planètes
+  planets.forEach(p => {
+    p.angle += p.speed;
+    const x = cx + Math.cos(p.angle) * p.orbit.rx;
+    const y = cy + Math.sin(p.angle) * p.orbit.ry;
+
+    drawShadedPlanet(x, y, p.size, p.baseColor, 0.4);
+
+    if (p.ring) {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(-0.4);
+      const ringGrad = ctx.createLinearGradient(-p.size * 2, 0, p.size * 2, 0);
+      ringGrad.addColorStop(0, "rgba(255,255,255,0)");
+      ringGrad.addColorStop(0.3, "rgba(230,230,230,0.7)");
+      ringGrad.addColorStop(0.7, "rgba(230,230,230,0.7)");
+      ringGrad.addColorStop(1, "rgba(255,255,255,0)");
+      ctx.strokeStyle = ringGrad;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.ellipse(0, 0, p.size * 2, p.size * 0.9, 0, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
+    }
+  });
+
+  drawSun();
+
+  requestAnimationFrame(animate);
+}
+animate();
+
+/* -----------------------
+   🚀 Modale d'auth
+------------------------ */
+const modal = document.getElementById("auth-modal");
+const hero = document.getElementById("hero");
+const footer = document.getElementById("footer");
+const subtitle = document.querySelector(".subtitle");
+const btnGoogle = document.getElementById("btn-google");
+const btnGuest = document.getElementById("btn-guest");
+
+const MODE_KEY = "politariaMode";
+
+function startGame() {
+  modal.classList.add("show");
+}
+
+function closeModal() {
+  modal.classList.remove("show");
+}
+
+function backdropClick(event) {
+  if (event.target === modal) {
+    closeModal();
+  }
+}
+
+/* -----------------------
+   🔐 Actions des boutons
+------------------------ */
+
+function handleGoogleLogin() {
+  // À brancher sur ta vraie route OAuth
+  // window.location.href = "/auth/google";
+  alert("Connexion Google sera branchée ici plus tard.");
+}
+
+function applyGuestModeUI() {
+  if (subtitle) {
+    subtitle.textContent = "Mode invité : votre premier système Politaria est en préparation…";
+    subtitle.style.opacity = "1";
+    subtitle.style.transform = "translateY(0)";
+  }
+
+  if (hero) {
+    hero.classList.add("guest-active");
+  }
+
+  if (footer) {
+    footer.textContent = "Mode invité actif. Votre progression sera stockée localement.";
+    footer.classList.add("guest");
+  }
+}
+
+// Invité : on ferme la modale, on passe en mode “invité”
+function continueAsGuest() {
+  closeModal();
+  localStorage.setItem(MODE_KEY, "guest");
+  applyGuestModeUI();
+}
+
+// on connecte les boutons
+btnGoogle.addEventListener("click", handleGoogleLogin);
+btnGuest.addEventListener("click", continueAsGuest);
+
+// au chargement, on regarde si le joueur était déjà en invité
+window.addEventListener("DOMContentLoaded", () => {
+  const mode = localStorage.getItem(MODE_KEY);
+  if (mode === "guest") {
+    applyGuestModeUI();
+  }
+});
+
+// fermer avec Échap
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") {
+    closeModal();
+    closeLegalModal();
+  }
+});
+
+/* -----------------------
+   📜 Modale légale
+------------------------ */
+
 const legalModal = document.getElementById("legal-modal");
 const legalContent = document.getElementById("legal-content");
 
-function startGame(){ authModal.classList.add("show"); }
-function closeAuth(){ authModal.classList.remove("show"); }
-function closeLegal(){ legalModal.classList.remove("show"); }
-
-function openLegal(type){
-  const url = type==="conditions"
-    ? "/legal/conditions-utilisation.html"
-    : "/legal/politique-confidentialite.html";
+function openLegal(type) {
+  let url;
+  if (type === "conditions") {
+    url = "/legal/conditions-utilisation.html";
+  } else if (type === "confidentialite") {
+    url = "/legal/politique-confidentialite.html";
+  } else {
+    return;
+  }
 
   fetch(url)
-    .then(r=>r.text())
-    .then(html=>{
-      if(html.toLowerCase().includes("<html")) throw "bad";
+    .then((res) => {
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      return res.text();
+    })
+    .then((html) => {
+      const lower = html.toLowerCase();
+      // Si jamais le serveur renvoie une page complète (index, 404, etc.)
+      if (lower.includes("<html") || lower.includes("<body")) {
+        throw new Error("Document complet détecté");
+      }
+
       legalContent.innerHTML = html;
       legalModal.classList.add("show");
     })
-    .catch(()=>{
-      legalContent.innerHTML="<p>Document indisponible.</p>";
+    .catch((err) => {
+      console.error(err);
+      legalContent.innerHTML = `
+        <h2>Document indisponible</h2>
+        <p>
+          Impossible de charger ce document pour le moment.
+          Réessayez plus tard ou contactez le support Politaria.
+        </p>
+      `;
       legalModal.classList.add("show");
     });
+}
+
+function closeLegalModal() {
+  legalModal.classList.remove("show");
+}
+
+function backdropLegalClick(e) {
+  if (e.target === legalModal) {
+    closeLegalModal();
+  }
 }
 </script>
 
