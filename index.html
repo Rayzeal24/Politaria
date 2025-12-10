@@ -443,6 +443,7 @@ for (let i = 0; i < mainOrbitCount; i++) {
   planets.push({
     orbit,
     angle: Math.random() * Math.PI * 2,
+    // rotation beaucoup plus lente
     speed: (0.00012 + i * 0.00003),
     size: cfg.size,
     baseColor: cfg.color,
@@ -512,9 +513,7 @@ function initFarPlanets() {
       hue: 180 + Math.random() * 160,
       saturation: 35 + Math.random() * 35,
       lightness: 40 + Math.random() * 20,
-      glow: Math.random() * 0.35 + 0.25,
-      rotation: Math.random() * Math.PI * 2,
-      rotationSpeed: (Math.random() * 0.00018 + 0.00003) * (Math.random() < 0.5 ? -1 : 1)
+      glow: Math.random() * 0.35 + 0.25
     });
   }
 }
@@ -599,8 +598,10 @@ function drawShadedPlanet(x, y, radius, baseColor, glowFactor = 0.5) {
   ctx.fillRect(x - radius, y - radius, radius * 2, radius * 2);
 
   // ---- TEXTURE ----
-  if (radius > 14) {
-    // planète gazeuse : bandes
+  if (radius < 9) {
+    // petites planètes : pas de texture, juste le volume
+  } else if (radius > 14) {
+    // gazeuse : bandes
     ctx.globalAlpha = 0.22;
     for (let i = -3; i <= 3; i++) {
       ctx.beginPath();
@@ -617,7 +618,7 @@ function drawShadedPlanet(x, y, radius, baseColor, glowFactor = 0.5) {
       ctx.fill();
     }
   } else {
-    // planète rocheuse : taches
+    // rocheuse : taches / continents
     ctx.globalAlpha = 0.35;
     const patchCount = 5;
     for (let i = 0; i < patchCount; i++) {
@@ -669,7 +670,6 @@ function drawShadedPlanet(x, y, radius, baseColor, glowFactor = 0.5) {
     ctx.fill();
   }
 }
-
 
 function hexToRgba(hex, alpha) {
   const c = hex.replace("#", "");
@@ -727,7 +727,6 @@ function animate() {
 
   // planètes lointaines
   farPlanets.forEach(fp => {
-    fp.rotation += fp.rotationSpeed;
     drawShadedPlanet(
       fp.x,
       fp.y,
@@ -812,22 +811,15 @@ function backdropClick(event) {
    🔐 Actions des boutons
 ------------------------ */
 
-// Google : pour l'instant, simple placeholder.
-// Tu peux remplacer l'URL par ta vraie route OAuth (ex: "/auth/google").
 function handleGoogleLogin() {
-  // Exemple : redirection vers une future page de login
-  // window.location.href = "/auth/google";
   alert("Connexion Google sera branchée ici plus tard.");
 }
 
-// Invité : on ferme la modale, on passe en mode “invité”
 function continueAsGuest() {
   closeModal();
 
   if (subtitle) {
     subtitle.textContent = "Mode invité : votre premier système Politaria est en préparation…";
-    subtitle.style.opacity = "1";
-    subtitle.style.transform = "translateY(0)";
   }
 
   if (hero) {
@@ -838,15 +830,11 @@ function continueAsGuest() {
     footer.textContent = "Mode invité actif. Votre progression sera stockée localement.";
     footer.classList.add("guest");
   }
-
-  // Ici plus tard : initialiser la partie, charger une scène, etc.
 }
 
-// on connecte les boutons
 btnGoogle.addEventListener("click", handleGoogleLogin);
 btnGuest.addEventListener("click", continueAsGuest);
 
-// fermer avec Échap
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") {
     closeModal();
