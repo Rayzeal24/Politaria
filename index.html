@@ -569,22 +569,12 @@ function drawOrbits() {
    🎨 Planètes avec dégradés
 ------------------------ */
 function drawShadedPlanet(x, y, radius, baseColor, glowFactor = 0.5) {
-  const dx = cx - x;
-  const dy = cy - y;
-  const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-  const lx = dx / dist;
-  const ly = dy / dist;
-
-  const highlightX = x + lx * radius * 0.5;
-  const highlightY = y + ly * radius * 0.5;
-
   const gradient = ctx.createRadialGradient(
-    highlightX, highlightY, radius * 0.1,
+    x, y, radius * 0.6,
     x, y, radius * 1.1
   );
 
-  gradient.addColorStop(0, lightenColor(baseColor, 0.35));
-  gradient.addColorStop(0.4, baseColor);
+  gradient.addColorStop(0, baseColor);
   gradient.addColorStop(1, darkenColor(baseColor, 0.35));
 
   ctx.fillStyle = gradient;
@@ -597,7 +587,7 @@ function drawShadedPlanet(x, y, radius, baseColor, glowFactor = 0.5) {
       x, y, radius,
       x, y, radius * 2.3
     );
-    glowGradient.addColorStop(0, hexToRgba(baseColor, 0.4 * glowFactor));
+    glowGradient.addColorStop(0, hexToRgba(baseColor, 0.35 * glowFactor));
     glowGradient.addColorStop(1, "rgba(0,0,0,0)");
 
     ctx.fillStyle = glowGradient;
