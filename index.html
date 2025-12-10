@@ -823,14 +823,17 @@ const legalModal = document.getElementById("legal-modal");
 const legalContent = document.getElementById("legal-content");
 
 function openLegal(type) {
-  let url;
+  let baseUrl;
   if (type === "conditions") {
-    url = "/legal/conditions-utilisation.html";
+    baseUrl = "/legal/conditions-utilisation.html";
   } else if (type === "confidentialite") {
-    url = "/legal/politique-confidentialite.html";
+    baseUrl = "/legal/politique-confidentialite.html";
   } else {
     return;
   }
+
+  // on ajoute un paramètre unique pour casser le cache du navigateur/CDN
+  const url = baseUrl + "?t=" + Date.now();
 
   fetch(url)
     .then((res) => {
@@ -859,6 +862,7 @@ function openLegal(type) {
       legalModal.classList.add("show");
     });
 }
+
 
 function closeLegalModal() {
   legalModal.classList.remove("show");
