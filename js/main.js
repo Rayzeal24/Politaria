@@ -373,11 +373,21 @@ document.addEventListener("DOMContentLoaded", () => {
      🔐 Actions des boutons
   ------------------------ */
 
-  function handleGoogleLogin() {
-    // À brancher sur ta vraie route OAuth
-    // window.location.href = "/auth/google";
-    alert("Connexion Google sera branchée ici plus tard.");
+ function handleGoogleLogin() {
+  // Pour l'instant : fonctionnalité en cours de développement
+  const btn = document.getElementById("btn-google");
+  if (btn) {
+    btn.classList.add("auth-disabled");
+    btn.innerHTML = `
+      <span class="auth-btn-icon">G</span>
+      <span>Connexion Google bientôt disponible</span>
+    `;
   }
+
+  // Petit message dans la console pour toi
+  console.info("TODO: brancher Google OAuth ici (ex: /auth/google).");
+}
+
 
   function applyGuestModeUI() {
     if (subtitle) {
