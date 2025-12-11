@@ -344,27 +344,18 @@ const btnGuest = document.getElementById("btn-guest");
 
 const MODE_KEY = "politariaMode";
 
-// ⚙️ Config OAuth Google – À REMPLACER par ton vrai client ID
-const GOOGLE_CLIENT_ID = "VOTRE_CLIENT_ID_GOOGLE"; // <--- remplace ça
+// ⚙️ Config OAuth Google
+const GOOGLE_CLIENT_ID = "384194128216-26uuditt8tfcj2trpghfb0a3bj0njuhd.apps.googleusercontent.com";
 const GOOGLE_AUTH_ENDPOINT = "https://accounts.google.com/o/oauth2/v2/auth";
 
-/**
- * Ouvre la modale principale
- */
 function startGame() {
   modal.classList.add("show");
 }
 
-/**
- * Ferme la modale principale
- */
 function closeModal() {
   modal.classList.remove("show");
 }
 
-/**
- * Ferme la modale si on clique sur le fond
- */
 function backdropClick(event) {
   if (event.target === modal) {
     closeModal();
@@ -375,25 +366,13 @@ function backdropClick(event) {
    🔐 Actions des boutons
 ------------------------ */
 
-/**
- * Connexion Google via OAuth 2.0 (redirection)
- * Redirige vers Google, qui renverra ensuite sur /games.html?mode=google
- */
 function handleGoogleLogin() {
-  // Sécurité : si tu n'as pas encore mis ton vrai client ID, on bloque
-  if (!GOOGLE_CLIENT_ID || GOOGLE_CLIENT_ID === "VOTRE_CLIENT_ID_GOOGLE") {
-    alert("OAuth Google n'est pas encore configuré (client ID manquant).");
-    console.warn("Remplace GOOGLE_CLIENT_ID par ton vrai client ID Google.");
-    return;
-  }
-
   const params = new URLSearchParams({
     client_id: GOOGLE_CLIENT_ID,
-    redirect_uri: "https://politaria.eu/games.html?mode=google",
-    response_type: "token", // flux implicite : access_token dans le hash de l'URL
+    redirect_uri: "https://politaria.eu/games.html",
+    response_type: "token",
     scope: "openid email profile",
     include_granted_scopes: "true",
-    state: "politaria_google_login",
     prompt: "select_account"
   });
 
@@ -401,10 +380,6 @@ function handleGoogleLogin() {
   window.location.href = url;
 }
 
-/**
- * Mode invité : on marque le mode en localStorage
- * puis redirection vers la page des jeux.
- */
 function applyGuestModeUI() {
   if (subtitle) {
     subtitle.textContent = "Mode invité : votre premier système Politaria est en préparation…";
@@ -424,15 +399,14 @@ function applyGuestModeUI() {
 
 function continueAsGuest() {
   localStorage.setItem(MODE_KEY, "guest");
-  // On pourrait laisser l'UI se mettre à jour ici, mais on part directement sur la page de jeux
   window.location.href = "/games.html?mode=guest";
 }
 
-/* Connexion des boutons */
+// on connecte les boutons
 if (btnGoogle) btnGoogle.addEventListener("click", handleGoogleLogin);
 if (btnGuest) btnGuest.addEventListener("click", continueAsGuest);
 
-/* Au chargement de la page d'accueil, si déjà en invité, on ajuste l'UI */
+// au chargement, on regarde si le joueur était déjà en invité
 window.addEventListener("DOMContentLoaded", () => {
   const mode = localStorage.getItem(MODE_KEY);
   if (mode === "guest") {
@@ -440,9 +414,7 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-/* -----------------------
-   ⌨️ Fermeture avec Échap
------------------------- */
+// fermer avec Échap
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") {
     closeModal();
@@ -467,7 +439,6 @@ function openLegal(type) {
     return;
   }
 
-  // on ajoute un paramètre unique pour casser le cache du navigateur/CDN
   const url = baseUrl + "?t=" + Date.now();
 
   fetch(url)
@@ -477,7 +448,6 @@ function openLegal(type) {
     })
     .then((html) => {
       const lower = html.toLowerCase();
-      // Si jamais le serveur renvoie une page complète (index, 404, etc.)
       if (lower.includes("<html") || lower.includes("<body")) {
         throw new Error("Document complet détecté");
       }
