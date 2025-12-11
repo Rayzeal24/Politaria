@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Politaria – Games</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: system-ui, sans-serif;
+      background: #0d1117;
+      color: #e6edf3;
+    }
+
+    header {
+      padding: 20px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #1f2937;
+      background: rgba(255,255,255,0.02);
+      backdrop-filter: blur(8px);
+    }
+
+    .logo {
+      font-size: 1.6rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo span {
+      background: linear-gradient(90deg, #4f46e5, #06b6d4);
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    .status-badge {
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: #1e3a8a;
+      color: #bfdbfe;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    main {
+      text-align: center;
+      margin-top: 80px;
+      padding: 20px;
+    }
+
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 10px;
+    }
+
+    p.subtitle {
+      opacity: 0.8;
+      font-size: 1.1rem;
+      margin-bottom: 40px;
+    }
+
+    .btn {
+      padding: 18px 36px;
+      border: none;
+      border-radius: 999px;
+      font-size: 1.2rem;
+      font-weight: 600;
+      background: #2563eb;
+      color: white;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .btn:hover {
+      background: #1e40af;
+      transform: translateY(-2px);
+    }
+
+    footer {
+      margin-top: 80px;
+      opacity: 0.5;
+      font-size: 0.85rem;
+      padding-bottom: 40px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">🌌 <span>Politaria</span></div>
+
+  <div class="status-badge">
+    🕶️ Mode invité
+  </div>
+</header>
+
+<main>
+  <h1>Games</h1>
+  <p class="subtitle">Chargement du statut du joueur...</p>
+
+  <button class="btn" onclick="alert('Création de système à venir !')">
+    + Créer un système
+  </button>
+</main>
+
+<footer>
+  Politaria © 2025 – Tous droits réservés.
+</footer>
+
+<!-- SCRIPT POUR DÉTECTER LE MODE (invité / google) -->
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const mode = params.get("mode"); // "guest" ou "google"
+
+  const badge = document.querySelector(".status-badge");
+  const subtitle = document.querySelector(".subtitle");
+
+  if (mode === "google") {
+    badge.textContent = "🔐 Connecté via Google";
+    subtitle.textContent = "Bienvenue dans vos systèmes stellaires.";
+  } else {
+    badge.textContent = "🕶️ Mode invité";
+    subtitle.textContent = "Vous n'avez pas encore créé de système stellaire.";
+  }
+</script>
+
+</body>
+</html>
