@@ -5,6 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Politaria – Games</title>
 
+  <!-- Favicons (optionnel mais recommandé) -->
+  <link rel="icon" type="image/png" sizes="96x96" href="icon/favicon-96x96.png">
+  <link rel="icon" type="image/svg+xml" href="icon/favicon.svg">
+  <link rel="shortcut icon" href="icon/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="icon/apple-touch-icon.png">
+  <link rel="manifest" href="icon/site.webmanifest">
+
   <style>
     :root{
       --bg0:#070A12;
@@ -37,8 +44,6 @@
         radial-gradient(900px 600px at 40% 90%, rgba(52,211,153,0.10), transparent 62%),
         linear-gradient(180deg, var(--bg0), var(--bg1));
       overflow-x:hidden;
-
-      /* Typo système améliorée */
       font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
     }
 
@@ -87,48 +92,35 @@
       user-select:none;
     }
 
+    /* ✅ Logo badge + image */
     .logo-badge{
       width:36px;
       height:36px;
       border-radius:14px;
-      background:
-        radial-gradient(circle at 30% 20%, rgba(255,255,255,0.12), transparent 55%),
-        linear-gradient(135deg, rgba(99,102,241,0.7), rgba(34,211,238,0.55));
-      box-shadow: 0 0 22px rgba(99,102,241,0.22), 0 0 22px rgba(34,211,238,0.16);
+      overflow:hidden;
+      background: rgba(255,255,255,0.06);
+      border:1px solid rgba(255,255,255,0.14);
       display:flex;
       align-items:center;
       justify-content:center;
-      border:1px solid rgba(255,255,255,0.14);
+      box-shadow: 0 0 22px rgba(99,102,241,0.18), 0 0 22px rgba(34,211,238,0.12);
+    }
+
+    .logo-img{
+      width: 74%;
+      height: 74%;
+      object-fit: contain;
+      display:block;
+      filter: drop-shadow(0 0 6px rgba(0,0,0,0.35));
     }
 
     .logo span{
-      font-size:1.1rem;
-      background: linear-gradient(90deg, #a5b4fc, #67e8f9, #a5b4fc);
+      font-size:1.15rem;
+      font-weight: 950;
+      background: linear-gradient(90deg, #dbeafe, #a5b4fc, #67e8f9);
       -webkit-background-clip:text;
       color:transparent;
-    }
-
-    .status-badge{
-      display:inline-flex;
-      align-items:center;
-      gap:10px;
-      padding:10px 14px;
-      border-radius:999px;
-      background: rgba(30,58,138,0.35);
-      border:1px solid rgba(191,219,254,0.22);
-      color:#cfe3ff;
-      font-weight:700;
-      letter-spacing:0.2px;
-      box-shadow: 0 10px 28px rgba(0,0,0,0.25);
-      white-space:nowrap;
-    }
-
-    .status-dot{
-      width:10px;
-      height:10px;
-      border-radius:50%;
-      background: rgba(255,255,255,0.35);
-      box-shadow: 0 0 12px rgba(255,255,255,0.25);
+      text-shadow: 0 0 18px rgba(99,102,241,0.22);
     }
 
     main{
@@ -236,9 +228,7 @@
       box-shadow: 0 20px 60px rgba(37,99,235,0.22), 0 14px 44px rgba(34,211,238,0.18);
     }
 
-    .big-btn:active{
-      transform: translateY(0px);
-    }
+    .big-btn:active{ transform: translateY(0px); }
 
     .side{
       display:flex;
@@ -286,9 +276,7 @@
        PROFIL / MENU UTILISATEUR
        ========================= */
 
-    .profile-wrapper {
-      position: relative;
-    }
+    .profile-wrapper { position: relative; }
 
     .profile-btn {
       display: flex;
@@ -373,14 +361,14 @@
   <header>
     <div class="left">
       <div class="logo">
-        <div class="logo-badge">🌌</div>
+        <!-- ✅ Logo remplacé -->
+        <div class="logo-badge">
+          <img src="icon/favicon-96x96.png" alt="Politaria" class="logo-img">
+        </div>
         <span>Politaria</span>
       </div>
 
-      <div class="status-badge">
-        <span class="status-dot" id="statusDot"></span>
-        <span id="statusText">⏳ Chargement...</span>
-      </div>
+      <!-- ✅ Badge “Connecté via Google” supprimé ici -->
     </div>
 
     <!-- ✅ Bouton profil + menu -->
@@ -448,8 +436,6 @@
   <script>
     const MODE_KEY = "politariaMode";
 
-    const statusText = document.getElementById("statusText");
-    const statusDot  = document.getElementById("statusDot");
     const subtitle   = document.getElementById("subtitle");
 
     const modePill    = document.getElementById("modePill");
@@ -478,17 +464,6 @@
     // 3) LocalStorage
     const savedMode = localStorage.getItem(MODE_KEY);
 
-    function setDot(kind){
-      if (!statusDot) return;
-      if (kind === "google"){
-        statusDot.style.background = "rgba(34,211,238,0.95)";
-        statusDot.style.boxShadow  = "0 0 14px rgba(34,211,238,0.55)";
-      } else {
-        statusDot.style.background = "rgba(251,191,36,0.95)";
-        statusDot.style.boxShadow  = "0 0 14px rgba(251,191,36,0.45)";
-      }
-    }
-
     function updateProfileUI(mode){
       if (mode === "google") {
         profileIcon.textContent = "👤";
@@ -501,9 +476,7 @@
 
     function setGuestMode() {
       localStorage.setItem(MODE_KEY, "guest");
-      if (statusText) statusText.textContent = "🕶️ Mode invité";
       if (subtitle) subtitle.textContent = "Vous êtes en invité : progression locale, sans synchronisation.";
-      setDot("guest");
 
       if (modePill) modePill.textContent = "Invité";
       if (storagePill) storagePill.textContent = "Local";
@@ -518,9 +491,7 @@
 
     function setGoogleMode() {
       localStorage.setItem(MODE_KEY, "google");
-      if (statusText) statusText.textContent = "🔐 Connecté via Google";
       if (subtitle) subtitle.textContent = "Session Google active : vos systèmes seront synchronisés.";
-      setDot("google");
 
       if (modePill) modePill.textContent = "Google";
       if (storagePill) storagePill.textContent = "Cloud (bientôt)";
