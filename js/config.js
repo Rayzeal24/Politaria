@@ -1,6 +1,7 @@
 "use strict";
 
-window.POLITARIA = window.POLITARIA || {};
+// ✅ On crée l’objet global ET on crée l’identifiant POLITARIA
+const POLITARIA = (window.POLITARIA = window.POLITARIA || {});
 
 POLITARIA.CONFIG = {
   ROUTES: {
