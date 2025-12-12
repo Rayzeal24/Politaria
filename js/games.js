@@ -1,9 +1,18 @@
 "use strict";
+window.POLITARIA = window.POLITARIA || {};
 
-const { CONFIG, session, systems } = window.POLITARIA;
+const CONFIG = (window.POLITARIA.CONFIG || {
+  KEYS: { COINS:"politariaCoins" }
+});
 
-(() => {
-  const K = CONFIG.KEYS;
+document.addEventListener("DOMContentLoaded", () => {
+  const session = window.POLITARIA.session;
+  const systems = window.POLITARIA.systems;
+
+  if(!session || !systems){
+    console.error("POLITARIA: session/systems manquant -> vérifie les chemins /js/*.js");
+    return;
+  }
 
   // DOM
   const subtitle     = document.getElementById("subtitle");
@@ -35,8 +44,9 @@ const { CONFIG, session, systems } = window.POLITARIA;
   const formatDots = (n) => String(Math.floor(Number(n||0))).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 
   function setCoinsUI(){
-    if (!localStorage.getItem(K.COINS)) localStorage.setItem(K.COINS, "1000");
-    walletAmount.textContent = "$" + formatDots(localStorage.getItem(K.COINS));
+    const key = CONFIG.KEYS.COINS || "politariaCoins";
+    if (!localStorage.getItem(key)) localStorage.setItem(key, "1000");
+    walletAmount.textContent = "$" + formatDots(localStorage.getItem(key));
   }
 
   function applyModeUI(mode){
@@ -124,7 +134,7 @@ const { CONFIG, session, systems } = window.POLITARIA;
     }
   }
 
-  // menu profil
+  // ✅ Menu profil
   profileBtn.addEventListener("click", (e) => {
     e.stopPropagation();
     const open = profileMenu.classList.toggle("show");
@@ -139,7 +149,7 @@ const { CONFIG, session, systems } = window.POLITARIA;
   menuSave.addEventListener("click", () => toast("Sauvegarde : OK (local). Cloud à brancher ensuite."));
   menuLogout.addEventListener("click", () => session.logout());
 
-  // actions
+  // ✅ Boutons
   btnCreate.addEventListener("click", () => {
     const name = prompt("Nom du système :", "Nova-" + Math.floor(Math.random()*999));
     if(!name) return;
@@ -156,9 +166,11 @@ const { CONFIG, session, systems } = window.POLITARIA;
   btnLeaderboard.addEventListener("click", () => toast("Classement à venir."));
   btnSettings.addEventListener("click", () => toast("Paramètres à venir."));
 
-  // init (porte d’entrée login/inscription)
+  // ✅ Init (porte login/inscription)
   const mode = session.initFromUrl();
   applyModeUI(mode);
   setCoinsUI();
   renderSystems();
-})();
+
+  console.log("POLITARIA READY ✅");
+});
