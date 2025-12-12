@@ -551,42 +551,58 @@
     // Load external profile menu
     // =========================
     async function loadProfileMenu(){
-      try{
-        const res = await fetch("partials/profile-menu.html", { cache: "no-cache" });
-        const html = await res.text();
-        profileMenuMount.innerHTML = html;
+  const fallbackHTML = `
+    <div class="profile-menu" id="profileMenu" role="menu" aria-label="Menu utilisateur">
+      <button class="menu-item" id="menuSave">⚙️ Sauvegarder la progression</button>
+      <button class="menu-item" id="menuLogout">⛔ Déconnexion</button>
+      <div class="menu-sep"></div>
+      <a class="menu-item link" href="https://discord.gg/" target="_blank" rel="noopener">💬 Rejoindre le Discord</a>
+      <a class="menu-item link" href="#" target="_blank" rel="noopener">📖 Voir le Wiki</a>
+    </div>
+  `;
 
-        // Maintenant qu'il existe, on peut le hook
-        const profileMenu = document.getElementById("profileMenu");
-        const menuLogout  = document.getElementById("menuLogout");
-        const menuSave    = document.getElementById("menuSave");
+  try{
+    const url = "/partials/profile-menu.html?v=" + Date.now();
+    const res = await fetch(url, { cache: "no-store" });
 
-        profileBtn.addEventListener("click", (e) => {
-          e.stopPropagation();
-          const isOpen = profileMenu.classList.toggle("show");
-          profileBtn.setAttribute("aria-expanded", String(isOpen));
-        });
+    if(!res.ok) throw new Error("HTTP " + res.status);
 
-        document.addEventListener("click", () => {
-          profileMenu.classList.remove("show");
-          profileBtn.setAttribute("aria-expanded", "false");
-        });
+    const html = await res.text();
+    profileMenuMount.innerHTML = html;
 
-        menuSave?.addEventListener("click", () => {
-          toast("Sauvegarde : OK (local). Cloud à brancher ensuite.");
-        });
+  }catch(err){
+    console.warn("Menu externe indisponible, fallback utilisé:", err);
+    profileMenuMount.innerHTML = fallbackHTML;
+  }
 
-        menuLogout?.addEventListener("click", () => {
-          localStorage.removeItem(MODE_KEY);
-          window.location.href = "/index.html";
-        });
+  // 🔥 Hook APRÈS injection (fallback ou fetch)
+  const profileMenu = document.getElementById("profileMenu");
+  const menuLogout  = document.getElementById("menuLogout");
+  const menuSave    = document.getElementById("menuSave");
 
-      }catch(err){
-        console.error("Profile menu load failed:", err);
-      }
-    }
+  profileBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const isOpen = profileMenu.classList.toggle("show");
+    profileBtn.setAttribute("aria-expanded", String(isOpen));
+  });
 
-    loadProfileMenu();
+  document.addEventListener("click", () => {
+    profileMenu.classList.remove("show");
+    profileBtn.setAttribute("aria-expanded", "false");
+  });
+
+  menuSave?.addEventListener("click", () => {
+    toast("Sauvegarde : OK (local). Cloud à brancher ensuite.");
+  });
+
+  menuLogout?.addEventListener("click", () => {
+    localStorage.removeItem(MODE_KEY);
+    window.location.href = "/index.html";
+  });
+}
+
+loadProfileMenu();
+
 
     // =========================
     // Session Mode (Google / Guest)
