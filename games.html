@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Politaria – Games</title>
 
-  <!-- Favicons (optionnel mais recommandé) -->
-  <link rel="icon" type="image/png" sizes="96x96" href="icon/favicon-96x96.png">
-  <link rel="icon" type="image/svg+xml" href="icon/favicon.svg">
-  <link rel="shortcut icon" href="icon/favicon.ico">
-  <link rel="apple-touch-icon" sizes="180x180" href="icon/apple-touch-icon.png">
-  <link rel="manifest" href="icon/site.webmanifest">
+  <!-- Favicons -->
+  <link rel="icon" type="image/png" sizes="96x96" href="icon/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="icon/favicon.svg" />
+  <link rel="shortcut icon" href="icon/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="icon/apple-touch-icon.png" />
+  <link rel="manifest" href="icon/site.webmanifest" />
 
   <style>
     :root{
@@ -22,19 +22,11 @@
       --text:#e6edf3;
       --muted: rgba(230,237,243,0.72);
 
-      --blue:#60a5fa;
-      --cyan:#22d3ee;
-      --indigo:#6366f1;
-      --emerald:#34d399;
-      --amber:#fbbf24;
-      --red:#ef4444;
-
       --shadow: 0 24px 70px rgba(0,0,0,0.55);
       --radius: 22px;
     }
 
     *{ box-sizing:border-box; }
-
     body{
       margin:0;
       color:var(--text);
@@ -47,7 +39,7 @@
       font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
     }
 
-    /* étoiles */
+    /* étoiles (léger, tu peux l’enlever si tu veux) */
     .stars{
       position:fixed;
       inset:0;
@@ -62,6 +54,9 @@
       filter: blur(0.1px);
     }
 
+    /* =========================
+       HEADER (NE PAS CHANGER)
+       ========================= */
     header{
       position:sticky;
       top:0;
@@ -75,14 +70,12 @@
       backdrop-filter: blur(10px);
       gap: 14px;
     }
-
     .left{
       display:flex;
       align-items:center;
       gap:14px;
       min-width: 280px;
     }
-
     .logo{
       display:flex;
       align-items:center;
@@ -91,8 +84,6 @@
       letter-spacing:0.3px;
       user-select:none;
     }
-
-    /* ✅ Logo badge + image */
     .logo-badge{
       width:36px;
       height:36px;
@@ -105,7 +96,6 @@
       justify-content:center;
       box-shadow: 0 0 22px rgba(99,102,241,0.18), 0 0 22px rgba(34,211,238,0.12);
     }
-
     .logo-img{
       width: 74%;
       height: 74%;
@@ -113,7 +103,6 @@
       display:block;
       filter: drop-shadow(0 0 6px rgba(0,0,0,0.35));
     }
-
     .logo span{
       font-size:1.15rem;
       font-weight: 950;
@@ -123,161 +112,7 @@
       text-shadow: 0 0 18px rgba(99,102,241,0.22);
     }
 
-    main{
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 34px 18px 60px;
-    }
-
-    .hero{
-      margin-top: 22px;
-      text-align:center;
-      position:relative;
-    }
-
-    h1{
-      margin:0;
-      font-size: clamp(2.3rem, 4.2vw, 3.6rem);
-      font-weight: 950;
-      letter-spacing: 0.4px;
-      background: linear-gradient(90deg, rgba(255,255,255,0.95), rgba(165,180,252,0.95), rgba(103,232,249,0.95));
-      -webkit-background-clip:text;
-      color:transparent;
-      text-shadow: 0 0 26px rgba(99,102,241,0.18);
-    }
-
-    .subtitle{
-      margin: 12px auto 0;
-      max-width: 740px;
-      opacity:0.88;
-      font-size: 1.08rem;
-      color: var(--muted);
-      line-height:1.55;
-    }
-
-    .grid{
-      margin-top: 34px;
-      display:grid;
-      grid-template-columns: 1.35fr 0.65fr;
-      gap: 16px;
-      align-items:stretch;
-    }
-
-    @media (max-width: 880px){
-      .grid{ grid-template-columns: 1fr; }
-      .left{ min-width: unset; }
-      header{ padding: 16px 16px; }
-    }
-
-    .card{
-      background: linear-gradient(180deg, var(--card), var(--card2));
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      overflow:hidden;
-      position:relative;
-    }
-
-    .card::before{
-      content:"";
-      position:absolute;
-      inset:-2px;
-      background:
-        radial-gradient(600px 220px at 20% 0%, rgba(99,102,241,0.20), transparent 60%),
-        radial-gradient(600px 220px at 80% 20%, rgba(34,211,238,0.16), transparent 60%);
-      pointer-events:none;
-      opacity:0.9;
-    }
-
-    .card-inner{
-      position:relative;
-      padding: 20px 20px 18px;
-    }
-
-    .card h2{
-      margin:0 0 8px;
-      font-size: 1.05rem;
-      letter-spacing:0.25px;
-      color: rgba(255,255,255,0.92);
-    }
-
-    .muted{
-      color: var(--muted);
-      line-height:1.55;
-      margin:0;
-    }
-
-    .big-btn{
-      width: 100%;
-      margin-top: 16px;
-      padding: 16px 18px;
-      border: none;
-      border-radius: 999px;
-      font-size: 1.06rem;
-      font-weight: 850;
-      cursor: pointer;
-      transition: 0.18s ease;
-      color: #071018;
-      background: linear-gradient(135deg, rgba(96,165,250,0.95), rgba(34,211,238,0.88));
-      box-shadow: 0 16px 44px rgba(37,99,235,0.18), 0 10px 34px rgba(34,211,238,0.16);
-    }
-
-    .big-btn:hover{
-      transform: translateY(-2px);
-      filter: brightness(1.03);
-      box-shadow: 0 20px 60px rgba(37,99,235,0.22), 0 14px 44px rgba(34,211,238,0.18);
-    }
-
-    .big-btn:active{ transform: translateY(0px); }
-
-    .side{
-      display:flex;
-      flex-direction:column;
-      gap: 12px;
-    }
-
-    .pill{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      padding: 14px 16px;
-      border-radius: 18px;
-      border: 1px solid rgba(148,163,184,0.14);
-      background: rgba(255,255,255,0.035);
-    }
-
-    .pill .k{
-      font-weight:850;
-      letter-spacing:0.2px;
-    }
-
-    .pill .v{
-      color: rgba(230,237,243,0.78);
-      font-weight:700;
-    }
-
-    .hint{
-      margin-top: 8px;
-      font-size: 0.92rem;
-      color: rgba(230,237,243,0.68);
-    }
-
-    footer{
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 0 18px 40px;
-      opacity:0.55;
-      font-size:0.86rem;
-      text-align:center;
-    }
-
-    /* =========================
-       PROFIL / MENU UTILISATEUR
-       ========================= */
-
     .profile-wrapper { position: relative; }
-
     .profile-btn {
       display: flex;
       align-items: center;
@@ -292,13 +127,11 @@
       transition: 0.2s ease;
       white-space: nowrap;
     }
-
     .profile-btn:hover {
       transform: translateY(-1px);
       box-shadow: 0 12px 32px rgba(0,0,0,0.35);
       border-color: rgba(148,163,184,0.35);
     }
-
     .profile-icon {
       width: 26px;
       height: 26px;
@@ -309,7 +142,6 @@
       background: rgba(255,255,255,0.15);
       font-size: 0.95rem;
     }
-
     .profile-menu {
       position: absolute;
       top: calc(100% + 10px);
@@ -323,9 +155,7 @@
       display: none;
       z-index: 50;
     }
-
     .profile-menu.show { display: block; }
-
     .menu-item {
       width: 100%;
       padding: 12px 14px;
@@ -339,18 +169,189 @@
       cursor: pointer;
       transition: 0.15s ease;
     }
-
     .menu-item:hover { background: rgba(255,255,255,0.08); }
+    .menu-item.link { text-decoration: none; display: block; }
+    .menu-sep { height: 1px; margin: 6px 0; background: rgba(148,163,184,0.15); }
 
-    .menu-item.link {
-      text-decoration: none;
-      display: block;
+    /* =========================
+       PAGE
+       ========================= */
+    main{
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 34px 18px 60px;
+    }
+    .hero{
+      margin-top: 22px;
+      text-align:center;
+      position:relative;
+    }
+    h1{
+      margin:0;
+      font-size: clamp(2.3rem, 4.2vw, 3.6rem);
+      font-weight: 950;
+      letter-spacing: 0.4px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.95), rgba(165,180,252,0.95), rgba(103,232,249,0.95));
+      -webkit-background-clip:text;
+      color:transparent;
+      text-shadow: 0 0 26px rgba(99,102,241,0.18);
+    }
+    .subtitle{
+      margin: 12px auto 0;
+      max-width: 780px;
+      opacity:0.88;
+      font-size: 1.05rem;
+      color: var(--muted);
+      line-height:1.55;
     }
 
-    .menu-sep {
-      height: 1px;
-      margin: 6px 0;
-      background: rgba(148,163,184,0.15);
+    .grid{
+      margin-top: 26px;
+      display:grid;
+      grid-template-columns: 1.35fr 0.65fr;
+      gap: 16px;
+      align-items:stretch;
+    }
+    @media (max-width: 880px){
+      .grid{ grid-template-columns: 1fr; }
+      .left{ min-width: unset; }
+      header{ padding: 16px 16px; }
+    }
+
+    .card{
+      background: linear-gradient(180deg, var(--card), var(--card2));
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+    .card::before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background:
+        radial-gradient(600px 220px at 20% 0%, rgba(99,102,241,0.20), transparent 60%),
+        radial-gradient(600px 220px at 80% 20%, rgba(34,211,238,0.16), transparent 60%);
+      pointer-events:none;
+      opacity:0.9;
+    }
+    .card-inner{ position:relative; padding: 20px 20px 18px; }
+
+    .muted{ color: var(--muted); line-height:1.55; margin:0; }
+
+    .toolbar{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top: 14px;
+    }
+
+    .btn{
+      border: 1px solid rgba(148,163,184,0.18);
+      background: rgba(255,255,255,0.045);
+      color: rgba(255,255,255,0.92);
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: 0.18s ease;
+    }
+    .btn:hover{ transform: translateY(-1px); border-color: rgba(148,163,184,0.35); }
+    .btn.primary{
+      border:none;
+      color:#071018;
+      background: linear-gradient(135deg, rgba(96,165,250,0.95), rgba(34,211,238,0.88));
+      box-shadow: 0 16px 44px rgba(37,99,235,0.18), 0 10px 34px rgba(34,211,238,0.16);
+    }
+    .btn.primary:hover{ filter: brightness(1.03); }
+
+    .list{
+      margin-top: 14px;
+      display:flex;
+      flex-direction:column;
+      gap: 10px;
+    }
+    .system{
+      border-radius: 16px;
+      border: 1px solid rgba(148,163,184,0.14);
+      background: rgba(255,255,255,0.03);
+      padding: 12px 12px;
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .system h3{
+      margin:0;
+      font-size: 1.02rem;
+      font-weight: 900;
+      letter-spacing:0.2px;
+    }
+    .system .meta{
+      margin-top: 6px;
+      font-size: 0.92rem;
+      color: rgba(230,237,243,0.70);
+      display:flex;
+      flex-wrap:wrap;
+      gap: 10px;
+    }
+    .system .actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap: 8px;
+      justify-content:flex-end;
+      align-items:center;
+    }
+    .chip{
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.18);
+      background: rgba(255,255,255,0.03);
+      font-weight: 800;
+      color: rgba(230,237,243,0.86);
+    }
+
+    .side{
+      display:flex;
+      flex-direction:column;
+      gap: 12px;
+    }
+    .pill{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding: 14px 16px;
+      border-radius: 18px;
+      border: 1px solid rgba(148,163,184,0.14);
+      background: rgba(255,255,255,0.035);
+    }
+    .pill .k{ font-weight:850; letter-spacing:0.2px; }
+    .pill .v{ color: rgba(230,237,243,0.78); font-weight:700; }
+
+    .hint{
+      margin-top: 10px;
+      font-size: 0.92rem;
+      color: rgba(230,237,243,0.68);
+    }
+
+    footer{
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 18px 40px;
+      opacity:0.55;
+      font-size:0.86rem;
+      text-align:center;
+    }
+
+    /* Accessibilité */
+    .sr-only{
+      position:absolute;
+      width:1px;height:1px;
+      padding:0;margin:-1px;
+      overflow:hidden;clip:rect(0,0,0,0);
+      white-space:nowrap;border:0;
     }
   </style>
 </head>
@@ -358,34 +359,31 @@
 <body>
   <div class="stars"></div>
 
+  <!-- HEADER INCHANGÉ -->
   <header>
     <div class="left">
       <div class="logo">
-        <!-- ✅ Logo remplacé -->
         <div class="logo-badge">
           <img src="icon/favicon-96x96.png" alt="Politaria" class="logo-img">
         </div>
         <span>Politaria</span>
       </div>
-
-      <!-- ✅ Badge “Connecté via Google” supprimé ici -->
     </div>
 
-    <!-- ✅ Bouton profil + menu -->
     <div class="profile-wrapper">
-      <button class="profile-btn" id="profileBtn">
+      <button class="profile-btn" id="profileBtn" aria-haspopup="true" aria-expanded="false">
         <span class="profile-icon" id="profileIcon">🕶️</span>
         <span class="profile-label" id="profileLabel">Invité</span>
       </button>
 
-      <div class="profile-menu" id="profileMenu">
+      <div class="profile-menu" id="profileMenu" role="menu" aria-label="Menu utilisateur">
         <button class="menu-item" id="menuSave">⚙️ Sauvegarder la progression</button>
         <button class="menu-item" id="menuLogout">⛔ Déconnexion</button>
 
         <div class="menu-sep"></div>
 
-        <a class="menu-item link" href="https://discord.gg/" target="_blank">💬 Rejoindre le Discord</a>
-        <a class="menu-item link" href="#" target="_blank">📖 Voir le Wiki</a>
+        <a class="menu-item link" href="https://discord.gg/" target="_blank" rel="noopener">💬 Rejoindre le Discord</a>
+        <a class="menu-item link" href="#" target="_blank" rel="noopener">📖 Voir le Wiki</a>
       </div>
     </div>
   </header>
@@ -393,7 +391,7 @@
   <main>
     <section class="hero">
       <h1>Games</h1>
-      <p class="subtitle" id="subtitle">Vérification de votre session...</p>
+      <p class="subtitle" id="subtitle">Chargement...</p>
     </section>
 
     <section class="grid">
@@ -401,14 +399,28 @@
         <div class="card-inner">
           <h2>Vos systèmes stellaires</h2>
           <p class="muted" id="systemsText">
-            Aucun système détecté pour le moment. Créez votre premier monde et commencez à réécrire son histoire.
+            Préparez votre première étoile. Donnez-lui un nom… et laissez Politaria écrire le reste.
           </p>
 
-          <button class="big-btn" id="btnCreate">+ Créer un système</button>
-
-          <div class="hint">
-            Astuce : vous pourrez bientôt importer des drapeaux, choisir des doctrines, et déclencher des crises galactiques.
+          <!-- Boutons utiles -->
+          <div class="toolbar" aria-label="Actions principales">
+            <button class="btn primary" id="btnCreate">+ Créer</button>
+            <button class="btn" id="btnImport">Importer</button>
+            <button class="btn" id="btnTutorial">Tutoriel</button>
+            <button class="btn" id="btnLeaderboard">Classement</button>
+            <button class="btn" id="btnSettings">Paramètres</button>
           </div>
+
+          <div class="hint" id="hint">
+            Astuce : chaque système a une <b>seed</b>. Plus tard, elle générera planètes, ressources et anomalies.
+          </div>
+
+          <!-- Liste dynamique -->
+          <div class="list" id="systemsList" aria-live="polite"></div>
+
+          <p class="muted" id="emptyState" style="margin-top:12px; display:none;">
+            Rien ici pour l’instant. Crée ton premier système et lance la chronologie.
+          </p>
         </div>
       </div>
 
@@ -425,6 +437,10 @@
           <div class="k">Statut</div>
           <div class="v" id="statusPill">…</div>
         </div>
+        <div class="pill">
+          <div class="k">Systèmes</div>
+          <div class="v" id="countPill">0</div>
+        </div>
       </div>
     </section>
   </main>
@@ -434,18 +450,34 @@
   </footer>
 
   <script>
+    "use strict";
+
+    // =========================
+    // Keys
+    // =========================
     const MODE_KEY = "politariaMode";
+    const SYSTEMS_KEY = "politariaSystems_v1";
 
-    const subtitle   = document.getElementById("subtitle");
+    // =========================
+    // DOM
+    // =========================
+    const subtitle     = document.getElementById("subtitle");
+    const systemsText  = document.getElementById("systemsText");
+    const systemsList  = document.getElementById("systemsList");
+    const emptyState   = document.getElementById("emptyState");
 
-    const modePill    = document.getElementById("modePill");
-    const storagePill = document.getElementById("storagePill");
-    const statusPill  = document.getElementById("statusPill");
+    const modePill     = document.getElementById("modePill");
+    const storagePill  = document.getElementById("storagePill");
+    const statusPill   = document.getElementById("statusPill");
+    const countPill    = document.getElementById("countPill");
 
-    const systemsText = document.getElementById("systemsText");
-    const btnCreate   = document.getElementById("btnCreate");
+    const btnCreate      = document.getElementById("btnCreate");
+    const btnImport      = document.getElementById("btnImport");
+    const btnTutorial    = document.getElementById("btnTutorial");
+    const btnLeaderboard = document.getElementById("btnLeaderboard");
+    const btnSettings    = document.getElementById("btnSettings");
 
-    // Profil / menu
+    // Profil / menu (header)
     const profileBtn   = document.getElementById("profileBtn");
     const profileMenu  = document.getElementById("profileMenu");
     const profileIcon  = document.getElementById("profileIcon");
@@ -453,15 +485,27 @@
     const menuLogout   = document.getElementById("menuLogout");
     const menuSave     = document.getElementById("menuSave");
 
-    // 1) Token Google dans le hash (#)
+    // =========================
+    // Utils
+    // =========================
+    const uid = () => (crypto?.randomUUID ? crypto.randomUUID() : String(Date.now()) + "_" + Math.random().toString(16).slice(2));
+    const nowISO = () => new Date().toISOString();
+    const safeJsonParse = (s, fallback) => { try { return JSON.parse(s); } catch { return fallback; } };
+
+    function toast(msg){
+      // ultra simple, sans dépendance
+      alert(msg);
+    }
+
+    // =========================
+    // Session Mode (Google / Guest)
+    // =========================
     const hashParams = new URLSearchParams(window.location.hash.slice(1));
     const googleToken = hashParams.get("access_token");
 
-    // 2) URL ?mode=guest
     const params = new URLSearchParams(window.location.search);
     const urlMode = params.get("mode");
 
-    // 3) LocalStorage
     const savedMode = localStorage.getItem(MODE_KEY);
 
     function updateProfileUI(mode){
@@ -476,85 +520,277 @@
 
     function setGuestMode() {
       localStorage.setItem(MODE_KEY, "guest");
-      if (subtitle) subtitle.textContent = "Vous êtes en invité : progression locale, sans synchronisation.";
-
-      if (modePill) modePill.textContent = "Invité";
-      if (storagePill) storagePill.textContent = "Local";
-      if (statusPill) statusPill.textContent = "Actif";
-
-      if (systemsText) {
-        systemsText.textContent = "Aucun système détecté. En mode invité, vos sauvegardes seront stockées sur cet appareil.";
-      }
-
+      subtitle.textContent = "Mode invité : progression locale, sans synchronisation.";
+      modePill.textContent = "Invité";
+      storagePill.textContent = "Local";
+      statusPill.textContent = "Actif";
+      systemsText.textContent = "Créez un système, testez, cassez tout… puis recommencez. Ici, l’univers vous obéit.";
       updateProfileUI("guest");
     }
 
     function setGoogleMode() {
       localStorage.setItem(MODE_KEY, "google");
-      if (subtitle) subtitle.textContent = "Session Google active : vos systèmes seront synchronisés.";
-
-      if (modePill) modePill.textContent = "Google";
-      if (storagePill) storagePill.textContent = "Cloud (bientôt)";
-      if (statusPill) statusPill.textContent = "Actif";
-
-      if (systemsText) {
-        systemsText.textContent = "Bienvenue. Vos systèmes apparaîtront ici dès que la synchronisation sera branchée.";
-      }
-
+      subtitle.textContent = "Session Google détectée : synchronisation cloud à brancher.";
+      modePill.textContent = "Google";
+      storagePill.textContent = "Cloud (bientôt)";
+      statusPill.textContent = "Actif";
+      systemsText.textContent = "Bienvenue. Vos systèmes apparaîtront ici, prêts à être partagés et disputés.";
       updateProfileUI("google");
     }
 
     function cleanUrlHash(){
-      if (window.location.hash && window.history && window.history.replaceState) {
+      if (window.location.hash && window.history?.replaceState) {
         history.replaceState(null, "", window.location.pathname + window.location.search);
       }
     }
 
-    // Priorité :
-    if (googleToken) {
-      setGoogleMode();
-      cleanUrlHash();
-    } else if (urlMode === "guest") {
-      setGuestMode();
-    } else if (savedMode === "google") {
-      setGoogleMode();
-    } else if (savedMode === "guest") {
-      setGuestMode();
-    } else {
-      setGuestMode();
+    if (googleToken) { setGoogleMode(); cleanUrlHash(); }
+    else if (urlMode === "guest") setGuestMode();
+    else if (savedMode === "google") setGoogleMode();
+    else setGuestMode();
+
+    // =========================
+    // Systems Store (local)
+    // =========================
+    function loadSystems(){
+      return safeJsonParse(localStorage.getItem(SYSTEMS_KEY), []);
+    }
+    function saveSystems(list){
+      localStorage.setItem(SYSTEMS_KEY, JSON.stringify(list));
     }
 
-    // Menu profil
-    if (profileBtn) {
-      profileBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        profileMenu.classList.toggle("show");
-      });
+    function renderSystems(){
+      const systems = loadSystems();
+      systemsList.innerHTML = "";
 
-      document.addEventListener("click", () => {
-        profileMenu.classList.remove("show");
+      countPill.textContent = String(systems.length);
+      emptyState.style.display = systems.length ? "none" : "block";
+
+      // Tri : récent d’abord
+      systems.sort((a,b) => (b.updatedAt || b.createdAt || "").localeCompare(a.updatedAt || a.createdAt || ""));
+
+      for(const s of systems){
+        const el = document.createElement("div");
+        el.className = "system";
+
+        const left = document.createElement("div");
+        left.style.flex = "1";
+
+        const title = document.createElement("h3");
+        title.textContent = s.name || "Système sans nom";
+
+        const meta = document.createElement("div");
+        meta.className = "meta";
+
+        const chipMode = document.createElement("span");
+        chipMode.className = "chip";
+        chipMode.textContent = "Mode: " + (s.mode || "Sandbox");
+
+        const chipSeed = document.createElement("span");
+        chipSeed.className = "chip";
+        chipSeed.textContent = "Seed: " + (s.seed || "—");
+
+        const chipDate = document.createElement("span");
+        chipDate.className = "chip";
+        chipDate.textContent = "Maj: " + (s.updatedAt ? new Date(s.updatedAt).toLocaleString() : "—");
+
+        meta.append(chipMode, chipSeed, chipDate);
+
+        left.append(title, meta);
+
+        const actions = document.createElement("div");
+        actions.className = "actions";
+
+        const btnPlay = document.createElement("button");
+        btnPlay.className = "btn primary";
+        btnPlay.textContent = "Jouer";
+        btnPlay.addEventListener("click", () => {
+          // Plus tard: rediriger vers /play.html?system=<id>
+          toast("Mode jeu à venir. Système: " + (s.name || "—"));
+        });
+
+        const btnRename = document.createElement("button");
+        btnRename.className = "btn";
+        btnRename.textContent = "Renommer";
+        btnRename.addEventListener("click", () => {
+          const name = prompt("Nouveau nom :", s.name || "");
+          if(!name) return;
+          updateSystem(s.id, { name, updatedAt: nowISO() });
+          renderSystems();
+        });
+
+        const btnExport = document.createElement("button");
+        btnExport.className = "btn";
+        btnExport.textContent = "Exporter";
+        btnExport.addEventListener("click", () => exportSystem(s.id));
+
+        const btnDelete = document.createElement("button");
+        btnDelete.className = "btn";
+        btnDelete.textContent = "Supprimer";
+        btnDelete.addEventListener("click", () => {
+          if(confirm("Supprimer ce système ?")) {
+            deleteSystem(s.id);
+            renderSystems();
+          }
+        });
+
+        actions.append(btnPlay, btnRename, btnExport, btnDelete);
+        el.append(left, actions);
+        systemsList.appendChild(el);
+      }
+    }
+
+    function addSystem(system){
+      const systems = loadSystems();
+      systems.push(system);
+      saveSystems(systems);
+    }
+
+    function updateSystem(id, patch){
+      const systems = loadSystems();
+      const i = systems.findIndex(x => x.id === id);
+      if(i === -1) return;
+      systems[i] = { ...systems[i], ...patch };
+      saveSystems(systems);
+    }
+
+    function deleteSystem(id){
+      const systems = loadSystems().filter(x => x.id !== id);
+      saveSystems(systems);
+    }
+
+    function exportSystem(id){
+      const systems = loadSystems();
+      const s = systems.find(x => x.id === id);
+      if(!s) return;
+
+      const blob = new Blob([JSON.stringify(s, null, 2)], { type: "application/json" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = (s.name || "system") + ".json";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+    }
+
+    function importSystemFromFile(file){
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          try{
+            const data = JSON.parse(String(reader.result || "{}"));
+            resolve(data);
+          }catch(e){ reject(e); }
+        };
+        reader.onerror = reject;
+        reader.readAsText(file);
       });
     }
 
-    // Actions
-    if (btnCreate) {
-      btnCreate.addEventListener("click", () => {
-        alert("Création de système à venir !");
-      });
-    }
+    // =========================
+    // Main Actions
+    // =========================
+    btnCreate.addEventListener("click", () => {
+      const name = prompt("Nom du système :", "Nova-" + Math.floor(Math.random()*999));
+      if(!name) return;
 
-    if (menuSave) {
-      menuSave.addEventListener("click", () => {
-        alert("Sauvegarde automatique activée (à brancher serveur).");
-      });
-    }
+      const mode = prompt("Mode (Sandbox / Chronique / Survie / Escarmouche) :", "Sandbox") || "Sandbox";
+      const seed = prompt("Seed (laisser vide = auto) :", "") || Math.floor(Math.random()*1e9).toString(16);
 
-    if (menuLogout) {
-      menuLogout.addEventListener("click", () => {
-        localStorage.setItem(MODE_KEY, "guest");
-        window.location.href = "/games.html?mode=guest";
+      addSystem({
+        id: uid(),
+        name: name.trim(),
+        mode: mode.trim(),
+        seed: seed.trim(),
+        createdAt: nowISO(),
+        updatedAt: nowISO(),
+        // réservé pour la suite :
+        planets: [],
+        factions: [],
+        events: []
       });
-    }
+
+      renderSystems();
+    });
+
+    btnImport.addEventListener("click", async () => {
+      const input = document.createElement("input");
+      input.type = "file";
+      input.accept = "application/json";
+      input.onchange = async () => {
+        const file = input.files?.[0];
+        if(!file) return;
+
+        try{
+          const data = await importSystemFromFile(file);
+          // Normalisation minimale
+          const system = {
+            id: data.id || uid(),
+            name: data.name || "Système importé",
+            mode: data.mode || "Sandbox",
+            seed: data.seed || Math.floor(Math.random()*1e9).toString(16),
+            createdAt: data.createdAt || nowISO(),
+            updatedAt: nowISO(),
+            planets: Array.isArray(data.planets) ? data.planets : [],
+            factions: Array.isArray(data.factions) ? data.factions : [],
+            events: Array.isArray(data.events) ? data.events : []
+          };
+
+          addSystem(system);
+          renderSystems();
+          toast("Import réussi : " + system.name);
+        }catch{
+          toast("Import échoué : fichier invalide.");
+        }
+      };
+      input.click();
+    });
+
+    btnTutorial.addEventListener("click", () => {
+      toast("Tutoriel à venir : création → planètes → factions → événements → première crise.");
+    });
+
+    btnLeaderboard.addEventListener("click", () => {
+      toast("Classement à venir (quand le mode en ligne sera prêt).");
+    });
+
+    btnSettings.addEventListener("click", () => {
+      const current = localStorage.getItem(MODE_KEY) || "guest";
+      const next = prompt("Paramètre rapide : mode (guest/google) :", current);
+      if(!next) return;
+      localStorage.setItem(MODE_KEY, next === "google" ? "google" : "guest");
+      location.reload();
+    });
+
+    // =========================
+    // Profile Menu
+    // =========================
+    profileBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const isOpen = profileMenu.classList.toggle("show");
+      profileBtn.setAttribute("aria-expanded", String(isOpen));
+    });
+
+    document.addEventListener("click", () => {
+      profileMenu.classList.remove("show");
+      profileBtn.setAttribute("aria-expanded", "false");
+    });
+
+    menuSave.addEventListener("click", () => {
+      // Ici c’est local, donc “save” = rien à faire, mais bouton utile pour plus tard
+      toast("Sauvegarde : OK (local). Cloud à brancher ensuite.");
+    });
+
+    menuLogout.addEventListener("click", () => {
+      localStorage.setItem(MODE_KEY, "guest");
+      window.location.href = "/games.html?mode=guest";
+    });
+
+    // =========================
+    // Init
+    // =========================
+    renderSystems();
   </script>
 </body>
 </html>
