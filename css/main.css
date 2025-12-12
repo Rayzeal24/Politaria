@@ -1,510 +1,373 @@
-/* ===========================================================
-   🌌 SYSTÈME STELLAIRE ANIMÉ
-   =========================================================== */
-
-const canvas = document.getElementById("space");
-const ctx = canvas.getContext("2d");
-
-let w, h, cx, cy;
-
-function resize() {
-  w = canvas.width = window.innerWidth;
-  h = canvas.height = window.innerHeight;
-  cx = w * 0.6;
-  cy = h * 0.5;
-}
-resize();
-window.addEventListener("resize", resize);
-
-/* -----------------------
-   🌟 Fond : ciel étoilé
------------------------- */
-const stars = [];
-const STAR_COUNT = 2000;
-
-for (let i = 0; i < STAR_COUNT; i++) {
-  stars.push({
-    x: Math.random() * w,
-    y: Math.random() * h,
-    size: Math.random() * 1.4 + 0.2,
-    baseAlpha: Math.random() * 0.6 + 0.2,
-    speed: Math.random() * 0.02 + 0.005
-  });
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-/* -----------------------
-   🪐 Système de planètes
------------------------- */
-const orbits = [];
-const planets = [];
-
-// Orbites principales
-const mainOrbitCount = 8;
-for (let i = 0; i < mainOrbitCount; i++) {
-  const rx = 80 + i * 55;
-  const ry = rx * 0.7;
-  orbits.push({ rx, ry });
+body {
+  background: #000;
+  overflow: hidden;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #fff;
 }
 
-// Config de base (teintes)
-const mainPlanetsConfig = [
-  { size: 8,  color: "#b0bec5" },
-  { size: 10, color: "#ffb74d" },
-  { size: 12, color: "#4fc3f7" },
-  { size: 11, color: "#a5d6a7" },
-  { size: 18, color: "#ffcc80" },
-  { size: 16, color: "#90caf9" },
-  { size: 14, color: "#ce93d8" },
-  { size: 20, color: "#80cbc4" }
-];
-
-for (let i = 0; i < mainOrbitCount; i++) {
-  const orbit = orbits[i];
-  const cfg = mainPlanetsConfig[i % mainPlanetsConfig.length];
-  planets.push({
-    orbit,
-    angle: Math.random() * Math.PI * 2,
-    speed: (0.0004 + i * 0.0001),
-    size: cfg.size,
-    baseColor: cfg.color,
-    ring: i === 4
-  });
+canvas#space {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1; /* le canvas reste derrière tout */
 }
 
-// Petits corps sur les orbites
-const smallBodies = [];
-for (let i = 0; i < 80; i++) {
-  const orbit = orbits[Math.floor(Math.random() * orbits.length)];
-  smallBodies.push({
-    orbit,
-    angle: Math.random() * Math.PI * 2,
-    speed: (Math.random() * 0.0006 + 0.0001) * (Math.random() < 0.5 ? 1 : -1),
-    size: Math.random() * 3 + 0.8,
-    hue: 180 + Math.random() * 160,
-    lightness: 40 + Math.random() * 30
-  });
+.main {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  pointer-events: none; /* le bouton a pointer-events:auto donc ça va */
+  transition: transform 0.3s ease, opacity 0.3s ease;
 }
 
-/* -----------------------
-   🌍 Planètes lointaines hors système
------------------------- */
-const farPlanets = [];
-const FAR_PLANET_COUNT = 22;
-const FAR_PLANET_MIN_DIST = 70;
+h1 {
+  font-size: 4rem;
+  font-weight: 900;
+  letter-spacing: 2px;
+  background: linear-gradient(90deg, #ffffff, #e5f0ff, #ffffff);
+  -webkit-background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 25px rgba(255,255,255,0.7);
+}
 
-function initFarPlanets() {
-  farPlanets.length = 0;
-  const maxOrbit = orbits.length
-    ? orbits[orbits.length - 1].rx
-    : Math.min(w, h) * 0.4;
+.subtitle {
+  font-size: 1.3rem;
+  opacity: 0.85;
+  margin-top: 10px;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
 
-  const exclusionRadius = maxOrbit + 100;
+.btn-wrap {
+  margin-top: 40px;
+  pointer-events: auto;
+}
 
-  for (let i = 0; i < FAR_PLANET_COUNT; i++) {
-    let x, y, distToCenter, ok, guard = 0;
+.btn {
+  padding: 15px 40px;
+  border-radius: 999px;
+  border: 2px solid rgba(255,255,255,0.7);
+  background: radial-gradient(circle at 0% 0%, #38bdf8 0, #020617 55%);
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 0 25px rgba(56,189,248,0.6);
+  transition: 0.25s;
+}
 
-    do {
-      x = Math.random() * w;
-      y = Math.random() * h;
+.btn:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 0 40px rgba(56,189,248,0.9);
+  background: radial-gradient(circle at 100% 0%, #38bdf8 0, #020617 60%);
+}
 
-      const dx = x - cx;
-      const dy = y - cy;
-      distToCenter = Math.sqrt(dx * dx + dy * dy);
+/* Alpha en rouge */
+.alpha {
+  position: fixed;
+  top: 40px;
+  right: 80px;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #F52727;
+  transform: rotate(-15deg);
+  text-shadow: 0 0 10px rgba(245,39,39,0.8);
+}
 
-      ok = distToCenter > exclusionRadius;
+.footer {
+  position: fixed;
+  bottom: 20px;
+  width: 100%;
+  text-align: center;
+  font-size: 0.75rem;
+  opacity: 0.6;
+  transition: opacity 0.3s ease;
+}
 
-      if (ok) {
-        ok = farPlanets.every(p => {
-          const dx2 = x - p.x;
-          const dy2 = y - p.y;
-          const d = Math.sqrt(dx2 * dx2 + dy2 * dy2);
-          return d > FAR_PLANET_MIN_DIST;
-        });
-      }
+.footer.guest {
+  opacity: 0.9;
+}
 
-      guard++;
-      if (guard > 200) break;
-    } while (!ok);
+/* ===========================
+   MODALES
+   =========================== */
 
-    farPlanets.push({
-      x,
-      y,
-      size: Math.random() * 14 + 6,
-      hue: 180 + Math.random() * 160,
-      saturation: 35 + Math.random() * 35,
-      lightness: 40 + Math.random() * 20,
-      glow: Math.random() * 0.35 + 0.25,
-      rotation: Math.random() * Math.PI * 2,
-      rotationSpeed: (Math.random() * 0.0004 + 0.0001) * (Math.random() < 0.5 ? -1 : 1)
-    });
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
+.modal-backdrop.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-card {
+  background: radial-gradient(circle at top left, #101827, #050816 55%, #02010a 100%);
+  color: #f9fafb;
+  border-radius: 22px;
+  max-width: 960px;
+  width: min(92%, 960px);
+  padding: 32px 40px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.85);
+  display: flex;
+  gap: 40px;
+  position: relative;
+  overflow: hidden;
+}
+
+@media (max-width: 800px) {
+  .modal-card {
+    flex-direction: column;
+    padding: 24px 20px 28px;
+    gap: 24px;
   }
 }
-initFarPlanets();
 
-/* -----------------------
-   ☀️ Soleil central
------------------------- */
-function drawSun() {
-  const maxR = 55;
-  const gradient = ctx.createRadialGradient(cx, cy, 5, cx, cy, maxR);
-  gradient.addColorStop(0, "#fff3e0");
-  gradient.addColorStop(0.4, "#ffb74d");
-  gradient.addColorStop(1, "rgba(0,0,0,0)");
-
-  ctx.fillStyle = gradient;
-  ctx.beginPath();
-  ctx.arc(cx, cy, maxR, 0, Math.PI * 2);
-  ctx.fill();
-
-  ctx.beginPath();
-  ctx.arc(cx, cy, 28, 0, Math.PI * 2);
-  ctx.fillStyle = "#ff6f00";
-  ctx.fill();
-
-  ctx.beginPath();
-  ctx.arc(cx, cy, 18, 0, Math.PI * 2);
-  ctx.fillStyle = "#ffcc80";
-  ctx.fill();
+.modal-left {
+  flex: 1.1;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
 
-/* -----------------------
-   🌀 Orbites elliptiques
------------------------- */
-function drawOrbits() {
-  ctx.lineWidth = 1;
-  ctx.strokeStyle = "rgba(255,255,255,0.18)";
-
-  orbits.forEach(o => {
-    ctx.beginPath();
-    for (let a = 0; a <= Math.PI * 2 + 0.1; a += 0.05) {
-      const x = cx + Math.cos(a) * o.rx;
-      const y = cy + Math.sin(a) * o.ry;
-      if (a === 0) ctx.moveTo(x, y);
-      else ctx.lineTo(x, y);
-    }
-    ctx.stroke();
-  });
+.modal-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  justify-content: center;
 }
 
-/* -----------------------
-   🎨 Planètes avec dégradés
------------------------- */
-function drawShadedPlanet(x, y, radius, baseColor, glowFactor = 0.5) {
-  const gradient = ctx.createRadialGradient(
-    x, y, radius * 0.6,
-    x, y, radius * 1.1
+.modal-title {
+  font-size: 2.1rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.modal-subtitle {
+  font-size: 0.98rem;
+  opacity: 0.78;
+  line-height: 1.5;
+  max-width: 360px;
+}
+
+/* === Logo avec favicon === */
+.modal-logo {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 20%, #fef3c7, #f97316 35%, #1e293b 60%, #020617 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+  box-shadow: 0 0 25px rgba(248, 250, 252, 0.25);
+  overflow: hidden;
+}
+
+.modal-logo-img {
+  width: 70%;
+  height: 70%;
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 0 4px rgba(15, 23, 42, 0.8));
+}
+
+.modal-close {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  border: none;
+  background: transparent;
+  color: rgba(248, 250, 252, 0.7);
+  font-size: 1.4rem;
+  cursor: pointer;
+  padding: 4px;
+  line-height: 1;
+  transition: transform 0.15s ease, color 0.15s ease;
+}
+
+.modal-close:hover {
+  transform: scale(1.1);
+  color: #fff;
+}
+
+.auth-btn {
+  width: 100%;
+  padding: 14px 18px;
+  border-radius: 999px;
+  border: 1px solid rgba(248, 250, 252, 0.22);
+  background: rgba(15, 23, 42, 0.8);
+  color: #f9fafb;
+  font-size: 1rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.auth-btn:hover {
+  background: radial-gradient(circle at 0 0, #1d4ed8, #020617 70%);
+  transform: translateY(-1px);
+  box-shadow: 0 0 22px rgba(59, 130, 246, 0.55);
+  border-color: rgba(191, 219, 254, 0.9);
+}
+
+.auth-btn.secondary {
+  background: rgba(15, 23, 42, 0.6);
+}
+
+.auth-btn-icon {
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  background: #ffffff;
+  color: #1f2937;
+  font-weight: 700;
+}
+
+.auth-btn-icon.guest {
+  background: rgba(15, 23, 42, 1);
+  color: #e5e7eb;
+  border: 1px solid rgba(148, 163, 184, 0.8);
+}
+
+.legal-text {
+  margin-top: 10px;
+  font-size: 0.8rem;
+  opacity: 0.7;
+  max-width: 380px;
+  line-height: 1.5;
+}
+
+.legal-text a {
+  color: #bfdbfe;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+
+/* On désactive visuellement l’orbite pour éviter tout bug */
+.modal-orbit {
+  display: none;
+}
+
+.main.guest-active {
+  transform: translateY(-10px);
+}
+
+/* ===========================
+   📜 CONTENU LÉGAL – STYLE
+   =========================== */
+
+#legal-content {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: #e5e7eb;
+  padding-right: 10px;
+}
+
+#legal-content h2 {
+  font-size: 2rem;
+  font-weight: 800;
+  margin-bottom: 18px;
+  background: linear-gradient(90deg, #ffffff, #93c5fd);
+  -webkit-background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 18px rgba(147,197,253,0.35);
+}
+
+#legal-content h3 {
+  margin-top: 32px;
+  margin-bottom: 10px;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #f8fafc;
+  position: relative;
+  padding-left: 14px;
+}
+
+#legal-content h3::before {
+  content: "✦";
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: #60a5fa;
+  text-shadow: 0 0 6px rgba(96,165,250,0.8);
+}
+
+#legal-content p {
+  margin-bottom: 12px;
+  opacity: 0.9;
+}
+
+#legal-content ul {
+  margin: 10px 0 14px 18px;
+  padding-left: 10px;
+}
+
+#legal-content li {
+  margin-bottom: 6px;
+  position: relative;
+}
+
+#legal-content li::marker {
+  color: #60a5fa;
+}
+
+#legal-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+#legal-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+#legal-content::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    180deg,
+    rgba(96,165,250,0.9),
+    rgba(37,99,235,0.9)
   );
-
-  gradient.addColorStop(0, baseColor);
-  gradient.addColorStop(1, darkenColor(baseColor, 0.35));
-
-  ctx.fillStyle = gradient;
-  ctx.beginPath();
-  ctx.arc(x, y, radius, 0, Math.PI * 2);
-  ctx.fill();
-
-  if (glowFactor > 0) {
-    const glowGradient = ctx.createRadialGradient(
-      x, y, radius,
-      x, y, radius * 2.3
-    );
-    glowGradient.addColorStop(0, hexToRgba(baseColor, 0.35 * glowFactor));
-    glowGradient.addColorStop(1, "rgba(0,0,0,0)");
-
-    ctx.fillStyle = glowGradient;
-    ctx.beginPath();
-    ctx.arc(x, y, radius * 2.3, 0, Math.PI * 2);
-    ctx.fill();
-  }
+  border-radius: 999px;
 }
 
-function hexToRgba(hex, alpha) {
-  const c = hex.replace("#", "");
-  const bigint = parseInt(c, 16);
-  const r = (bigint >> 16) & 255;
-  const g = (bigint >> 8) & 255;
-  const b = bigint & 255;
-  return `rgba(${r},${g},${b},${alpha})`;
+.auth-btn.auth-disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  box-shadow: none;
 }
 
-function lightenColor(hex, amount) {
-  const c = hex.replace("#", "");
-  const bigint = parseInt(c, 16);
-  let r = (bigint >> 16) & 255;
-  let g = (bigint >> 8) & 255;
-  let b = bigint & 255;
-  r = Math.min(255, r + 255 * amount);
-  g = Math.min(255, g + 255 * amount);
-  b = Math.min(255, b + 255 * amount);
-  return "#" + ((1 << 24) + (r << 16) + (g << 8) + (b | 0)).toString(16).slice(1);
-}
-
-function darkenColor(hex, amount) {
-  const c = hex.replace("#", "");
-  const bigint = parseInt(c, 16);
-  let r = (bigint >> 16) & 255;
-  let g = (bigint >> 8) & 255;
-  let b = bigint & 255;
-  r = Math.max(0, r - 255 * amount);
-  g = Math.max(0, g - 255 * amount);
-  b = Math.max(0, b - 255 * amount);
-  return "#" + ((1 << 24) + (r << 16) + (g << 8) + (b | 0)).toString(16).slice(1);
-}
-
-/* -----------------------
-   🔁 Animation
------------------------- */
-let t = 0;
-function animate() {
-  t += 1;
-
-  ctx.fillStyle = "#020012";
-  ctx.fillRect(0, 0, w, h);
-
-  // étoiles
-  for (let i = 0; i < stars.length; i++) {
-    const s = stars[i];
-    const alpha = s.baseAlpha + Math.sin(t * s.speed + i) * 0.25;
-
-    ctx.beginPath();
-    ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(255,255,255,${alpha})`;
-    ctx.fill();
-  }
-
-  // planètes lointaines
-  farPlanets.forEach(fp => {
-    fp.rotation += fp.rotationSpeed;
-    drawShadedPlanet(
-      fp.x,
-      fp.y,
-      fp.size,
-      `hsl(${fp.hue}, ${fp.saturation}%, ${fp.lightness}%)`,
-      fp.glow
-    );
-  });
-
-  // orbites
-  drawOrbits();
-
-  // petits corps
-  smallBodies.forEach(b => {
-    b.angle += b.speed;
-    const x = cx + Math.cos(b.angle) * b.orbit.rx;
-    const y = cy + Math.sin(b.angle) * b.orbit.ry;
-
-    ctx.beginPath();
-    ctx.arc(x, y, b.size, 0, Math.PI * 2);
-    ctx.fillStyle = `hsl(${b.hue}, 55%, ${b.lightness}%)`;
-    ctx.fill();
-  });
-
-  // grosses planètes
-  planets.forEach(p => {
-    p.angle += p.speed;
-    const x = cx + Math.cos(p.angle) * p.orbit.rx;
-    const y = cy + Math.sin(p.angle) * p.orbit.ry;
-
-    drawShadedPlanet(x, y, p.size, p.baseColor, 0.4);
-
-    if (p.ring) {
-      ctx.save();
-      ctx.translate(x, y);
-      ctx.rotate(-0.4);
-      const ringGrad = ctx.createLinearGradient(-p.size * 2, 0, p.size * 2, 0);
-      ringGrad.addColorStop(0, "rgba(255,255,255,0)");
-      ringGrad.addColorStop(0.3, "rgba(230,230,230,0.7)");
-      ringGrad.addColorStop(0.7, "rgba(230,230,230,0.7)");
-      ringGrad.addColorStop(1, "rgba(255,255,255,0)");
-      ctx.strokeStyle = ringGrad;
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.ellipse(0, 0, p.size * 2, p.size * 0.9, 0, 0, Math.PI * 2);
-      ctx.stroke();
-      ctx.restore();
-    }
-  });
-
-  drawSun();
-
-  requestAnimationFrame(animate);
-}
-animate();
-
-/* ===========================================================
-   🚀 MODALE D'AUTHENTIFICATION
-   =========================================================== */
-
-const modal = document.getElementById("auth-modal");
-const hero = document.getElementById("hero");
-const footer = document.getElementById("footer");
-const subtitle = document.querySelector(".subtitle");
-const btnGoogle = document.getElementById("btn-google");
-const btnGuest = document.getElementById("btn-guest");
-
-const MODE_KEY = "politariaMode";
-
-// ⚙️ Config OAuth Google
-const GOOGLE_CLIENT_ID = "384194128216-26uuditt8tfcj2trpghfb0a3bj0njuhd.apps.googleusercontent.com";
-const GOOGLE_AUTH_ENDPOINT = "https://accounts.google.com/o/oauth2/v2/auth";
-
-/**
- * Cliquer sur "Commencer →"
- * => si un mode est déjà choisi, on va direct sur /games
- * => sinon on ouvre la modale
- */
-function startGame() {
-  const mode = localStorage.getItem(MODE_KEY);
-  if (mode === "guest") {
-    window.location.href = "/games.html?mode=guest";
-  } else if (mode === "google") {
-    window.location.href = "/games.html";
-  } else {
-    modal.classList.add("show");
-  }
-}
-
-function closeModal() {
-  modal.classList.remove("show");
-}
-
-function backdropClick(event) {
-  if (event.target === modal) {
-    closeModal();
-  }
-}
-
-/* -----------------------
-   🔐 Actions des boutons
------------------------- */
-
-function handleGoogleLogin() {
-  const params = new URLSearchParams({
-    client_id: GOOGLE_CLIENT_ID,
-    redirect_uri: "https://politaria.eu/games.html",
-    response_type: "token",
-    scope: "openid email profile",
-    include_granted_scopes: "true",
-    prompt: "select_account"
-  });
-
-  const url = `${GOOGLE_AUTH_ENDPOINT}?${params.toString()}`;
-  window.location.href = url;
-}
-
-function applyGuestModeUI() {
-  if (subtitle) {
-    subtitle.textContent = "Mode invité : votre premier système Politaria est en préparation…";
-    subtitle.style.opacity = "1";
-    subtitle.style.transform = "translateY(0)";
-  }
-
-  if (hero) {
-    hero.classList.add("guest-active");
-  }
-
-  if (footer) {
-    footer.textContent = "Mode invité actif. Votre progression sera stockée localement.";
-    footer.classList.add("guest");
-  }
-}
-
-function applyGoogleModeUI() {
-  if (subtitle) {
-    subtitle.textContent = "Connecté via Google : retrouvez vos systèmes Politaria.";
-    subtitle.style.opacity = "1";
-    subtitle.style.transform = "translateY(0)";
-  }
-
-  if (hero) {
-    hero.classList.add("guest-active");
-  }
-
-  if (footer) {
-    footer.textContent = "Compte Google connecté. Vos systèmes sont synchronisés.";
-    footer.classList.add("guest");
-  }
-}
-
-function continueAsGuest() {
-  localStorage.setItem(MODE_KEY, "guest");
-  window.location.href = "/games.html?mode=guest";
-}
-
-// on connecte les boutons
-if (btnGoogle) btnGoogle.addEventListener("click", handleGoogleLogin);
-if (btnGuest) btnGuest.addEventListener("click", continueAsGuest);
-
-// au chargement, on regarde si le joueur avait déjà un mode
-window.addEventListener("DOMContentLoaded", () => {
-  const mode = localStorage.getItem(MODE_KEY);
-  if (mode === "guest") {
-    applyGuestModeUI();
-  } else if (mode === "google") {
-    applyGoogleModeUI();
-  }
-});
-
-// fermer avec Échap
-document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") {
-    closeModal();
-    closeLegalModal();
-  }
-});
-
-/* ===========================================================
-   📜 MODALE LÉGALE
-   =========================================================== */
-
-const legalModal = document.getElementById("legal-modal");
-const legalContent = document.getElementById("legal-content");
-
-function openLegal(type) {
-  let baseUrl;
-  if (type === "conditions") {
-    baseUrl = "/legal/conditions-utilisation.html";
-  } else if (type === "confidentialite") {
-    baseUrl = "/legal/politique-confidentialite.html";
-  } else {
-    return;
-  }
-
-  const url = baseUrl + "?t=" + Date.now();
-
-  fetch(url)
-    .then((res) => {
-      if (!res.ok) throw new Error("HTTP " + res.status);
-      return res.text();
-    })
-    .then((html) => {
-      const lower = html.toLowerCase();
-      if (lower.includes("<html") || lower.includes("<body")) {
-        throw new Error("Document complet détecté");
-      }
-
-      legalContent.innerHTML = html;
-      legalModal.classList.add("show");
-    })
-    .catch((err) => {
-      console.error(err);
-      legalContent.innerHTML = `
-        <h2>Document indisponible</h2>
-        <p>
-          Impossible de charger ce document pour le moment.
-          Réessayez plus tard ou contactez le support Politaria.
-        </p>
-      `;
-      legalModal.classList.add("show");
-    });
-}
-
-function closeLegalModal() {
-  legalModal.classList.remove("show");
-}
-
-function backdropLegalClick(e) {
-  if (e.target === legalModal) {
-    closeLegalModal();
-  }
+.auth-btn.auth-disabled:hover {
+  transform: none;
+  box-shadow: none;
+  background: rgba(15, 23, 42, 0.8);
 }
