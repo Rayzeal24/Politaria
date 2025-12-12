@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Politaria – Games</title>
 
-  <!-- Favicons -->
   <link rel="icon" type="image/png" sizes="96x96" href="icon/favicon-96x96.png" />
   <link rel="icon" type="image/svg+xml" href="icon/favicon.svg" />
   <link rel="shortcut icon" href="icon/favicon.ico" />
@@ -13,6 +12,12 @@
   <link rel="manifest" href="icon/site.webmanifest" />
 
   <link rel="stylesheet" href="css/games.css" />
+
+  <!-- ✅ defer = DOM prêt + ordre conservé -->
+  <script defer src="js/config.js"></script>
+  <script defer src="js/session.js"></script>
+  <script defer src="js/systems.js"></script>
+  <script defer src="js/games.js"></script>
 </head>
 
 <body>
@@ -95,11 +100,5 @@
   </main>
 
   <footer>Politaria © 2025 – Tous droits réservés.</footer>
-
-  <!-- Ordre important -->
-  <script src="js/config.js"></script>
-  <script src="js/session.js"></script>
-  <script src="js/systems.js"></script>
-  <script src="js/games.js"></script>
 </body>
 </html>
