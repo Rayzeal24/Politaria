@@ -1,6 +1,10 @@
 "use strict";
+window.POLITARIA = window.POLITARIA || {};
 
-const { CONFIG } = window.POLITARIA;
+const CONFIG = (window.POLITARIA.CONFIG || {
+  ROUTES: { HOME: "/index.html", GAMES: "/games.html" },
+  KEYS: { MODE:"politariaMode", EMAIL:"politariaEmail", COINS:"politariaCoins", SYSTEMS:"politariaSystems_v1" }
+});
 
 POLITARIA.session = (() => {
   const K = CONFIG.KEYS;
@@ -9,7 +13,6 @@ POLITARIA.session = (() => {
   function parseUrl(){
     const hashParams = new URLSearchParams(location.hash.slice(1));
     const params = new URLSearchParams(location.search);
-
     return {
       googleToken: hashParams.get("access_token"),
       email: params.get("email") || hashParams.get("email"),
@@ -30,21 +33,11 @@ POLITARIA.session = (() => {
     return /[A-Z0-9]/.test(c) ? c : "I";
   }
 
-  function setMode(mode){
-    localStorage.setItem(K.MODE, mode);
-  }
+  function setMode(mode){ localStorage.setItem(K.MODE, mode); }
+  function getMode(){ return localStorage.getItem(K.MODE) || "guest"; }
 
-  function getMode(){
-    return localStorage.getItem(K.MODE) || "guest";
-  }
-
-  function setEmail(email){
-    if(email) localStorage.setItem(K.EMAIL, email);
-  }
-
-  function getEmail(){
-    return localStorage.getItem(K.EMAIL) || "";
-  }
+  function setEmail(email){ if(email) localStorage.setItem(K.EMAIL, email); }
+  function getEmail(){ return localStorage.getItem(K.EMAIL) || ""; }
 
   function logout(){
     localStorage.removeItem(K.MODE);
@@ -60,20 +53,12 @@ POLITARIA.session = (() => {
       cleanHash();
       return "google";
     }
-
     if (u.urlMode === "guest") {
       setMode("guest");
       return "guest";
     }
-
     return getMode();
   }
 
-  return {
-    initFromUrl,
-    getMode,
-    getEmail,
-    getInitialFromEmail,
-    logout,
-  };
+  return { initFromUrl, getMode, getEmail, getInitialFromEmail, logout };
 })();
