@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Politaria – Profil</title>
+
+  <!-- Favicons -->
+  <link rel="icon" type="image/png" sizes="96x96" href="icon/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="icon/favicon.svg" />
+  <link rel="shortcut icon" href="icon/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="icon/apple-touch-icon.png" />
+  <link rel="manifest" href="icon/site.webmanifest" />
+
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0b1020;
+      --card: rgba(255,255,255,0.045);
+      --card2: rgba(255,255,255,0.025);
+      --border: rgba(148,163,184,0.16);
+      --text:#e6edf3;
+      --muted: rgba(230,237,243,0.72);
+      --shadow: 0 24px 70px rgba(0,0,0,0.55);
+      --radius: 22px;
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      color:var(--text);
+      background:
+        radial-gradient(1200px 600px at 18% 10%, rgba(99,102,241,0.16), transparent 55%),
+        radial-gradient(900px 500px at 85% 20%, rgba(34,211,238,0.14), transparent 58%),
+        radial-gradient(900px 600px at 40% 90%, rgba(52,211,153,0.10), transparent 62%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      overflow-x:hidden;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+
+    .stars{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      opacity:0.55;
+      background-image:
+        radial-gradient(2px 2px at 15% 25%, rgba(255,255,255,0.9) 40%, transparent 60%),
+        radial-gradient(1px 1px at 45% 70%, rgba(255,255,255,0.7) 40%, transparent 60%),
+        radial-gradient(1px 1px at 75% 35%, rgba(255,255,255,0.6) 40%, transparent 60%),
+        radial-gradient(1px 1px at 85% 80%, rgba(255,255,255,0.55) 40%, transparent 60%),
+        radial-gradient(2px 2px at 30% 85%, rgba(255,255,255,0.5) 40%, transparent 60%);
+      filter: blur(0.1px);
+    }
+
+    header{
+      position:sticky;
+      top:0;
+      z-index:10;
+      padding:18px 26px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      border-bottom:1px solid rgba(148,163,184,0.12);
+      background: rgba(10, 14, 26, 0.58);
+      backdrop-filter: blur(10px);
+      gap: 14px;
+    }
+
+    .logo{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-weight:900;
+      letter-spacing:0.3px;
+      user-select:none;
+    }
+    .logo-badge{
+      width:36px;
+      height:36px;
+      border-radius:14px;
+      overflow:hidden;
+      background: rgba(255,255,255,0.06);
+      border:1px solid rgba(255,255,255,0.14);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      box-shadow: 0 0 22px rgba(99,102,241,0.18), 0 0 22px rgba(34,211,238,0.12);
+    }
+    .logo-img{
+      width: 74%;
+      height: 74%;
+      object-fit: contain;
+      display:block;
+      filter: drop-shadow(0 0 6px rgba(0,0,0,0.35));
+    }
+    .logo span{
+      font-size:1.15rem;
+      font-weight: 950;
+      background: linear-gradient(90deg, #dbeafe, #a5b4fc, #67e8f9);
+      -webkit-background-clip:text;
+      color:transparent;
+      text-shadow: 0 0 18px rgba(99,102,241,0.22);
+    }
+
+    .btn{
+      border: 1px solid rgba(148,163,184,0.18);
+      background: rgba(255,255,255,0.045);
+      color: rgba(255,255,255,0.92);
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: 0.18s ease;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+    }
+    .btn:hover{ transform: translateY(-1px); border-color: rgba(148,163,184,0.35); }
+
+    main{
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 34px 18px 60px;
+    }
+
+    .card{
+      background: linear-gradient(180deg, var(--card), var(--card2));
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position:relative;
+      padding: 22px;
+    }
+    .card::before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background:
+        radial-gradient(600px 220px at 20% 0%, rgba(99,102,241,0.20), transparent 60%),
+        radial-gradient(600px 220px at 80% 20%, rgba(34,211,238,0.16), transparent 60%);
+      pointer-events:none;
+      opacity:0.9;
+    }
+    .card > *{ position:relative; }
+
+    h1{
+      margin:0;
+      font-size: clamp(2.0rem, 4vw, 3.0rem);
+      font-weight: 950;
+      letter-spacing: 0.4px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.95), rgba(165,180,252,0.95), rgba(103,232,249,0.95));
+      -webkit-background-clip:text;
+      color:transparent;
+      text-shadow: 0 0 26px rgba(99,102,241,0.18);
+    }
+    .muted{ color: var(--muted); line-height:1.55; margin: 10px 0 0; }
+
+    .grid{
+      margin-top: 18px;
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    @media (max-width: 760px){
+      .grid{ grid-template-columns: 1fr; }
+      header{ padding:16px; }
+    }
+
+    .pill{
+      border-radius: 18px;
+      border: 1px solid rgba(148,163,184,0.14);
+      background: rgba(255,255,255,0.035);
+      padding: 14px 16px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .pill .k{ font-weight:850; letter-spacing:0.2px; }
+    .pill .v{ color: rgba(230,237,243,0.78); font-weight:700; }
+
+    .field{
+      margin-top: 14px;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+    input{
+      flex: 1 1 260px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.18);
+      background: rgba(255,255,255,0.04);
+      color: var(--text);
+      padding: 12px 14px;
+      outline:none;
+      font-weight: 800;
+    }
+    input::placeholder{ color: rgba(230,237,243,0.45); }
+
+    .btn.primary{
+      border:none;
+      color:#071018;
+      background: linear-gradient(135deg, rgba(96,165,250,0.95), rgba(34,211,238,0.88));
+      box-shadow: 0 16px 44px rgba(37,99,235,0.18), 0 10px 34px rgba(34,211,238,0.16);
+    }
+
+    .warn{
+      margin-top: 12px;
+      font-size: 0.92rem;
+      color: rgba(230,237,243,0.68);
+    }
+
+    footer{
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 18px 40px;
+      opacity:0.55;
+      font-size:0.86rem;
+      text-align:center;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="stars"></div>
+
+  <header>
+    <div class="logo">
+      <div class="logo-badge">
+        <img src="icon/favicon-96x96.png" alt="Politaria" class="logo-img">
+      </div>
+      <span>Politaria</span>
+    </div>
+
+    <a class="btn" href="/games.html">← Retour</a>
+  </header>
+
+  <main>
+    <div class="card">
+      <h1>Profil</h1>
+      <p class="muted">Ici, tu ajustes ton identité. Pour l’instant, tout est local — mais bientôt, on branchera le cloud.</p>
+
+      <div class="grid">
+        <div class="pill">
+          <div class="k">Pseudo</div>
+          <div class="v" id="pillUsername">…</div>
+        </div>
+        <div class="pill">
+          <div class="k">Mode</div>
+          <div class="v" id="pillMode">…</div>
+        </div>
+        <div class="pill">
+          <div class="k">Email</div>
+          <div class="v" id="pillEmail">—</div>
+        </div>
+        <div class="pill">
+          <div class="k">Stockage</div>
+          <div class="v" id="pillStorage">Local</div>
+        </div>
+      </div>
+
+      <div class="field">
+        <input id="usernameInput" type="text" maxlength="18" placeholder="Nouveau pseudo (ex: user1933)" />
+        <button class="btn primary" id="btnSaveName">Enregistrer</button>
+        <button class="btn" id="btnRandom">Générer</button>
+      </div>
+
+      <div class="warn" id="warn"></div>
+    </div>
+  </main>
+
+  <footer>
+    Politaria © 2025 – Tous droits réservés.
+  </footer>
+
+  <script>
+    "use strict";
+
+    const MODE_KEY = "politariaMode";
+    const EMAIL_KEY = "politariaEmail";
+    const USERNAME_KEY = "politariaUsername";
+
+    const pillUsername = document.getElementById("pillUsername");
+    const pillMode = document.getElementById("pillMode");
+    const pillEmail = document.getElementById("pillEmail");
+    const pillStorage = document.getElementById("pillStorage");
+
+    const usernameInput = document.getElementById("usernameInput");
+    const btnSaveName = document.getElementById("btnSaveName");
+    const btnRandom = document.getElementById("btnRandom");
+    const warn = document.getElementById("warn");
+
+    function generateUsername(){
+      const n = Math.floor(1000 + Math.random() * 9000);
+      return "user" + n;
+    }
+
+    function normalizeName(s){
+      return String(s || "")
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, "")
+        .replace(/[^a-z0-9_]/g, "")
+        .slice(0, 18);
+    }
+
+    function ensureUsername(){
+      let u = localStorage.getItem(USERNAME_KEY);
+      if(!u){
+        u = generateUsername();
+        localStorage.setItem(USERNAME_KEY, u);
+      }
+      return u;
+    }
+
+    function render(){
+      const mode = localStorage.getItem(MODE_KEY) || "guest";
+      const email = localStorage.getItem(EMAIL_KEY) || "—";
+      const username = ensureUsername();
+
+      pillUsername.textContent = username;
+      pillMode.textContent = mode === "google" ? "Google (local)" : "Invité";
+      pillEmail.textContent = email;
+      pillStorage.textContent = "Local";
+      usernameInput.value = username;
+      warn.textContent = "";
+    }
+
+    btnRandom.addEventListener("click", () => {
+      const u = generateUsername();
+      usernameInput.value = u;
+      warn.textContent = "Pseudo généré. Clique sur Enregistrer pour l’appliquer.";
+    });
+
+    btnSaveName.addEventListener("click", () => {
+      const raw = usernameInput.value;
+      const clean = normalizeName(raw);
+
+      if(!clean || clean.length < 3){
+        warn.textContent = "Pseudo invalide (min 3 caractères). Autorisés : a-z, 0-9, _.";
+        return;
+      }
+
+      localStorage.setItem(USERNAME_KEY, clean);
+      render();
+      warn.textContent = "Pseudo enregistré ✅";
+    });
+
+    render();
+  </script>
+</body>
+</html>
