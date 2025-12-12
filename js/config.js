@@ -1,5 +1,4 @@
 "use strict";
-
 window.POLITARIA = window.POLITARIA || {};
 
 POLITARIA.CONFIG = {
