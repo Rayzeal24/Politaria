@@ -6,166 +6,487 @@
   <title>Politaria – Games</title>
 
   <style>
-    body {
-      margin: 0;
-      font-family: system-ui, sans-serif;
-      background: #0d1117;
-      color: #e6edf3;
+    :root{
+      --bg0:#070A12;
+      --bg1:#0b1020;
+      --card: rgba(255,255,255,0.045);
+      --card2: rgba(255,255,255,0.025);
+      --border: rgba(148,163,184,0.16);
+      --text:#e6edf3;
+      --muted: rgba(230,237,243,0.72);
+
+      --blue:#60a5fa;
+      --cyan:#22d3ee;
+      --indigo:#6366f1;
+      --emerald:#34d399;
+      --amber:#fbbf24;
+      --red:#ef4444;
+
+      --shadow: 0 24px 70px rgba(0,0,0,0.55);
+      --radius: 22px;
     }
 
-    header {
-      padding: 20px 40px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 1px solid #1f2937;
-      background: rgba(255,255,255,0.02);
-      backdrop-filter: blur(8px);
+    *{ box-sizing:border-box; }
+
+    body{
+      margin:0;
+      color:var(--text);
+      background:
+        radial-gradient(1200px 600px at 18% 10%, rgba(99,102,241,0.16), transparent 55%),
+        radial-gradient(900px 500px at 85% 20%, rgba(34,211,238,0.14), transparent 58%),
+        radial-gradient(900px 600px at 40% 90%, rgba(52,211,153,0.10), transparent 62%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      overflow-x:hidden;
+
+      /* Typo système améliorée */
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
     }
 
-    .logo {
-      font-size: 1.6rem;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 10px;
+    /* petits points "étoiles" */
+    .stars{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      opacity:0.55;
+      background-image:
+        radial-gradient(2px 2px at 15% 25%, rgba(255,255,255,0.9) 40%, transparent 60%),
+        radial-gradient(1px 1px at 45% 70%, rgba(255,255,255,0.7) 40%, transparent 60%),
+        radial-gradient(1px 1px at 75% 35%, rgba(255,255,255,0.6) 40%, transparent 60%),
+        radial-gradient(1px 1px at 85% 80%, rgba(255,255,255,0.55) 40%, transparent 60%),
+        radial-gradient(2px 2px at 30% 85%, rgba(255,255,255,0.5) 40%, transparent 60%);
+      filter: blur(0.1px);
     }
 
-    .logo span {
-      background: linear-gradient(90deg, #4f46e5, #06b6d4);
-      -webkit-background-clip: text;
-      color: transparent;
+    header{
+      position:sticky;
+      top:0;
+      z-index:10;
+      padding:18px 26px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      border-bottom:1px solid rgba(148,163,184,0.12);
+      background: rgba(10, 14, 26, 0.58);
+      backdrop-filter: blur(10px);
     }
 
-    .status-badge {
-      padding: 8px 14px;
-      border-radius: 999px;
-      background: #1e3a8a;
-      color: #bfdbfe;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 8px;
+    .left{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      min-width: 280px;
     }
 
-    main {
-      text-align: center;
-      margin-top: 80px;
-      padding: 20px;
+    .logo{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-weight:900;
+      letter-spacing:0.3px;
+      user-select:none;
     }
 
-    h1 {
-      font-size: 3rem;
-      margin-bottom: 10px;
+    .logo-badge{
+      width:36px;
+      height:36px;
+      border-radius:14px;
+      background:
+        radial-gradient(circle at 30% 20%, rgba(255,255,255,0.12), transparent 55%),
+        linear-gradient(135deg, rgba(99,102,241,0.7), rgba(34,211,238,0.55));
+      box-shadow: 0 0 22px rgba(99,102,241,0.22), 0 0 22px rgba(34,211,238,0.16);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      border:1px solid rgba(255,255,255,0.14);
     }
 
-    p.subtitle {
-      opacity: 0.8;
-      font-size: 1.1rem;
-      margin-bottom: 40px;
+    .logo span{
+      font-size:1.1rem;
+      background: linear-gradient(90deg, #a5b4fc, #67e8f9, #a5b4fc);
+      -webkit-background-clip:text;
+      color:transparent;
     }
 
-    .btn {
-      padding: 18px 36px;
+    .status-badge{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 14px;
+      border-radius:999px;
+      background: rgba(30,58,138,0.35);
+      border:1px solid rgba(191,219,254,0.22);
+      color:#cfe3ff;
+      font-weight:700;
+      letter-spacing:0.2px;
+      box-shadow: 0 10px 28px rgba(0,0,0,0.25);
+      white-space:nowrap;
+    }
+
+    .status-dot{
+      width:10px;
+      height:10px;
+      border-radius:50%;
+      background: rgba(255,255,255,0.35);
+      box-shadow: 0 0 12px rgba(255,255,255,0.25);
+    }
+
+    .actions{
+      display:flex;
+      gap:10px;
+      align-items:center;
+    }
+
+    .chip{
+      padding:10px 14px;
+      border-radius:999px;
+      background: rgba(255,255,255,0.04);
+      border:1px solid rgba(148,163,184,0.14);
+      color: rgba(230,237,243,0.88);
+      cursor:pointer;
+      transition: 0.2s ease;
+      font-weight:700;
+    }
+    .chip:hover{
+      transform: translateY(-1px);
+      border-color: rgba(148,163,184,0.30);
+      box-shadow: 0 14px 38px rgba(0,0,0,0.28);
+    }
+
+    main{
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 34px 18px 60px;
+    }
+
+    .hero{
+      margin-top: 22px;
+      text-align:center;
+      position:relative;
+    }
+
+    h1{
+      margin:0;
+      font-size: clamp(2.3rem, 4.2vw, 3.6rem);
+      font-weight: 950;
+      letter-spacing: 0.4px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.95), rgba(165,180,252,0.95), rgba(103,232,249,0.95));
+      -webkit-background-clip:text;
+      color:transparent;
+      text-shadow: 0 0 26px rgba(99,102,241,0.18);
+    }
+
+    .subtitle{
+      margin: 12px auto 0;
+      max-width: 740px;
+      opacity:0.88;
+      font-size: 1.08rem;
+      color: var(--muted);
+      line-height:1.55;
+    }
+
+    .grid{
+      margin-top: 34px;
+      display:grid;
+      grid-template-columns: 1.35fr 0.65fr;
+      gap: 16px;
+      align-items:stretch;
+    }
+
+    @media (max-width: 880px){
+      .grid{ grid-template-columns: 1fr; }
+      .left{ min-width: unset; }
+      header{ padding: 16px 16px; }
+    }
+
+    .card{
+      background: linear-gradient(180deg, var(--card), var(--card2));
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+
+    .card::before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background:
+        radial-gradient(600px 220px at 20% 0%, rgba(99,102,241,0.20), transparent 60%),
+        radial-gradient(600px 220px at 80% 20%, rgba(34,211,238,0.16), transparent 60%);
+      pointer-events:none;
+      opacity:0.9;
+    }
+
+    .card-inner{
+      position:relative;
+      padding: 20px 20px 18px;
+    }
+
+    .card h2{
+      margin:0 0 8px;
+      font-size: 1.05rem;
+      letter-spacing:0.25px;
+      color: rgba(255,255,255,0.92);
+    }
+
+    .muted{
+      color: var(--muted);
+      line-height:1.55;
+      margin:0;
+    }
+
+    .big-btn{
+      width: 100%;
+      margin-top: 16px;
+      padding: 16px 18px;
       border: none;
       border-radius: 999px;
-      font-size: 1.2rem;
-      font-weight: 600;
-      background: #2563eb;
-      color: white;
+      font-size: 1.06rem;
+      font-weight: 850;
       cursor: pointer;
-      transition: 0.2s;
+      transition: 0.18s ease;
+      color: #071018;
+      background: linear-gradient(135deg, rgba(96,165,250,0.95), rgba(34,211,238,0.88));
+      box-shadow: 0 16px 44px rgba(37,99,235,0.18), 0 10px 34px rgba(34,211,238,0.16);
     }
 
-    .btn:hover {
-      background: #1e40af;
+    .big-btn:hover{
       transform: translateY(-2px);
+      filter: brightness(1.03);
+      box-shadow: 0 20px 60px rgba(37,99,235,0.22), 0 14px 44px rgba(34,211,238,0.18);
     }
 
-    footer {
-      margin-top: 80px;
-      opacity: 0.5;
-      font-size: 0.85rem;
-      padding-bottom: 40px;
+    .big-btn:active{
+      transform: translateY(0px);
+    }
+
+    .side{
+      display:flex;
+      flex-direction:column;
+      gap: 12px;
+    }
+
+    .pill{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding: 14px 16px;
+      border-radius: 18px;
+      border: 1px solid rgba(148,163,184,0.14);
+      background: rgba(255,255,255,0.035);
+    }
+
+    .pill .k{
+      font-weight:850;
+      letter-spacing:0.2px;
+    }
+
+    .pill .v{
+      color: rgba(230,237,243,0.78);
+      font-weight:700;
+    }
+
+    .hint{
+      margin-top: 8px;
+      font-size: 0.92rem;
+      color: rgba(230,237,243,0.68);
+    }
+
+    footer{
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 18px 40px;
+      opacity:0.55;
+      font-size:0.86rem;
+      text-align:center;
     }
   </style>
 </head>
+
 <body>
+  <div class="stars"></div>
 
-<header>
-  <div class="logo">🌌 <span>Politaria</span></div>
+  <header>
+    <div class="left">
+      <div class="logo">
+        <div class="logo-badge">🌌</div>
+        <span>Politaria</span>
+      </div>
 
-  <div class="status-badge">
-    ⏳ Chargement...
-  </div>
-</header>
+      <div class="status-badge">
+        <span class="status-dot" id="statusDot"></span>
+        <span id="statusText">⏳ Chargement...</span>
+      </div>
+    </div>
 
-<main>
-  <h1>Games</h1>
-  <p class="subtitle">Vérification de votre session...</p>
+    <div class="actions">
+      <button class="chip" id="btnSwitch">↩ Changer de mode</button>
+      <button class="chip" id="btnLogout">⛔ Déconnexion</button>
+    </div>
+  </header>
 
-  <button class="btn" onclick="alert('Création de système à venir !')">
-    + Créer un système
-  </button>
-</main>
+  <main>
+    <section class="hero">
+      <h1>Games</h1>
+      <p class="subtitle" id="subtitle">Vérification de votre session...</p>
+    </section>
 
-<footer>
-  Politaria © 2025 – Tous droits réservés.
-</footer>
+    <section class="grid">
+      <div class="card">
+        <div class="card-inner">
+          <h2>Vos systèmes stellaires</h2>
+          <p class="muted" id="systemsText">
+            Aucun système détecté pour le moment. Créez votre premier monde et commencez à réécrire son histoire.
+          </p>
 
+          <button class="big-btn" id="btnCreate">
+            + Créer un système
+          </button>
 
-<!-- 🔥 LOGIQUE DE DÉTECTION (GOOGLE / INVITÉ) -->
-<script>
-  const MODE_KEY = "politariaMode";
+          <div class="hint">
+            Astuce : vous pourrez bientôt importer des drapeaux, choisir des doctrines, et déclencher des crises galactiques.
+          </div>
+        </div>
+      </div>
 
-  const badge = document.querySelector(".status-badge");
-  const subtitle = document.querySelector(".subtitle");
+      <div class="side">
+        <div class="pill">
+          <div class="k">Mode</div>
+          <div class="v" id="modePill">…</div>
+        </div>
+        <div class="pill">
+          <div class="k">Stockage</div>
+          <div class="v" id="storagePill">…</div>
+        </div>
+        <div class="pill">
+          <div class="k">Statut</div>
+          <div class="v" id="statusPill">…</div>
+        </div>
+      </div>
+    </section>
+  </main>
 
-  // 1. Vérifie si on a reçu un access_token Google dans le hash (#)
-  const hashParams = new URLSearchParams(window.location.hash.slice(1));
-  const googleToken = hashParams.get("access_token");
+  <footer>
+    Politaria © 2025 – Tous droits réservés.
+  </footer>
 
-  // 2. Vérifie si l’URL contient ?mode=guest
-  const params = new URLSearchParams(window.location.search);
-  const urlMode = params.get("mode");
+  <!-- 🔥 LOGIQUE DE DÉTECTION (GOOGLE / INVITÉ) -->
+  <script>
+    const MODE_KEY = "politariaMode";
 
-  // 3. Vérifie si un mode existe déjà dans localStorage
-  const savedMode = localStorage.getItem(MODE_KEY);
+    const statusText = document.getElementById("statusText");
+    const statusDot  = document.getElementById("statusDot");
+    const subtitle   = document.getElementById("subtitle");
 
-  function setGuestMode() {
-    localStorage.setItem(MODE_KEY, "guest");
-    badge.textContent = "🕶️ Mode invité";
-    subtitle.textContent = "Vous n'avez pas encore créé de système stellaire.";
-  }
+    const modePill    = document.getElementById("modePill");
+    const storagePill = document.getElementById("storagePill");
+    const statusPill  = document.getElementById("statusPill");
 
-  function setGoogleMode() {
-    localStorage.setItem(MODE_KEY, "google");
-    badge.textContent = "🔐 Connecté via Google";
-    subtitle.textContent = "Bienvenue dans vos systèmes stellaires.";
-  }
+    const btnCreate = document.getElementById("btnCreate");
+    const btnSwitch = document.getElementById("btnSwitch");
+    const btnLogout = document.getElementById("btnLogout");
 
-  // 🔍 Ordre de priorité :
-  // 1) Token Google reçu → mode Google
-  // 2) URL dit mode=guest → mode invité
-  // 3) LocalStorage dit Google ou Guest → on garde
-  // 4) Sinon, pas connecté → invité par défaut
+    // 1) Token Google dans le hash (#)
+    const hashParams = new URLSearchParams(window.location.hash.slice(1));
+    const googleToken = hashParams.get("access_token");
 
-  if (googleToken) {
-    setGoogleMode();
-  }
-  else if (urlMode === "guest") {
-    setGuestMode();
-  }
-  else if (savedMode === "google") {
-    setGoogleMode();
-  }
-  else if (savedMode === "guest") {
-    setGuestMode();
-  }
-  else {
-    setGuestMode();
-  }
-</script>
+    // 2) URL ?mode=guest
+    const params = new URLSearchParams(window.location.search);
+    const urlMode = params.get("mode");
+
+    // 3) LocalStorage
+    const savedMode = localStorage.getItem(MODE_KEY);
+
+    function setDot(kind){
+      if (!statusDot) return;
+      if (kind === "google"){
+        statusDot.style.background = "rgba(34,211,238,0.95)";
+        statusDot.style.boxShadow  = "0 0 14px rgba(34,211,238,0.55)";
+      } else {
+        statusDot.style.background = "rgba(251,191,36,0.95)";
+        statusDot.style.boxShadow  = "0 0 14px rgba(251,191,36,0.45)";
+      }
+    }
+
+    function setGuestMode() {
+      localStorage.setItem(MODE_KEY, "guest");
+      if (statusText) statusText.textContent = "🕶️ Mode invité";
+      if (subtitle) subtitle.textContent = "Vous êtes en invité : progression locale, sans synchronisation.";
+      setDot("guest");
+
+      if (modePill) modePill.textContent = "Invité";
+      if (storagePill) storagePill.textContent = "Local";
+      if (statusPill) statusPill.textContent = "Actif";
+
+      // En invité : message systèmes
+      const systemsText = document.getElementById("systemsText");
+      if (systemsText) {
+        systemsText.textContent = "Aucun système détecté. En mode invité, vos sauvegardes seront stockées sur cet appareil.";
+      }
+    }
+
+    function setGoogleMode() {
+      localStorage.setItem(MODE_KEY, "google");
+      if (statusText) statusText.textContent = "🔐 Connecté via Google";
+      if (subtitle) subtitle.textContent = "Session Google active : vos systèmes seront synchronisés.";
+      setDot("google");
+
+      if (modePill) modePill.textContent = "Google";
+      if (storagePill) storagePill.textContent = "Cloud (bientôt)";
+      if (statusPill) statusPill.textContent = "Actif";
+
+      const systemsText = document.getElementById("systemsText");
+      if (systemsText) {
+        systemsText.textContent = "Bienvenue. Vos systèmes apparaîtront ici dès que la synchronisation sera branchée.";
+      }
+    }
+
+    // Nettoie l’URL : on enlève le hash (#access_token=...) pour éviter de le garder affiché
+    function cleanUrlHash(){
+      if (window.location.hash && window.history && window.history.replaceState) {
+        history.replaceState(null, "", window.location.pathname + window.location.search);
+      }
+    }
+
+    // Priorité
+    if (googleToken) {
+      setGoogleMode();
+      cleanUrlHash();
+    } else if (urlMode === "guest") {
+      setGuestMode();
+    } else if (savedMode === "google") {
+      setGoogleMode();
+    } else if (savedMode === "guest") {
+      setGuestMode();
+    } else {
+      setGuestMode();
+    }
+
+    // Actions UI
+    if (btnCreate) {
+      btnCreate.addEventListener("click", () => {
+        alert("Création de système à venir !");
+      });
+    }
+
+    // Changer de mode = reset + retour à l’accueil
+    if (btnSwitch) {
+      btnSwitch.addEventListener("click", () => {
+        localStorage.removeItem(MODE_KEY);
+        window.location.href = "/";
+      });
+    }
+
+    // Déconnexion = force mode guest (pour l’instant, car pas de serveur)
+    if (btnLogout) {
+      btnLogout.addEventListener("click", () => {
+        localStorage.setItem(MODE_KEY, "guest");
+        window.location.href = "/games.html?mode=guest";
+      });
+    }
+  </script>
 
 </body>
 </html>
