@@ -5,19 +5,32 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Politaria – Games</title>
 
+  <!-- Favicons (optionnel mais recommandé) -->
+  <link rel="icon" type="image/png" sizes="96x96" href="icon/favicon-96x96.png">
+  <link rel="icon" type="image/svg+xml" href="icon/favicon.svg">
+  <link rel="shortcut icon" href="icon/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="icon/apple-touch-icon.png">
+  <link rel="manifest" href="icon/site.webmanifest">
+
   <style>
     :root{
       --bg0:#070A12;
       --bg1:#0b1020;
       --card: rgba(255,255,255,0.045);
+      --card2: rgba(255,255,255,0.025);
       --border: rgba(148,163,184,0.16);
       --text:#e6edf3;
-      --muted: rgba(230,237,243,0.7);
+      --muted: rgba(230,237,243,0.72);
+
       --blue:#60a5fa;
       --cyan:#22d3ee;
+      --indigo:#6366f1;
+      --emerald:#34d399;
       --amber:#fbbf24;
-      --radius:22px;
-      --shadow:0 24px 70px rgba(0,0,0,0.55);
+      --red:#ef4444;
+
+      --shadow: 0 24px 70px rgba(0,0,0,0.55);
+      --radius: 22px;
     }
 
     *{ box-sizing:border-box; }
@@ -26,248 +39,522 @@
       margin:0;
       color:var(--text);
       background:
-        radial-gradient(1200px 600px at 20% 10%, rgba(99,102,241,0.18), transparent 60%),
-        radial-gradient(900px 500px at 85% 20%, rgba(34,211,238,0.16), transparent 60%),
+        radial-gradient(1200px 600px at 18% 10%, rgba(99,102,241,0.16), transparent 55%),
+        radial-gradient(900px 500px at 85% 20%, rgba(34,211,238,0.14), transparent 58%),
+        radial-gradient(900px 600px at 40% 90%, rgba(52,211,153,0.10), transparent 62%),
         linear-gradient(180deg, var(--bg0), var(--bg1));
-      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial;
       overflow-x:hidden;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
     }
 
-    /* ===== HEADER ===== */
+    /* étoiles */
+    .stars{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      opacity:0.55;
+      background-image:
+        radial-gradient(2px 2px at 15% 25%, rgba(255,255,255,0.9) 40%, transparent 60%),
+        radial-gradient(1px 1px at 45% 70%, rgba(255,255,255,0.7) 40%, transparent 60%),
+        radial-gradient(1px 1px at 75% 35%, rgba(255,255,255,0.6) 40%, transparent 60%),
+        radial-gradient(1px 1px at 85% 80%, rgba(255,255,255,0.55) 40%, transparent 60%),
+        radial-gradient(2px 2px at 30% 85%, rgba(255,255,255,0.5) 40%, transparent 60%);
+      filter: blur(0.1px);
+    }
 
     header{
       position:sticky;
       top:0;
       z-index:10;
+      padding:18px 26px;
       display:flex;
       align-items:center;
       justify-content:space-between;
-      padding:18px 26px;
-      background: rgba(10,14,26,0.6);
+      border-bottom:1px solid rgba(148,163,184,0.12);
+      background: rgba(10, 14, 26, 0.58);
       backdrop-filter: blur(10px);
-      border-bottom:1px solid rgba(148,163,184,0.14);
+      gap: 14px;
     }
 
     .left{
       display:flex;
       align-items:center;
       gap:14px;
+      min-width: 280px;
     }
 
-    /* ✅ LOGO UNIFIÉ (PAS D’IMAGE) */
     .logo{
       display:flex;
       align-items:center;
       gap:10px;
       font-weight:900;
+      letter-spacing:0.3px;
+      user-select:none;
     }
 
+    /* ✅ Logo badge + image */
     .logo-badge{
       width:36px;
       height:36px;
       border-radius:14px;
-      background:
-        radial-gradient(circle at 30% 20%, rgba(255,255,255,0.15), transparent 55%),
-        linear-gradient(135deg, var(--blue), var(--cyan));
+      overflow:hidden;
+      background: rgba(255,255,255,0.06);
+      border:1px solid rgba(255,255,255,0.14);
       display:flex;
       align-items:center;
       justify-content:center;
-      box-shadow:0 0 22px rgba(96,165,250,0.35);
-      font-size:18px;
+      box-shadow: 0 0 22px rgba(99,102,241,0.18), 0 0 22px rgba(34,211,238,0.12);
+    }
+
+    .logo-img{
+      width: 74%;
+      height: 74%;
+      object-fit: contain;
+      display:block;
+      filter: drop-shadow(0 0 6px rgba(0,0,0,0.35));
     }
 
     .logo span{
-      background: linear-gradient(90deg, #a5b4fc, #67e8f9);
+      font-size:1.15rem;
+      font-weight: 950;
+      background: linear-gradient(90deg, #dbeafe, #a5b4fc, #67e8f9);
       -webkit-background-clip:text;
       color:transparent;
-      font-size:1.1rem;
+      text-shadow: 0 0 18px rgba(99,102,241,0.22);
     }
-
-    .status-badge{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      padding:10px 14px;
-      border-radius:999px;
-      background: rgba(30,58,138,0.35);
-      border:1px solid rgba(191,219,254,0.22);
-      font-weight:700;
-    }
-
-    .status-dot{
-      width:10px;
-      height:10px;
-      border-radius:50%;
-      background: var(--amber);
-      box-shadow:0 0 12px rgba(251,191,36,0.6);
-    }
-
-    /* ===== PROFIL ===== */
-
-    .profile-wrapper{ position:relative; }
-
-    .profile-btn{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      padding:10px 16px;
-      border-radius:999px;
-      background: rgba(255,255,255,0.05);
-      border:1px solid rgba(148,163,184,0.18);
-      color:var(--text);
-      font-weight:700;
-      cursor:pointer;
-    }
-
-    .profile-icon{
-      width:26px;
-      height:26px;
-      border-radius:50%;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      background: rgba(255,255,255,0.15);
-    }
-
-    .profile-menu{
-      position:absolute;
-      top:calc(100% + 10px);
-      right:0;
-      width:260px;
-      background:#0b1020;
-      border-radius:16px;
-      border:1px solid rgba(148,163,184,0.18);
-      box-shadow:0 30px 80px rgba(0,0,0,0.6);
-      padding:8px;
-      display:none;
-      z-index:50;
-    }
-
-    .profile-menu.show{ display:block; }
-
-    .menu-item{
-      width:100%;
-      padding:12px 14px;
-      border-radius:12px;
-      background:none;
-      border:none;
-      color:var(--text);
-      font-weight:600;
-      text-align:left;
-      cursor:pointer;
-    }
-
-    .menu-item:hover{ background: rgba(255,255,255,0.08); }
-
-    .menu-sep{
-      height:1px;
-      margin:6px 0;
-      background: rgba(148,163,184,0.15);
-    }
-
-    /* ===== MAIN ===== */
 
     main{
-      max-width:1100px;
-      margin:0 auto;
-      padding:40px 20px 60px;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 34px 18px 60px;
+    }
+
+    .hero{
+      margin-top: 22px;
       text-align:center;
+      position:relative;
     }
 
     h1{
-      font-size:3rem;
-      margin-bottom:10px;
-      background: linear-gradient(90deg,#fff,#a5b4fc,#67e8f9);
+      margin:0;
+      font-size: clamp(2.3rem, 4.2vw, 3.6rem);
+      font-weight: 950;
+      letter-spacing: 0.4px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.95), rgba(165,180,252,0.95), rgba(103,232,249,0.95));
       -webkit-background-clip:text;
       color:transparent;
+      text-shadow: 0 0 26px rgba(99,102,241,0.18);
     }
 
     .subtitle{
-      color:var(--muted);
-      font-size:1.1rem;
+      margin: 12px auto 0;
+      max-width: 740px;
+      opacity:0.88;
+      font-size: 1.08rem;
+      color: var(--muted);
+      line-height:1.55;
+    }
+
+    .grid{
+      margin-top: 34px;
+      display:grid;
+      grid-template-columns: 1.35fr 0.65fr;
+      gap: 16px;
+      align-items:stretch;
+    }
+
+    @media (max-width: 880px){
+      .grid{ grid-template-columns: 1fr; }
+      .left{ min-width: unset; }
+      header{ padding: 16px 16px; }
+    }
+
+    .card{
+      background: linear-gradient(180deg, var(--card), var(--card2));
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+
+    .card::before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background:
+        radial-gradient(600px 220px at 20% 0%, rgba(99,102,241,0.20), transparent 60%),
+        radial-gradient(600px 220px at 80% 20%, rgba(34,211,238,0.16), transparent 60%);
+      pointer-events:none;
+      opacity:0.9;
+    }
+
+    .card-inner{
+      position:relative;
+      padding: 20px 20px 18px;
+    }
+
+    .card h2{
+      margin:0 0 8px;
+      font-size: 1.05rem;
+      letter-spacing:0.25px;
+      color: rgba(255,255,255,0.92);
+    }
+
+    .muted{
+      color: var(--muted);
+      line-height:1.55;
+      margin:0;
+    }
+
+    .big-btn{
+      width: 100%;
+      margin-top: 16px;
+      padding: 16px 18px;
+      border: none;
+      border-radius: 999px;
+      font-size: 1.06rem;
+      font-weight: 850;
+      cursor: pointer;
+      transition: 0.18s ease;
+      color: #071018;
+      background: linear-gradient(135deg, rgba(96,165,250,0.95), rgba(34,211,238,0.88));
+      box-shadow: 0 16px 44px rgba(37,99,235,0.18), 0 10px 34px rgba(34,211,238,0.16);
+    }
+
+    .big-btn:hover{
+      transform: translateY(-2px);
+      filter: brightness(1.03);
+      box-shadow: 0 20px 60px rgba(37,99,235,0.22), 0 14px 44px rgba(34,211,238,0.18);
+    }
+
+    .big-btn:active{ transform: translateY(0px); }
+
+    .side{
+      display:flex;
+      flex-direction:column;
+      gap: 12px;
+    }
+
+    .pill{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding: 14px 16px;
+      border-radius: 18px;
+      border: 1px solid rgba(148,163,184,0.14);
+      background: rgba(255,255,255,0.035);
+    }
+
+    .pill .k{
+      font-weight:850;
+      letter-spacing:0.2px;
+    }
+
+    .pill .v{
+      color: rgba(230,237,243,0.78);
+      font-weight:700;
+    }
+
+    .hint{
+      margin-top: 8px;
+      font-size: 0.92rem;
+      color: rgba(230,237,243,0.68);
     }
 
     footer{
-      text-align:center;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 18px 40px;
       opacity:0.55;
-      padding:40px 20px;
-      font-size:0.85rem;
+      font-size:0.86rem;
+      text-align:center;
+    }
+
+    /* =========================
+       PROFIL / MENU UTILISATEUR
+       ========================= */
+
+    .profile-wrapper { position: relative; }
+
+    .profile-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(148,163,184,0.18);
+      color: #e6edf3;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .profile-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.35);
+      border-color: rgba(148,163,184,0.35);
+    }
+
+    .profile-icon {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255,255,255,0.15);
+      font-size: 0.95rem;
+    }
+
+    .profile-menu {
+      position: absolute;
+      top: calc(100% + 10px);
+      right: 0;
+      width: 260px;
+      background: #0b1020;
+      border-radius: 16px;
+      border: 1px solid rgba(148,163,184,0.18);
+      box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+      padding: 8px;
+      display: none;
+      z-index: 50;
+    }
+
+    .profile-menu.show { display: block; }
+
+    .menu-item {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: transparent;
+      border: none;
+      color: #e6edf3;
+      font-size: 0.95rem;
+      font-weight: 600;
+      text-align: left;
+      cursor: pointer;
+      transition: 0.15s ease;
+    }
+
+    .menu-item:hover { background: rgba(255,255,255,0.08); }
+
+    .menu-item.link {
+      text-decoration: none;
+      display: block;
+    }
+
+    .menu-sep {
+      height: 1px;
+      margin: 6px 0;
+      background: rgba(148,163,184,0.15);
     }
   </style>
 </head>
 
 <body>
+  <div class="stars"></div>
 
-<header>
-  <div class="left">
-    <div class="logo">
-      <div class="logo-badge">🌌</div>
-      <span>Politaria</span>
+  <header>
+    <div class="left">
+      <div class="logo">
+        <!-- ✅ Logo remplacé -->
+        <div class="logo-badge">
+          <img src="icon/favicon-96x96.png" alt="Politaria" class="logo-img">
+        </div>
+        <span>Politaria</span>
+      </div>
+
+      <!-- ✅ Badge “Connecté via Google” supprimé ici -->
     </div>
 
-    <div class="status-badge">
-      <span class="status-dot"></span>
-      <span id="statusText">Chargement…</span>
+    <!-- ✅ Bouton profil + menu -->
+    <div class="profile-wrapper">
+      <button class="profile-btn" id="profileBtn">
+        <span class="profile-icon" id="profileIcon">🕶️</span>
+        <span class="profile-label" id="profileLabel">Invité</span>
+      </button>
+
+      <div class="profile-menu" id="profileMenu">
+        <button class="menu-item" id="menuSave">⚙️ Sauvegarder la progression</button>
+        <button class="menu-item" id="menuLogout">⛔ Déconnexion</button>
+
+        <div class="menu-sep"></div>
+
+        <a class="menu-item link" href="https://discord.gg/" target="_blank">💬 Rejoindre le Discord</a>
+        <a class="menu-item link" href="#" target="_blank">📖 Voir le Wiki</a>
+      </div>
     </div>
-  </div>
+  </header>
 
-  <div class="profile-wrapper">
-    <button class="profile-btn" id="profileBtn">
-      <div class="profile-icon">🕶️</div>
-      <span id="profileLabel">Invité</span>
-    </button>
+  <main>
+    <section class="hero">
+      <h1>Games</h1>
+      <p class="subtitle" id="subtitle">Vérification de votre session...</p>
+    </section>
 
-    <div class="profile-menu" id="profileMenu">
-      <button class="menu-item">⚙️ Sauvegarder</button>
-      <button class="menu-item" id="logout">⛔ Déconnexion</button>
-      <div class="menu-sep"></div>
-      <a class="menu-item" href="#" target="_blank">💬 Discord</a>
-      <a class="menu-item" href="#" target="_blank">📖 Wiki</a>
-    </div>
-  </div>
-</header>
+    <section class="grid">
+      <div class="card">
+        <div class="card-inner">
+          <h2>Vos systèmes stellaires</h2>
+          <p class="muted" id="systemsText">
+            Aucun système détecté pour le moment. Créez votre premier monde et commencez à réécrire son histoire.
+          </p>
 
-<main>
-  <h1>Games</h1>
-  <p class="subtitle" id="subtitle">Vérification de votre session…</p>
-</main>
+          <button class="big-btn" id="btnCreate">+ Créer un système</button>
 
-<footer>
-  Politaria © 2025 – Tous droits réservés.
-</footer>
+          <div class="hint">
+            Astuce : vous pourrez bientôt importer des drapeaux, choisir des doctrines, et déclencher des crises galactiques.
+          </div>
+        </div>
+      </div>
 
-<script>
-  const MODE_KEY = "politariaMode";
+      <div class="side">
+        <div class="pill">
+          <div class="k">Mode</div>
+          <div class="v" id="modePill">…</div>
+        </div>
+        <div class="pill">
+          <div class="k">Stockage</div>
+          <div class="v" id="storagePill">…</div>
+        </div>
+        <div class="pill">
+          <div class="k">Statut</div>
+          <div class="v" id="statusPill">…</div>
+        </div>
+      </div>
+    </section>
+  </main>
 
-  const statusText = document.getElementById("statusText");
-  const subtitle = document.getElementById("subtitle");
-  const profileLabel = document.getElementById("profileLabel");
-  const profileMenu = document.getElementById("profileMenu");
-  const profileBtn = document.getElementById("profileBtn");
+  <footer>
+    Politaria © 2025 – Tous droits réservés.
+  </footer>
 
-  const savedMode = localStorage.getItem(MODE_KEY);
+  <script>
+    const MODE_KEY = "politariaMode";
 
-  if (savedMode === "google") {
-    statusText.textContent = "Connecté via Google";
-    subtitle.textContent = "Vos systèmes seront synchronisés.";
-    profileLabel.textContent = "Google";
-  } else {
-    statusText.textContent = "Mode invité";
-    subtitle.textContent = "Progression locale sur cet appareil.";
-    profileLabel.textContent = "Invité";
-  }
+    const subtitle   = document.getElementById("subtitle");
 
-  profileBtn.onclick = (e)=>{
-    e.stopPropagation();
-    profileMenu.classList.toggle("show");
-  };
-  document.addEventListener("click", ()=>profileMenu.classList.remove("show"));
+    const modePill    = document.getElementById("modePill");
+    const storagePill = document.getElementById("storagePill");
+    const statusPill  = document.getElementById("statusPill");
 
-  document.getElementById("logout").onclick = ()=>{
-    localStorage.setItem(MODE_KEY,"guest");
-    location.reload();
-  };
-</script>
+    const systemsText = document.getElementById("systemsText");
+    const btnCreate   = document.getElementById("btnCreate");
 
+    // Profil / menu
+    const profileBtn   = document.getElementById("profileBtn");
+    const profileMenu  = document.getElementById("profileMenu");
+    const profileIcon  = document.getElementById("profileIcon");
+    const profileLabel = document.getElementById("profileLabel");
+    const menuLogout   = document.getElementById("menuLogout");
+    const menuSave     = document.getElementById("menuSave");
+
+    // 1) Token Google dans le hash (#)
+    const hashParams = new URLSearchParams(window.location.hash.slice(1));
+    const googleToken = hashParams.get("access_token");
+
+    // 2) URL ?mode=guest
+    const params = new URLSearchParams(window.location.search);
+    const urlMode = params.get("mode");
+
+    // 3) LocalStorage
+    const savedMode = localStorage.getItem(MODE_KEY);
+
+    function updateProfileUI(mode){
+      if (mode === "google") {
+        profileIcon.textContent = "👤";
+        profileLabel.textContent = "Compte Google";
+      } else {
+        profileIcon.textContent = "🕶️";
+        profileLabel.textContent = "Invité";
+      }
+    }
+
+    function setGuestMode() {
+      localStorage.setItem(MODE_KEY, "guest");
+      if (subtitle) subtitle.textContent = "Vous êtes en invité : progression locale, sans synchronisation.";
+
+      if (modePill) modePill.textContent = "Invité";
+      if (storagePill) storagePill.textContent = "Local";
+      if (statusPill) statusPill.textContent = "Actif";
+
+      if (systemsText) {
+        systemsText.textContent = "Aucun système détecté. En mode invité, vos sauvegardes seront stockées sur cet appareil.";
+      }
+
+      updateProfileUI("guest");
+    }
+
+    function setGoogleMode() {
+      localStorage.setItem(MODE_KEY, "google");
+      if (subtitle) subtitle.textContent = "Session Google active : vos systèmes seront synchronisés.";
+
+      if (modePill) modePill.textContent = "Google";
+      if (storagePill) storagePill.textContent = "Cloud (bientôt)";
+      if (statusPill) statusPill.textContent = "Actif";
+
+      if (systemsText) {
+        systemsText.textContent = "Bienvenue. Vos systèmes apparaîtront ici dès que la synchronisation sera branchée.";
+      }
+
+      updateProfileUI("google");
+    }
+
+    function cleanUrlHash(){
+      if (window.location.hash && window.history && window.history.replaceState) {
+        history.replaceState(null, "", window.location.pathname + window.location.search);
+      }
+    }
+
+    // Priorité :
+    if (googleToken) {
+      setGoogleMode();
+      cleanUrlHash();
+    } else if (urlMode === "guest") {
+      setGuestMode();
+    } else if (savedMode === "google") {
+      setGoogleMode();
+    } else if (savedMode === "guest") {
+      setGuestMode();
+    } else {
+      setGuestMode();
+    }
+
+    // Menu profil
+    if (profileBtn) {
+      profileBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        profileMenu.classList.toggle("show");
+      });
+
+      document.addEventListener("click", () => {
+        profileMenu.classList.remove("show");
+      });
+    }
+
+    // Actions
+    if (btnCreate) {
+      btnCreate.addEventListener("click", () => {
+        alert("Création de système à venir !");
+      });
+    }
+
+    if (menuSave) {
+      menuSave.addEventListener("click", () => {
+        alert("Sauvegarde automatique activée (à brancher serveur).");
+      });
+    }
+
+    if (menuLogout) {
+      menuLogout.addEventListener("click", () => {
+        localStorage.setItem(MODE_KEY, "guest");
+        window.location.href = "/games.html?mode=guest";
+      });
+    }
+  </script>
 </body>
 </html>
