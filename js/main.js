@@ -227,18 +227,6 @@ function hexToRgba(hex, alpha) {
   return `rgba(${r},${g},${b},${alpha})`;
 }
 
-function lightenColor(hex, amount) {
-  const c = hex.replace("#", "");
-  const bigint = parseInt(c, 16);
-  let r = (bigint >> 16) & 255;
-  let g = (bigint >> 8) & 255;
-  let b = bigint & 255;
-  r = Math.min(255, r + 255 * amount);
-  g = Math.min(255, g + 255 * amount);
-  b = Math.min(255, b + 255 * amount);
-  return "#" + ((1 << 24) + (r << 16) + (g << 8) + (b | 0)).toString(16).slice(1);
-}
-
 function darkenColor(hex, amount) {
   const c = hex.replace("#", "");
   const bigint = parseInt(c, 16);
@@ -344,11 +332,24 @@ const btnGuest = document.getElementById("btn-guest");
 
 const MODE_KEY = "politariaMode";
 
-// ⚙️ Config OAuth Google
+// ⚙️ Config OAuth Google (Implicit Flow)
 const GOOGLE_CLIENT_ID = "384194128216-26uuditt8tfcj2trpghfb0a3bj0njuhd.apps.googleusercontent.com";
 const GOOGLE_AUTH_ENDPOINT = "https://accounts.google.com/o/oauth2/v2/auth";
+const GOOGLE_REDIRECT_URI = "https://politaria.eu/games.html";
 
 function startGame() {
+  const mode = localStorage.getItem(MODE_KEY);
+
+  // Si déjà choisi, on saute la modale
+  if (mode === "guest") {
+    window.location.href = "/games.html?mode=guest";
+    return;
+  }
+  if (mode === "google") {
+    window.location.href = "/games.html";
+    return;
+  }
+
   modal.classList.add("show");
 }
 
@@ -369,7 +370,7 @@ function backdropClick(event) {
 function handleGoogleLogin() {
   const params = new URLSearchParams({
     client_id: GOOGLE_CLIENT_ID,
-    redirect_uri: "https://politaria.eu/games.html",
+    redirect_uri: GOOGLE_REDIRECT_URI,
     response_type: "token",
     scope: "openid email profile",
     include_granted_scopes: "true",
@@ -387,9 +388,7 @@ function applyGuestModeUI() {
     subtitle.style.transform = "translateY(0)";
   }
 
-  if (hero) {
-    hero.classList.add("guest-active");
-  }
+  if (hero) hero.classList.add("guest-active");
 
   if (footer) {
     footer.textContent = "Mode invité actif. Votre progression sera stockée localement.";
@@ -406,12 +405,10 @@ function continueAsGuest() {
 if (btnGoogle) btnGoogle.addEventListener("click", handleGoogleLogin);
 if (btnGuest) btnGuest.addEventListener("click", continueAsGuest);
 
-// au chargement, on regarde si le joueur était déjà en invité
+// au chargement : si déjà invité, on adapte l'UI
 window.addEventListener("DOMContentLoaded", () => {
   const mode = localStorage.getItem(MODE_KEY);
-  if (mode === "guest") {
-    applyGuestModeUI();
-  }
+  if (mode === "guest") applyGuestModeUI();
 });
 
 // fermer avec Échap
