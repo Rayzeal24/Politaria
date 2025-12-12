@@ -5,43 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Politaria – Games</title>
 
+  <!-- Favicons -->
   <link rel="icon" type="image/png" sizes="96x96" href="icon/favicon-96x96.png" />
   <link rel="icon" type="image/svg+xml" href="icon/favicon.svg" />
   <link rel="shortcut icon" href="icon/favicon.ico" />
   <link rel="apple-touch-icon" sizes="180x180" href="icon/apple-touch-icon.png" />
   <link rel="manifest" href="icon/site.webmanifest" />
 
-  <link rel="stylesheet" href="css/games.css?v=20251212" />
+  <link rel="stylesheet" href="css/games.css?v=4bea4593" />
 
-  <!-- 🔥 Debug: si un script ne charge pas, tu le vois DIRECT -->
-  <script>
-    window.POLITARIA = window.POLITARIA || {};
-    window.__assetFail = function(file){
-      console.error("ASSET LOAD FAIL:", file);
-      const el = document.getElementById("assetFail");
-      if(el){
-        el.style.display = "block";
-        el.textContent = "❌ Fichier introuvable: " + file + " (chemin/casse/cache).";
-      } else {
-        alert("❌ Fichier introuvable: " + file);
-      }
-    };
-  </script>
-
-  <!-- ✅ defer + cache-buster -->
-  <script defer src="js/config.js?v=20251212" onerror="__assetFail('js/config.js')"></script>
-  <script defer src="js/session.js?v=20251212" onerror="__assetFail('js/session.js')"></script>
-  <script defer src="js/systems.js?v=20251212" onerror="__assetFail('js/systems.js')"></script>
-  <script defer src="js/games.js?v=20251212" onerror="__assetFail('js/games.js')"></script>
+  <!-- ✅ Scripts (ordre important) + cache-buster -->
+  <script defer src="js/config.js?v=4bea4593"></script>
+  <script defer src="js/session.js?v=4bea4593"></script>
+  <script defer src="js/systems.js?v=4bea4593"></script>
+  <script defer src="js/games.js?v=4bea4593"></script>
 </head>
 
 <body>
   <div class="stars"></div>
-
-  <!-- bandeau debug -->
-  <div id="assetFail" style="display:none; position:sticky; top:0; z-index:9999; padding:10px 14px; background:#b91c1c; color:white; font-weight:900;">
-    ❌ Un fichier n’a pas chargé.
-  </div>
 
   <header>
     <div class="left">
