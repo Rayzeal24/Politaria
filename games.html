@@ -21,6 +21,7 @@
       --border: rgba(148,163,184,0.16);
       --text:#e6edf3;
       --muted: rgba(230,237,243,0.72);
+
       --shadow: 0 24px 70px rgba(0,0,0,0.55);
       --radius: 22px;
     }
@@ -35,33 +36,45 @@
         radial-gradient(900px 600px at 40% 90%, rgba(52,211,153,0.10), transparent 62%),
         linear-gradient(180deg, var(--bg0), var(--bg1));
       overflow-x:hidden;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
     }
 
     .stars{
       position:fixed;
       inset:0;
       pointer-events:none;
-      opacity:.55;
+      opacity:0.55;
       background-image:
-        radial-gradient(2px 2px at 15% 25%, rgba(255,255,255,.9) 40%, transparent 60%),
-        radial-gradient(1px 1px at 45% 70%, rgba(255,255,255,.7) 40%, transparent 60%),
-        radial-gradient(1px 1px at 75% 35%, rgba(255,255,255,.6) 40%, transparent 60%),
-        radial-gradient(1px 1px at 85% 80%, rgba(255,255,255,.55) 40%, transparent 60%);
+        radial-gradient(2px 2px at 15% 25%, rgba(255,255,255,0.9) 40%, transparent 60%),
+        radial-gradient(1px 1px at 45% 70%, rgba(255,255,255,0.7) 40%, transparent 60%),
+        radial-gradient(1px 1px at 75% 35%, rgba(255,255,255,0.6) 40%, transparent 60%),
+        radial-gradient(1px 1px at 85% 80%, rgba(255,255,255,0.55) 40%, transparent 60%),
+        radial-gradient(2px 2px at 30% 85%, rgba(255,255,255,0.5) 40%, transparent 60%);
+      filter: blur(0.1px);
     }
 
-    /* ================= HEADER ================= */
+    /* =========================
+       HEADER
+       ========================= */
     header{
       position:sticky;
       top:0;
       z-index:10;
       padding:18px 26px;
       display:flex;
-      justify-content:space-between;
       align-items:center;
-      background:rgba(10,14,26,.58);
+      justify-content:space-between;
+      border-bottom:1px solid rgba(148,163,184,0.12);
+      background: rgba(10, 14, 26, 0.58);
       backdrop-filter: blur(10px);
-      border-bottom:1px solid rgba(148,163,184,.12);
+      gap: 14px;
+    }
+
+    .left{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      min-width: 280px;
     }
 
     .logo{
@@ -69,100 +82,314 @@
       align-items:center;
       gap:10px;
       font-weight:900;
+      letter-spacing:0.3px;
+      user-select:none;
     }
+
     .logo-badge{
-      width:36px;height:36px;
+      width:36px;
+      height:36px;
       border-radius:14px;
-      background:rgba(255,255,255,.06);
+      overflow:hidden;
+      background: rgba(255,255,255,0.06);
+      border:1px solid rgba(255,255,255,0.14);
       display:flex;
       align-items:center;
       justify-content:center;
+      box-shadow: 0 0 22px rgba(99,102,241,0.18), 0 0 22px rgba(34,211,238,0.12);
     }
-    .logo-img{ width:74%; }
 
-    .profile-wrapper{ position:relative; }
+    .logo-img{
+      width: 74%;
+      height: 74%;
+      object-fit: contain;
+      display:block;
+      filter: drop-shadow(0 0 6px rgba(0,0,0,0.35));
+    }
+
+    .logo span{
+      font-size:1.15rem;
+      font-weight: 950;
+      background: linear-gradient(90deg, #dbeafe, #a5b4fc, #67e8f9);
+      -webkit-background-clip:text;
+      color:transparent;
+      text-shadow: 0 0 18px rgba(99,102,241,0.22);
+    }
+
+    .header-right{
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+
+    .profile-wrapper { position: relative; }
 
     .profile-btn{
       display:flex;
       align-items:center;
-      gap:12px;
-      padding:10px 14px 10px 12px;
-      border-radius:999px;
-      background:rgba(255,255,255,.05);
-      border:1px solid rgba(148,163,184,.18);
-      cursor:pointer;
-      color:#e6edf3;
-      font-weight:800;
+      gap: 12px;
+      padding: 10px 14px 10px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(148,163,184,0.18);
+      color: #e6edf3;
+      font-weight: 800;
+      cursor: pointer;
+      transition: 0.2s ease;
+      white-space: nowrap;
+    }
+    .profile-btn:hover{
+      transform: translateY(-1px);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.35);
+      border-color: rgba(148,163,184,0.35);
     }
 
     .avatar-ring{
-      width:44px;height:44px;
-      border-radius:50%;
-      padding:3px;
-      background:linear-gradient(135deg,#a855f7,#3b82f6);
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      padding: 3px;
+      background: linear-gradient(135deg, rgba(168,85,247,0.95), rgba(59,130,246,0.88));
+      box-shadow: 0 18px 40px rgba(168,85,247,0.16);
+      flex: 0 0 auto;
     }
     .avatar{
-      width:100%;height:100%;
-      border-radius:50%;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
       display:flex;
       align-items:center;
       justify-content:center;
-      background:linear-gradient(180deg,#f97316,#ef4444);
-      font-weight:950;
+      background: linear-gradient(180deg, rgba(249,115,22,0.95), rgba(239,68,68,0.88));
+      color: rgba(255,255,255,0.96);
+      font-weight: 950;
+      font-size: 1.15rem;
+      letter-spacing: 0.5px;
+      border: 1px solid rgba(255,255,255,0.14);
     }
 
     .profile-label{
+      font-weight: 850;
+      color: rgba(230,237,243,0.92);
       display:flex;
       align-items:center;
       gap:10px;
     }
 
-    .gmail-logo{ display:none; }
+    /* ✅ Logo Gmail inline (affiché seulement en mode google) */
+    .gmail-logo{
+      width: 20px;
+      height: 20px;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      flex: 0 0 auto;
+    }
     .gmail-logo.show{ display:inline-flex; }
+    .gmail-logo svg{ display:block; width:20px; height:20px; }
 
     .profile-menu{
-      position:absolute;
-      right:0;
-      top:calc(100% + 10px);
-      width:260px;
-      background:#0b1020;
-      border-radius:16px;
-      border:1px solid rgba(148,163,184,.18);
-      padding:8px;
-      display:none;
-      box-shadow:0 30px 80px rgba(0,0,0,.6);
+      position: absolute;
+      top: calc(100% + 10px);
+      right: 0;
+      width: 260px;
+      background: #0b1020;
+      border-radius: 16px;
+      border: 1px solid rgba(148,163,184,0.18);
+      box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+      padding: 8px;
+      display: none;
+      z-index: 50;
     }
     .profile-menu.show{ display:block; }
 
     .menu-item{
       width:100%;
       padding:12px 14px;
-      background:none;
+      border-radius:12px;
+      background:transparent;
       border:none;
       color:#e6edf3;
+      font-size:0.95rem;
+      font-weight:700;
       text-align:left;
       cursor:pointer;
-      border-radius:12px;
-      font-weight:700;
+      transition:0.15s ease;
     }
-    .menu-item:hover{ background:rgba(255,255,255,.08); }
+    .menu-item:hover{ background: rgba(255,255,255,0.08); }
+    .menu-item.link{ text-decoration:none; display:block; }
+    .menu-sep{ height:1px; margin:6px 0; background: rgba(148,163,184,0.15); }
 
-    /* ================= PAGE ================= */
+    /* =========================
+       PAGE
+       ========================= */
     main{
-      max-width:1100px;
-      margin:0 auto;
-      padding:34px 18px 60px;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 34px 18px 60px;
+    }
+    .hero{
+      margin-top: 22px;
+      text-align:center;
+      position:relative;
+    }
+    h1{
+      margin:0;
+      font-size: clamp(2.3rem, 4.2vw, 3.6rem);
+      font-weight: 950;
+      letter-spacing: 0.4px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.95), rgba(165,180,252,0.95), rgba(103,232,249,0.95));
+      -webkit-background-clip:text;
+      color:transparent;
+      text-shadow: 0 0 26px rgba(99,102,241,0.18);
+    }
+    .subtitle{
+      margin: 12px auto 0;
+      max-width: 780px;
+      opacity:0.88;
+      font-size: 1.05rem;
+      color: var(--muted);
+      line-height:1.55;
     }
 
-    h1{
-      text-align:center;
-      font-size:clamp(2.3rem,4.2vw,3.6rem);
+    .grid{
+      margin-top: 26px;
+      display:grid;
+      grid-template-columns: 1.35fr 0.65fr;
+      gap: 16px;
+      align-items:stretch;
+    }
+    @media (max-width: 880px){
+      .grid{ grid-template-columns: 1fr; }
+      .left{ min-width: unset; }
+      header{ padding: 16px 16px; }
+    }
+
+    .card{
+      background: linear-gradient(180deg, var(--card), var(--card2));
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+    .card::before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background:
+        radial-gradient(600px 220px at 20% 0%, rgba(99,102,241,0.20), transparent 60%),
+        radial-gradient(600px 220px at 80% 20%, rgba(34,211,238,0.16), transparent 60%);
+      pointer-events:none;
+      opacity:0.9;
+    }
+    .card-inner{ position:relative; padding: 20px 20px 18px; }
+
+    .muted{ color: var(--muted); line-height:1.55; margin:0; }
+
+    .toolbar{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top: 14px;
+    }
+
+    .btn{
+      border: 1px solid rgba(148,163,184,0.18);
+      background: rgba(255,255,255,0.045);
+      color: rgba(255,255,255,0.92);
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: 0.18s ease;
+    }
+    .btn:hover{ transform: translateY(-1px); border-color: rgba(148,163,184,0.35); }
+    .btn.primary{
+      border:none;
+      color:#071018;
+      background: linear-gradient(135deg, rgba(96,165,250,0.95), rgba(34,211,238,0.88));
+      box-shadow: 0 16px 44px rgba(37,99,235,0.18), 0 10px 34px rgba(34,211,238,0.16);
+    }
+    .btn.primary:hover{ filter: brightness(1.03); }
+
+    .list{
+      margin-top: 14px;
+      display:flex;
+      flex-direction:column;
+      gap: 10px;
+    }
+    .system{
+      border-radius: 16px;
+      border: 1px solid rgba(148,163,184,0.14);
+      background: rgba(255,255,255,0.03);
+      padding: 12px 12px;
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .system h3{
+      margin:0;
+      font-size: 1.02rem;
+      font-weight: 900;
+      letter-spacing:0.2px;
+    }
+    .system .meta{
+      margin-top: 6px;
+      font-size: 0.92rem;
+      color: rgba(230,237,243,0.70);
+      display:flex;
+      flex-wrap:wrap;
+      gap: 10px;
+    }
+    .system .actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap: 8px;
+      justify-content:flex-end;
+      align-items:center;
+    }
+    .chip{
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.18);
+      background: rgba(255,255,255,0.03);
+      font-weight: 800;
+      color: rgba(230,237,243,0.86);
+    }
+
+    .side{
+      display:flex;
+      flex-direction:column;
+      gap: 12px;
+    }
+    .pill{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding: 14px 16px;
+      border-radius: 18px;
+      border: 1px solid rgba(148,163,184,0.14);
+      background: rgba(255,255,255,0.035);
+    }
+    .pill .k{ font-weight:850; letter-spacing:0.2px; }
+    .pill .v{ color: rgba(230,237,243,0.78); font-weight:700; }
+
+    .hint{
+      margin-top: 10px;
+      font-size: 0.92rem;
+      color: rgba(230,237,243,0.68);
     }
 
     footer{
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 18px 40px;
+      opacity:0.55;
+      font-size:0.86rem;
       text-align:center;
-      opacity:.55;
-      padding-bottom:40px;
     }
   </style>
 </head>
@@ -171,93 +398,454 @@
   <div class="stars"></div>
 
   <header>
-    <div class="logo">
-      <div class="logo-badge">
-        <img src="icon/favicon-96x96.png" class="logo-img" alt="Politaria">
+    <div class="left">
+      <div class="logo">
+        <div class="logo-badge">
+          <img src="icon/favicon-96x96.png" alt="Politaria" class="logo-img">
+        </div>
+        <span>Politaria</span>
       </div>
-      <span>Politaria</span>
     </div>
 
-    <div class="profile-wrapper">
-      <button class="profile-btn" id="profileBtn">
-        <span class="avatar-ring">
-          <span class="avatar" id="profileInitial">I</span>
-        </span>
-
-        <span class="profile-label">
-          <span class="gmail-logo" id="gmailLogo">
-            <!-- LOGO GMAIL INLINE -->
-            <svg viewBox="0 0 24 24" width="20" height="20">
-              <path fill="#EA4335" d="M20 6.6v10.8c0 .9-.7 1.6-1.6 1.6H5.6C4.7 19 4 18.3 4 17.4V6.6l8 6.2 8-6.2z"/>
-              <path fill="#FBBC05" d="M20 6.6l-8 6.2-8-6.2V6c0-.6.4-1 1-1h14c.6 0 1 .4 1 1v.6z"/>
-              <path fill="#34A853" d="M4 7.2V17.4c0 .9.7 1.6 1.6 1.6H8V10L4 7.2z"/>
-              <path fill="#4285F4" d="M20 7.2V17.4c0 .9-.7 1.6-1.6 1.6H16V10l4-2.8z"/>
-            </svg>
+    <!-- ✅ Coins supprimés (wallet retiré) -->
+    <div class="header-right">
+      <div class="profile-wrapper">
+        <button class="profile-btn" id="profileBtn" aria-haspopup="true" aria-expanded="false">
+          <span class="avatar-ring">
+            <span class="avatar" id="profileInitial">I</span>
           </span>
-          <span id="profileLabelText">Invité</span>
-        </span>
-      </button>
 
-      <div class="profile-menu" id="profileMenu">
-        <button class="menu-item">⚙️ Sauvegarder la progression</button>
-        <button class="menu-item" id="logout">⛔ Déconnexion</button>
+          <!-- ✅ Logo Gmail inline + texte invité (vide en mode google) -->
+          <span class="profile-label" id="profileLabel">
+            <span class="gmail-logo" id="gmailLogo" aria-label="Gmail" title="Gmail">
+              <svg viewBox="0 0 24 24" role="img" aria-hidden="true">
+                <path fill="#EA4335" d="M20 6.6v10.8c0 .9-.7 1.6-1.6 1.6H5.6C4.7 19 4 18.3 4 17.4V6.6l8 6.2 8-6.2z"/>
+                <path fill="#FBBC05" d="M20 6.6l-8 6.2-8-6.2V6c0-.6.4-1 1-1h14c.6 0 1 .4 1 1v.6z"/>
+                <path fill="#34A853" d="M4 7.2V17.4c0 .9.7 1.6 1.6 1.6H8V10L4 7.2z"/>
+                <path fill="#4285F4" d="M20 7.2V17.4c0 .9-.7 1.6-1.6 1.6H16V10l4-2.8z"/>
+              </svg>
+            </span>
+            <span id="profileLabelText">Invité</span>
+          </span>
+        </button>
+
+        <div class="profile-menu" id="profileMenu" role="menu" aria-label="Menu utilisateur">
+          <button class="menu-item" id="menuSave">⚙️ Sauvegarder la progression</button>
+          <button class="menu-item" id="menuLogout">⛔ Déconnexion</button>
+
+          <div class="menu-sep"></div>
+
+          <a class="menu-item link" href="https://discord.gg/" target="_blank" rel="noopener">💬 Rejoindre le Discord</a>
+          <a class="menu-item link" href="#" target="_blank" rel="noopener">📖 Voir le Wiki</a>
+        </div>
       </div>
     </div>
   </header>
 
   <main>
-    <h1>Games</h1>
+    <section class="hero">
+      <h1>Games</h1>
+      <p class="subtitle" id="subtitle">Chargement...</p>
+    </section>
+
+    <section class="grid">
+      <div class="card">
+        <div class="card-inner">
+          <h2>Vos systèmes stellaires</h2>
+          <p class="muted" id="systemsText">
+            Préparez votre première étoile. Donnez-lui un nom… et laissez Politaria écrire le reste.
+          </p>
+
+          <div class="toolbar" aria-label="Actions principales">
+            <button class="btn primary" id="btnCreate">+ Créer</button>
+            <button class="btn" id="btnImport">Importer</button>
+            <button class="btn" id="btnTutorial">Tutoriel</button>
+            <button class="btn" id="btnLeaderboard">Classement</button>
+            <button class="btn" id="btnSettings">Paramètres</button>
+          </div>
+
+          <div class="hint" id="hint">
+            Astuce : chaque système a une <b>seed</b>. Plus tard, elle générera planètes, ressources et anomalies.
+          </div>
+
+          <div class="list" id="systemsList" aria-live="polite"></div>
+
+          <p class="muted" id="emptyState" style="margin-top:12px; display:none;">
+            Rien ici pour l’instant. Crée ton premier système et lance la chronologie.
+          </p>
+        </div>
+      </div>
+
+      <div class="side">
+        <div class="pill">
+          <div class="k">Mode</div>
+          <div class="v" id="modePill">…</div>
+        </div>
+        <div class="pill">
+          <div class="k">Stockage</div>
+          <div class="v" id="storagePill">…</div>
+        </div>
+        <div class="pill">
+          <div class="k">Statut</div>
+          <div class="v" id="statusPill">…</div>
+        </div>
+        <div class="pill">
+          <div class="k">Systèmes</div>
+          <div class="v" id="countPill">0</div>
+        </div>
+      </div>
+    </section>
   </main>
 
   <footer>
-    Politaria © 2025
+    Politaria © 2025 – Tous droits réservés.
   </footer>
 
   <script>
     "use strict";
 
+    // =========================
+    // Keys
+    // =========================
     const MODE_KEY = "politariaMode";
+    const SYSTEMS_KEY = "politariaSystems_v1";
     const EMAIL_KEY = "politariaEmail";
+    // ✅ COINS_KEY supprimé
 
-    const profileBtn = document.getElementById("profileBtn");
-    const profileMenu = document.getElementById("profileMenu");
-    const gmailLogo = document.getElementById("gmailLogo");
+    // =========================
+    // DOM
+    // =========================
+    const subtitle     = document.getElementById("subtitle");
+    const systemsText  = document.getElementById("systemsText");
+    const systemsList  = document.getElementById("systemsList");
+    const emptyState   = document.getElementById("emptyState");
+
+    const modePill     = document.getElementById("modePill");
+    const storagePill  = document.getElementById("storagePill");
+    const statusPill   = document.getElementById("statusPill");
+    const countPill    = document.getElementById("countPill");
+
+    const btnCreate      = document.getElementById("btnCreate");
+    const btnImport      = document.getElementById("btnImport");
+    const btnTutorial    = document.getElementById("btnTutorial");
+    const btnLeaderboard = document.getElementById("btnLeaderboard");
+    const btnSettings    = document.getElementById("btnSettings");
+
+    // Profil / menu (header)
+    const profileBtn      = document.getElementById("profileBtn");
+    const profileMenu     = document.getElementById("profileMenu");
+    const profileInitial  = document.getElementById("profileInitial");
+    const menuLogout      = document.getElementById("menuLogout");
+    const menuSave        = document.getElementById("menuSave");
+
+    // ✅ Gmail logo + texte label
+    const gmailLogo        = document.getElementById("gmailLogo");
     const profileLabelText = document.getElementById("profileLabelText");
-    const profileInitial = document.getElementById("profileInitial");
 
-    function getInitial(email){
-      if(!email) return "I";
-      return email[0].toUpperCase();
+    // =========================
+    // Utils
+    // =========================
+    const uid = () => (crypto?.randomUUID ? crypto.randomUUID() : String(Date.now()) + "_" + Math.random().toString(16).slice(2));
+    const nowISO = () => new Date().toISOString();
+    const safeJsonParse = (s, fallback) => { try { return JSON.parse(s); } catch { return fallback; } };
+
+    function toast(msg){ alert(msg); }
+
+    function getInitialFromEmail(email){
+      const s = String(email || "").trim();
+      if(!s) return "I";
+      const first = s[0].toUpperCase();
+      return /[A-Z0-9]/.test(first) ? first : "I";
     }
 
+    // =========================
+    // Session Mode (Google / Guest)
+    // =========================
+    const hashParams = new URLSearchParams(window.location.hash.slice(1));
+    const googleToken = hashParams.get("access_token");
+
+    const params = new URLSearchParams(window.location.search);
+    const urlMode = params.get("mode");
+
+    const urlEmail = params.get("email") || hashParams.get("email");
+    if (urlEmail) localStorage.setItem(EMAIL_KEY, urlEmail);
+
+    const savedMode = localStorage.getItem(MODE_KEY);
+
     function updateProfileUI(mode){
-      const email = localStorage.getItem(EMAIL_KEY);
-      if(mode === "google"){
+      const email = localStorage.getItem(EMAIL_KEY) || "";
+      if (mode === "google") {
         gmailLogo.classList.add("show");
-        profileLabelText.textContent = "";
-        profileInitial.textContent = getInitial(email) || "G";
-      }else{
+        profileLabelText.textContent = "";            // ✅ pas de “Compte Google”
+        profileInitial.textContent = getInitialFromEmail(email) || "G";
+      } else {
         gmailLogo.classList.remove("show");
         profileLabelText.textContent = "Invité";
         profileInitial.textContent = "I";
       }
     }
 
-    updateProfileUI(localStorage.getItem(MODE_KEY) === "google" ? "google" : "guest");
+    function setGuestMode() {
+      localStorage.setItem(MODE_KEY, "guest");
+      subtitle.textContent = "Mode invité : progression locale, sans synchronisation.";
+      modePill.textContent = "Invité";
+      storagePill.textContent = "Local";
+      statusPill.textContent = "Actif";
+      systemsText.textContent = "Créez un système, testez, cassez tout… puis recommencez. Ici, l’univers vous obéit.";
+      updateProfileUI("guest");
+    }
 
-    profileBtn.addEventListener("click", e=>{
+    function setGoogleMode() {
+      localStorage.setItem(MODE_KEY, "google");
+      subtitle.textContent = "Session Google détectée : synchronisation cloud à brancher.";
+      modePill.textContent = "Google";
+      storagePill.textContent = "Cloud (bientôt)";
+      statusPill.textContent = "Actif";
+      systemsText.textContent = "Bienvenue. Vos systèmes apparaîtront ici, prêts à être partagés et disputés.";
+      updateProfileUI("google");
+    }
+
+    function cleanUrlHash(){
+      if (window.location.hash && window.history?.replaceState) {
+        history.replaceState(null, "", window.location.pathname + window.location.search);
+      }
+    }
+
+    if (googleToken) { setGoogleMode(); cleanUrlHash(); }
+    else if (urlMode === "guest") setGuestMode();
+    else if (savedMode === "google") setGoogleMode();
+    else setGuestMode();
+
+    // =========================
+    // Systems Store (local)
+    // =========================
+    function loadSystems(){
+      return safeJsonParse(localStorage.getItem(SYSTEMS_KEY), []);
+    }
+    function saveSystems(list){
+      localStorage.setItem(SYSTEMS_KEY, JSON.stringify(list));
+    }
+
+    function renderSystems(){
+      const systems = loadSystems();
+      systemsList.innerHTML = "";
+
+      countPill.textContent = String(systems.length);
+      emptyState.style.display = systems.length ? "none" : "block";
+
+      systems.sort((a,b) => (b.updatedAt || b.createdAt || "").localeCompare(a.updatedAt || a.createdAt || ""));
+
+      for(const s of systems){
+        const el = document.createElement("div");
+        el.className = "system";
+
+        const left = document.createElement("div");
+        left.style.flex = "1";
+
+        const title = document.createElement("h3");
+        title.textContent = s.name || "Système sans nom";
+
+        const meta = document.createElement("div");
+        meta.className = "meta";
+
+        const chipMode = document.createElement("span");
+        chipMode.className = "chip";
+        chipMode.textContent = "Mode: " + (s.mode || "Sandbox");
+
+        const chipSeed = document.createElement("span");
+        chipSeed.className = "chip";
+        chipSeed.textContent = "Seed: " + (s.seed || "—");
+
+        const chipDate = document.createElement("span");
+        chipDate.className = "chip";
+        chipDate.textContent = "Maj: " + (s.updatedAt ? new Date(s.updatedAt).toLocaleString() : "—");
+
+        meta.append(chipMode, chipSeed, chipDate);
+        left.append(title, meta);
+
+        const actions = document.createElement("div");
+        actions.className = "actions";
+
+        const btnPlay = document.createElement("button");
+        btnPlay.className = "btn primary";
+        btnPlay.textContent = "Jouer";
+        btnPlay.addEventListener("click", () => {
+          toast("Mode jeu à venir. Système: " + (s.name || "—"));
+        });
+
+        const btnRename = document.createElement("button");
+        btnRename.className = "btn";
+        btnRename.textContent = "Renommer";
+        btnRename.addEventListener("click", () => {
+          const name = prompt("Nouveau nom :", s.name || "");
+          if(!name) return;
+          updateSystem(s.id, { name, updatedAt: nowISO() });
+          renderSystems();
+        });
+
+        const btnExport = document.createElement("button");
+        btnExport.className = "btn";
+        btnExport.textContent = "Exporter";
+        btnExport.addEventListener("click", () => exportSystem(s.id));
+
+        const btnDelete = document.createElement("button");
+        btnDelete.className = "btn";
+        btnDelete.textContent = "Supprimer";
+        btnDelete.addEventListener("click", () => {
+          if(confirm("Supprimer ce système ?")) {
+            deleteSystem(s.id);
+            renderSystems();
+          }
+        });
+
+        actions.append(btnPlay, btnRename, btnExport, btnDelete);
+        el.append(left, actions);
+        systemsList.appendChild(el);
+      }
+    }
+
+    function addSystem(system){
+      const systems = loadSystems();
+      systems.push(system);
+      saveSystems(systems);
+    }
+
+    function updateSystem(id, patch){
+      const systems = loadSystems();
+      const i = systems.findIndex(x => x.id === id);
+      if(i === -1) return;
+      systems[i] = { ...systems[i], ...patch };
+      saveSystems(systems);
+    }
+
+    function deleteSystem(id){
+      const systems = loadSystems().filter(x => x.id !== id);
+      saveSystems(systems);
+    }
+
+    function exportSystem(id){
+      const systems = loadSystems();
+      const s = systems.find(x => x.id === id);
+      if(!s) return;
+
+      const blob = new Blob([JSON.stringify(s, null, 2)], { type: "application/json" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = (s.name || "system") + ".json";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+    }
+
+    function importSystemFromFile(file){
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          try{
+            const data = JSON.parse(String(reader.result || "{}"));
+            resolve(data);
+          }catch(e){ reject(e); }
+        };
+        reader.onerror = reject;
+        reader.readAsText(file);
+      });
+    }
+
+    // =========================
+    // Main Actions
+    // =========================
+    btnCreate.addEventListener("click", () => {
+      const name = prompt("Nom du système :", "Nova-" + Math.floor(Math.random()*999));
+      if(!name) return;
+
+      const mode = prompt("Mode (Sandbox / Chronique / Survie / Escarmouche) :", "Sandbox") || "Sandbox";
+      const seed = prompt("Seed (laisser vide = auto) :", "") || Math.floor(Math.random()*1e9).toString(16);
+
+      addSystem({
+        id: uid(),
+        name: name.trim(),
+        mode: mode.trim(),
+        seed: seed.trim(),
+        createdAt: nowISO(),
+        updatedAt: nowISO(),
+        planets: [],
+        factions: [],
+        events: []
+      });
+
+      renderSystems();
+    });
+
+    btnImport.addEventListener("click", async () => {
+      const input = document.createElement("input");
+      input.type = "file";
+      input.accept = "application/json";
+      input.onchange = async () => {
+        const file = input.files?.[0];
+        if(!file) return;
+
+        try{
+          const data = await importSystemFromFile(file);
+          const system = {
+            id: data.id || uid(),
+            name: data.name || "Système importé",
+            mode: data.mode || "Sandbox",
+            seed: data.seed || Math.floor(Math.random()*1e9).toString(16),
+            createdAt: data.createdAt || nowISO(),
+            updatedAt: nowISO(),
+            planets: Array.isArray(data.planets) ? data.planets : [],
+            factions: Array.isArray(data.factions) ? data.factions : [],
+            events: Array.isArray(data.events) ? data.events : []
+          };
+
+          addSystem(system);
+          renderSystems();
+          toast("Import réussi : " + system.name);
+        }catch{
+          toast("Import échoué : fichier invalide.");
+        }
+      };
+      input.click();
+    });
+
+    btnTutorial.addEventListener("click", () => toast("Tutoriel à venir : création → planètes → factions → événements → première crise."));
+    btnLeaderboard.addEventListener("click", () => toast("Classement à venir (quand le mode en ligne sera prêt)."));
+    btnSettings.addEventListener("click", () => {
+      const current = localStorage.getItem(MODE_KEY) || "guest";
+      const next = prompt("Paramètre rapide : mode (guest/google) :", current);
+      if(!next) return;
+      localStorage.setItem(MODE_KEY, next === "google" ? "google" : "guest");
+      location.reload();
+    });
+
+    // =========================
+    // Profile Menu
+    // =========================
+    profileBtn.addEventListener("click", (e) => {
       e.stopPropagation();
-      profileMenu.classList.toggle("show");
+      const isOpen = profileMenu.classList.toggle("show");
+      profileBtn.setAttribute("aria-expanded", String(isOpen));
     });
 
-    document.addEventListener("click", ()=>{
+    document.addEventListener("click", () => {
       profileMenu.classList.remove("show");
+      profileBtn.setAttribute("aria-expanded", "false");
     });
 
-    document.getElementById("logout").onclick = ()=>{
+    menuSave.addEventListener("click", () => {
+      toast("Sauvegarde : OK (local). Cloud à brancher ensuite.");
+    });
+
+    menuLogout.addEventListener("click", () => {
       localStorage.removeItem(MODE_KEY);
-      location.href = "index.html";
-    };
+      window.location.href = "/index.html";
+    });
+
+    // =========================
+    // Init
+    // =========================
+    renderSystems();
   </script>
 </body>
 </html>
