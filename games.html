@@ -176,7 +176,7 @@
       gap:10px;
     }
 
-    /* ✅ Logo Gmail inline (affiché seulement en mode google) */
+    /* ✅ Petit logo “Gmail” (enveloppe) inline, affiché seulement en mode google */
     .gmail-logo{
       width: 20px;
       height: 20px;
@@ -186,8 +186,9 @@
       flex: 0 0 auto;
     }
     .gmail-logo.show{ display:inline-flex; }
-    .gmail-logo svg{ display:block; width:20px; height:20px; }
+    .gmail-logo svg{ width:20px; height:20px; display:block; }
 
+    /* ✅ Le dropdown est dans un autre fichier, mais on garde le style ici */
     .profile-menu{
       position: absolute;
       top: calc(100% + 10px);
@@ -407,17 +408,16 @@
       </div>
     </div>
 
-    <!-- ✅ Coins supprimés (wallet retiré) -->
     <div class="header-right">
-      <div class="profile-wrapper">
+      <div class="profile-wrapper" id="profileWrapper">
         <button class="profile-btn" id="profileBtn" aria-haspopup="true" aria-expanded="false">
           <span class="avatar-ring">
             <span class="avatar" id="profileInitial">I</span>
           </span>
 
-          <!-- ✅ Logo Gmail inline + texte invité (vide en mode google) -->
-          <span class="profile-label" id="profileLabel">
-            <span class="gmail-logo" id="gmailLogo" aria-label="Gmail" title="Gmail">
+          <span class="profile-label">
+            <span class="gmail-logo" id="gmailLogo" aria-label="Gmail" title="Google">
+              <!-- Gmail-ish icon inline -->
               <svg viewBox="0 0 24 24" role="img" aria-hidden="true">
                 <path fill="#EA4335" d="M20 6.6v10.8c0 .9-.7 1.6-1.6 1.6H5.6C4.7 19 4 18.3 4 17.4V6.6l8 6.2 8-6.2z"/>
                 <path fill="#FBBC05" d="M20 6.6l-8 6.2-8-6.2V6c0-.6.4-1 1-1h14c.6 0 1 .4 1 1v.6z"/>
@@ -429,15 +429,8 @@
           </span>
         </button>
 
-        <div class="profile-menu" id="profileMenu" role="menu" aria-label="Menu utilisateur">
-          <button class="menu-item" id="menuSave">⚙️ Sauvegarder la progression</button>
-          <button class="menu-item" id="menuLogout">⛔ Déconnexion</button>
-
-          <div class="menu-sep"></div>
-
-          <a class="menu-item link" href="https://discord.gg/" target="_blank" rel="noopener">💬 Rejoindre le Discord</a>
-          <a class="menu-item link" href="#" target="_blank" rel="noopener">📖 Voir le Wiki</a>
-        </div>
+        <!-- ✅ ICI: le menu n'est plus en dur, il sera injecté depuis partials/profile-menu.html -->
+        <div id="profileMenuMount"></div>
       </div>
     </div>
   </header>
@@ -510,7 +503,6 @@
     const MODE_KEY = "politariaMode";
     const SYSTEMS_KEY = "politariaSystems_v1";
     const EMAIL_KEY = "politariaEmail";
-    // ✅ COINS_KEY supprimé
 
     // =========================
     // DOM
@@ -531,16 +523,13 @@
     const btnLeaderboard = document.getElementById("btnLeaderboard");
     const btnSettings    = document.getElementById("btnSettings");
 
-    // Profil / menu (header)
+    // Profil (header)
+    const profileWrapper  = document.getElementById("profileWrapper");
     const profileBtn      = document.getElementById("profileBtn");
-    const profileMenu     = document.getElementById("profileMenu");
     const profileInitial  = document.getElementById("profileInitial");
-    const menuLogout      = document.getElementById("menuLogout");
-    const menuSave        = document.getElementById("menuSave");
-
-    // ✅ Gmail logo + texte label
-    const gmailLogo        = document.getElementById("gmailLogo");
-    const profileLabelText = document.getElementById("profileLabelText");
+    const gmailLogo       = document.getElementById("gmailLogo");
+    const profileLabelText= document.getElementById("profileLabelText");
+    const profileMenuMount= document.getElementById("profileMenuMount");
 
     // =========================
     // Utils
@@ -557,6 +546,47 @@
       const first = s[0].toUpperCase();
       return /[A-Z0-9]/.test(first) ? first : "I";
     }
+
+    // =========================
+    // Load external profile menu
+    // =========================
+    async function loadProfileMenu(){
+      try{
+        const res = await fetch("partials/profile-menu.html", { cache: "no-cache" });
+        const html = await res.text();
+        profileMenuMount.innerHTML = html;
+
+        // Maintenant qu'il existe, on peut le hook
+        const profileMenu = document.getElementById("profileMenu");
+        const menuLogout  = document.getElementById("menuLogout");
+        const menuSave    = document.getElementById("menuSave");
+
+        profileBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const isOpen = profileMenu.classList.toggle("show");
+          profileBtn.setAttribute("aria-expanded", String(isOpen));
+        });
+
+        document.addEventListener("click", () => {
+          profileMenu.classList.remove("show");
+          profileBtn.setAttribute("aria-expanded", "false");
+        });
+
+        menuSave?.addEventListener("click", () => {
+          toast("Sauvegarde : OK (local). Cloud à brancher ensuite.");
+        });
+
+        menuLogout?.addEventListener("click", () => {
+          localStorage.removeItem(MODE_KEY);
+          window.location.href = "/index.html";
+        });
+
+      }catch(err){
+        console.error("Profile menu load failed:", err);
+      }
+    }
+
+    loadProfileMenu();
 
     // =========================
     // Session Mode (Google / Guest)
@@ -576,7 +606,7 @@
       const email = localStorage.getItem(EMAIL_KEY) || "";
       if (mode === "google") {
         gmailLogo.classList.add("show");
-        profileLabelText.textContent = "";            // ✅ pas de “Compte Google”
+        profileLabelText.textContent = ""; // pas de “Compte Google”
         profileInitial.textContent = getInitialFromEmail(email) || "G";
       } else {
         gmailLogo.classList.remove("show");
@@ -817,29 +847,6 @@
       if(!next) return;
       localStorage.setItem(MODE_KEY, next === "google" ? "google" : "guest");
       location.reload();
-    });
-
-    // =========================
-    // Profile Menu
-    // =========================
-    profileBtn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      const isOpen = profileMenu.classList.toggle("show");
-      profileBtn.setAttribute("aria-expanded", String(isOpen));
-    });
-
-    document.addEventListener("click", () => {
-      profileMenu.classList.remove("show");
-      profileBtn.setAttribute("aria-expanded", "false");
-    });
-
-    menuSave.addEventListener("click", () => {
-      toast("Sauvegarde : OK (local). Cloud à brancher ensuite.");
-    });
-
-    menuLogout.addEventListener("click", () => {
-      localStorage.removeItem(MODE_KEY);
-      window.location.href = "/index.html";
     });
 
     // =========================
