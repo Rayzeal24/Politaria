@@ -5,13 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Politaria – Games</title>
 
-  <!-- Favicons (optionnel mais recommandé) -->
-  <link rel="icon" type="image/png" sizes="96x96" href="icon/favicon-96x96.png">
-  <link rel="icon" type="image/svg+xml" href="icon/favicon.svg">
-  <link rel="shortcut icon" href="icon/favicon.ico">
-  <link rel="apple-touch-icon" sizes="180x180" href="icon/apple-touch-icon.png">
-  <link rel="manifest" href="icon/site.webmanifest">
-
   <style>
     :root{
       --bg0:#070A12;
@@ -47,7 +40,6 @@
       font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
     }
 
-    /* étoiles */
     .stars{
       position:fixed;
       inset:0;
@@ -92,35 +84,56 @@
       user-select:none;
     }
 
-    /* ✅ Logo badge + image */
+    /* ✅ LOGO POLITARIA (image) */
     .logo-badge{
       width:36px;
       height:36px;
       border-radius:14px;
-      overflow:hidden;
       background: rgba(255,255,255,0.06);
-      border:1px solid rgba(255,255,255,0.14);
+      border:1px solid rgba(148,163,184,0.18);
       display:flex;
       align-items:center;
       justify-content:center;
-      box-shadow: 0 0 22px rgba(99,102,241,0.18), 0 0 22px rgba(34,211,238,0.12);
+      overflow:hidden;
+      box-shadow: 0 0 18px rgba(99,102,241,0.14), 0 0 18px rgba(34,211,238,0.10);
     }
 
     .logo-img{
-      width: 74%;
-      height: 74%;
-      object-fit: contain;
-      display:block;
+      width:72%;
+      height:72%;
+      object-fit:contain;
       filter: drop-shadow(0 0 6px rgba(0,0,0,0.35));
     }
 
     .logo span{
-      font-size:1.15rem;
-      font-weight: 950;
-      background: linear-gradient(90deg, #dbeafe, #a5b4fc, #67e8f9);
+      font-size:1.1rem;
+      background: linear-gradient(90deg, #a5b4fc, #67e8f9, #a5b4fc);
       -webkit-background-clip:text;
       color:transparent;
-      text-shadow: 0 0 18px rgba(99,102,241,0.22);
+    }
+
+    /* ✅ ON GARDE PAS "Connecté via Google" ICI → on mettra juste Mode */
+    .status-badge{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 14px;
+      border-radius:999px;
+      background: rgba(255,255,255,0.04);
+      border:1px solid rgba(148,163,184,0.16);
+      color: rgba(230,237,243,0.92);
+      font-weight:800;
+      letter-spacing:0.2px;
+      box-shadow: 0 10px 28px rgba(0,0,0,0.25);
+      white-space:nowrap;
+    }
+
+    .status-dot{
+      width:10px;
+      height:10px;
+      border-radius:50%;
+      background: rgba(255,255,255,0.35);
+      box-shadow: 0 0 12px rgba(255,255,255,0.25);
     }
 
     main{
@@ -278,7 +291,7 @@
 
     .profile-wrapper { position: relative; }
 
-    .profile-btn {
+    .profile-btn{
       display: flex;
       align-items: center;
       gap: 10px;
@@ -287,30 +300,39 @@
       background: rgba(255,255,255,0.05);
       border: 1px solid rgba(148,163,184,0.18);
       color: #e6edf3;
-      font-weight: 700;
+      font-weight: 800;
       cursor: pointer;
       transition: 0.2s ease;
       white-space: nowrap;
     }
 
-    .profile-btn:hover {
+    .profile-btn:hover{
       transform: translateY(-1px);
       box-shadow: 0 12px 32px rgba(0,0,0,0.35);
       border-color: rgba(148,163,184,0.35);
     }
 
-    .profile-icon {
-      width: 26px;
-      height: 26px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: rgba(255,255,255,0.15);
-      font-size: 0.95rem;
+    /* ✅ ICONE PROFIL = LOGO POLITARIA (image) */
+    .profile-icon{
+      width:26px;
+      height:26px;
+      border-radius:50%;
+      background: rgba(255,255,255,0.10);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      overflow:hidden;
+      border: 1px solid rgba(148,163,184,0.18);
     }
 
-    .profile-menu {
+    .profile-img{
+      width:70%;
+      height:70%;
+      object-fit:contain;
+      filter: drop-shadow(0 0 4px rgba(0,0,0,0.25));
+    }
+
+    .profile-menu{
       position: absolute;
       top: calc(100% + 10px);
       right: 0;
@@ -324,9 +346,9 @@
       z-index: 50;
     }
 
-    .profile-menu.show { display: block; }
+    .profile-menu.show{ display:block; }
 
-    .menu-item {
+    .menu-item{
       width: 100%;
       padding: 12px 14px;
       border-radius: 12px;
@@ -334,20 +356,20 @@
       border: none;
       color: #e6edf3;
       font-size: 0.95rem;
-      font-weight: 600;
+      font-weight: 700;
       text-align: left;
       cursor: pointer;
       transition: 0.15s ease;
     }
 
-    .menu-item:hover { background: rgba(255,255,255,0.08); }
+    .menu-item:hover{ background: rgba(255,255,255,0.08); }
 
-    .menu-item.link {
+    .menu-item.link{
       text-decoration: none;
       display: block;
     }
 
-    .menu-sep {
+    .menu-sep{
       height: 1px;
       margin: 6px 0;
       background: rgba(148,163,184,0.15);
@@ -361,20 +383,24 @@
   <header>
     <div class="left">
       <div class="logo">
-        <!-- ✅ Logo remplacé -->
         <div class="logo-badge">
-          <img src="icon/favicon-96x96.png" alt="Politaria" class="logo-img">
+          <img src="/icon/favicon-96x96.png" alt="Politaria" class="logo-img">
         </div>
         <span>Politaria</span>
       </div>
 
-      <!-- ✅ Badge “Connecté via Google” supprimé ici -->
+      <!-- ✅ Badge simple: "Mode: ..." (plus de "Connecté via Google") -->
+      <div class="status-badge">
+        <span class="status-dot" id="statusDot"></span>
+        <span id="statusText">⏳ Chargement...</span>
+      </div>
     </div>
 
-    <!-- ✅ Bouton profil + menu -->
     <div class="profile-wrapper">
       <button class="profile-btn" id="profileBtn">
-        <span class="profile-icon" id="profileIcon">🕶️</span>
+        <span class="profile-icon">
+          <img src="/icon/favicon-96x96.png" alt="Profil" class="profile-img">
+        </span>
         <span class="profile-label" id="profileLabel">Invité</span>
       </button>
 
@@ -384,8 +410,8 @@
 
         <div class="menu-sep"></div>
 
-        <a class="menu-item link" href="https://discord.gg/" target="_blank">💬 Rejoindre le Discord</a>
-        <a class="menu-item link" href="#" target="_blank">📖 Voir le Wiki</a>
+        <a class="menu-item link" href="https://discord.gg/" target="_blank" rel="noopener">💬 Rejoindre le Discord</a>
+        <a class="menu-item link" href="#" target="_blank" rel="noopener">📖 Voir le Wiki</a>
       </div>
     </div>
   </header>
@@ -436,6 +462,8 @@
   <script>
     const MODE_KEY = "politariaMode";
 
+    const statusText = document.getElementById("statusText");
+    const statusDot  = document.getElementById("statusDot");
     const subtitle   = document.getElementById("subtitle");
 
     const modePill    = document.getElementById("modePill");
@@ -445,10 +473,8 @@
     const systemsText = document.getElementById("systemsText");
     const btnCreate   = document.getElementById("btnCreate");
 
-    // Profil / menu
     const profileBtn   = document.getElementById("profileBtn");
     const profileMenu  = document.getElementById("profileMenu");
-    const profileIcon  = document.getElementById("profileIcon");
     const profileLabel = document.getElementById("profileLabel");
     const menuLogout   = document.getElementById("menuLogout");
     const menuSave     = document.getElementById("menuSave");
@@ -464,19 +490,22 @@
     // 3) LocalStorage
     const savedMode = localStorage.getItem(MODE_KEY);
 
-    function updateProfileUI(mode){
-      if (mode === "google") {
-        profileIcon.textContent = "👤";
-        profileLabel.textContent = "Compte Google";
+    function setDot(kind){
+      if (!statusDot) return;
+      if (kind === "google"){
+        statusDot.style.background = "rgba(34,211,238,0.95)";
+        statusDot.style.boxShadow  = "0 0 14px rgba(34,211,238,0.55)";
       } else {
-        profileIcon.textContent = "🕶️";
-        profileLabel.textContent = "Invité";
+        statusDot.style.background = "rgba(251,191,36,0.95)";
+        statusDot.style.boxShadow  = "0 0 14px rgba(251,191,36,0.45)";
       }
     }
 
     function setGuestMode() {
       localStorage.setItem(MODE_KEY, "guest");
+      if (statusText) statusText.textContent = "Mode : Invité";
       if (subtitle) subtitle.textContent = "Vous êtes en invité : progression locale, sans synchronisation.";
+      setDot("guest");
 
       if (modePill) modePill.textContent = "Invité";
       if (storagePill) storagePill.textContent = "Local";
@@ -486,12 +515,14 @@
         systemsText.textContent = "Aucun système détecté. En mode invité, vos sauvegardes seront stockées sur cet appareil.";
       }
 
-      updateProfileUI("guest");
+      if (profileLabel) profileLabel.textContent = "Invité";
     }
 
     function setGoogleMode() {
       localStorage.setItem(MODE_KEY, "google");
+      if (statusText) statusText.textContent = "Mode : Google";
       if (subtitle) subtitle.textContent = "Session Google active : vos systèmes seront synchronisés.";
+      setDot("google");
 
       if (modePill) modePill.textContent = "Google";
       if (storagePill) storagePill.textContent = "Cloud (bientôt)";
@@ -501,7 +532,7 @@
         systemsText.textContent = "Bienvenue. Vos systèmes apparaîtront ici dès que la synchronisation sera branchée.";
       }
 
-      updateProfileUI("google");
+      if (profileLabel) profileLabel.textContent = "Compte Google";
     }
 
     function cleanUrlHash(){
@@ -510,7 +541,7 @@
       }
     }
 
-    // Priorité :
+    // Priorité
     if (googleToken) {
       setGoogleMode();
       cleanUrlHash();
