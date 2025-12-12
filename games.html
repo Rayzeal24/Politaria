@@ -96,13 +96,13 @@
   <div class="logo">🌌 <span>Politaria</span></div>
 
   <div class="status-badge">
-    🕶️ Mode invité
+    ⏳ Chargement...
   </div>
 </header>
 
 <main>
   <h1>Games</h1>
-  <p class="subtitle">Chargement du statut du joueur...</p>
+  <p class="subtitle">Vérification de votre session...</p>
 
   <button class="btn" onclick="alert('Création de système à venir !')">
     + Créer un système
@@ -113,20 +113,57 @@
   Politaria © 2025 – Tous droits réservés.
 </footer>
 
-<!-- SCRIPT POUR DÉTECTER LE MODE (invité / google) -->
+
+<!-- 🔥 LOGIQUE DE DÉTECTION (GOOGLE / INVITÉ) -->
 <script>
-  const params = new URLSearchParams(window.location.search);
-  const mode = params.get("mode"); // "guest" ou "google"
+  const MODE_KEY = "politariaMode";
 
   const badge = document.querySelector(".status-badge");
   const subtitle = document.querySelector(".subtitle");
 
-  if (mode === "google") {
-    badge.textContent = "🔐 Connecté via Google";
-    subtitle.textContent = "Bienvenue dans vos systèmes stellaires.";
-  } else {
+  // 1. Vérifie si on a reçu un access_token Google dans le hash (#)
+  const hashParams = new URLSearchParams(window.location.hash.slice(1));
+  const googleToken = hashParams.get("access_token");
+
+  // 2. Vérifie si l’URL contient ?mode=guest
+  const params = new URLSearchParams(window.location.search);
+  const urlMode = params.get("mode");
+
+  // 3. Vérifie si un mode existe déjà dans localStorage
+  const savedMode = localStorage.getItem(MODE_KEY);
+
+  function setGuestMode() {
+    localStorage.setItem(MODE_KEY, "guest");
     badge.textContent = "🕶️ Mode invité";
     subtitle.textContent = "Vous n'avez pas encore créé de système stellaire.";
+  }
+
+  function setGoogleMode() {
+    localStorage.setItem(MODE_KEY, "google");
+    badge.textContent = "🔐 Connecté via Google";
+    subtitle.textContent = "Bienvenue dans vos systèmes stellaires.";
+  }
+
+  // 🔍 Ordre de priorité :
+  // 1) Token Google reçu → mode Google
+  // 2) URL dit mode=guest → mode invité
+  // 3) LocalStorage dit Google ou Guest → on garde
+  // 4) Sinon, pas connecté → invité par défaut
+
+  if (googleToken) {
+    setGoogleMode();
+  }
+  else if (urlMode === "guest") {
+    setGuestMode();
+  }
+  else if (savedMode === "google") {
+    setGoogleMode();
+  }
+  else if (savedMode === "guest") {
+    setGuestMode();
+  }
+  else {
+    setGuestMode();
   }
 </script>
 
