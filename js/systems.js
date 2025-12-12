@@ -1,34 +1,28 @@
 "use strict";
+window.POLITARIA = window.POLITARIA || {};
 
-const { CONFIG } = window.POLITARIA;
+const CONFIG = (window.POLITARIA.CONFIG || {
+  KEYS: { SYSTEMS:"politariaSystems_v1" }
+});
 
 POLITARIA.systems = (() => {
-  const K = CONFIG.KEYS;
+  const KEY = CONFIG.KEYS.SYSTEMS;
 
   const safeJsonParse = (s, fallback) => { try { return JSON.parse(s); } catch { return fallback; } };
   const nowISO = () => new Date().toISOString();
   const uid = () => (crypto?.randomUUID ? crypto.randomUUID() : String(Date.now()) + "_" + Math.random().toString(16).slice(2));
 
-  function load(){
-    return safeJsonParse(localStorage.getItem(K.SYSTEMS), []);
-  }
-
-  function save(list){
-    localStorage.setItem(K.SYSTEMS, JSON.stringify(list));
-  }
+  function load(){ return safeJsonParse(localStorage.getItem(KEY), []); }
+  function save(list){ localStorage.setItem(KEY, JSON.stringify(list)); }
 
   function add({ name, mode, seed }){
     const list = load();
     list.push({
       id: uid(),
-      name,
-      mode,
-      seed,
+      name, mode, seed,
       createdAt: nowISO(),
       updatedAt: nowISO(),
-      planets: [],
-      factions: [],
-      events: []
+      planets: [], factions: [], events: []
     });
     save(list);
   }
