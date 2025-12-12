@@ -391,7 +391,7 @@
   <main>
     <section class="hero">
       <h1>Games</h1>
-      <p class="subtitle" id="subtitle">Chargement...</p>
+      <p class="subtitle" id="subtitle">来自...</p>
     </section>
 
     <section class="grid">
@@ -778,13 +778,15 @@
     });
 
     menuSave.addEventListener("click", () => {
-      // Ici c’est local, donc “save” = rien à faire, mais bouton utile pour plus tard
       toast("Sauvegarde : OK (local). Cloud à brancher ensuite.");
     });
 
+    // ✅ FIX : Déconnexion renvoie TOUJOURS à index.html (connecté ou invité)
     menuLogout.addEventListener("click", () => {
-      localStorage.setItem(MODE_KEY, "guest");
-      window.location.href = "/games.html?mode=guest";
+      localStorage.removeItem(MODE_KEY);
+      // si un jour tu stockes d'autres clés de session, tu peux les nettoyer ici
+      // sessionStorage.clear();
+      window.location.href = "/index.html";
     });
 
     // =========================
