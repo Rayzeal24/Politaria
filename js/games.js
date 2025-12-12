@@ -1,3 +1,9 @@
+console.log("games.js LOADED ✅", new Date().toISOString());
+document.addEventListener("DOMContentLoaded", () => {
+  const subtitle = document.getElementById("subtitle");
+  if(subtitle) subtitle.textContent = "JS OK ✅ " + new Date().toLocaleString();
+});
+
 "use strict";
 
 window.POLITARIA = window.POLITARIA || {};
