@@ -1,9 +1,7 @@
 "use strict";
-window.POLITARIA = window.POLITARIA || {};
 
-const CONFIG = (window.POLITARIA.CONFIG || {
-  KEYS: { SYSTEMS:"politariaSystems_v1" }
-});
+window.POLITARIA = window.POLITARIA || {};
+const CONFIG = window.POLITARIA.CONFIG;
 
 POLITARIA.systems = (() => {
   const KEY = CONFIG.KEYS.SYSTEMS;
