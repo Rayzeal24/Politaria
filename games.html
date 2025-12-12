@@ -42,7 +42,7 @@
       font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
     }
 
-    /* petits points "étoiles" */
+    /* étoiles */
     .stars{
       position:fixed;
       inset:0;
@@ -68,6 +68,7 @@
       border-bottom:1px solid rgba(148,163,184,0.12);
       background: rgba(10, 14, 26, 0.58);
       backdrop-filter: blur(10px);
+      gap: 14px;
     }
 
     .left{
@@ -128,28 +129,6 @@
       border-radius:50%;
       background: rgba(255,255,255,0.35);
       box-shadow: 0 0 12px rgba(255,255,255,0.25);
-    }
-
-    .actions{
-      display:flex;
-      gap:10px;
-      align-items:center;
-    }
-
-    .chip{
-      padding:10px 14px;
-      border-radius:999px;
-      background: rgba(255,255,255,0.04);
-      border:1px solid rgba(148,163,184,0.14);
-      color: rgba(230,237,243,0.88);
-      cursor:pointer;
-      transition: 0.2s ease;
-      font-weight:700;
-    }
-    .chip:hover{
-      transform: translateY(-1px);
-      border-color: rgba(148,163,184,0.30);
-      box-shadow: 0 14px 38px rgba(0,0,0,0.28);
     }
 
     main{
@@ -302,6 +281,89 @@
       font-size:0.86rem;
       text-align:center;
     }
+
+    /* =========================
+       PROFIL / MENU UTILISATEUR
+       ========================= */
+
+    .profile-wrapper {
+      position: relative;
+    }
+
+    .profile-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(148,163,184,0.18);
+      color: #e6edf3;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .profile-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.35);
+      border-color: rgba(148,163,184,0.35);
+    }
+
+    .profile-icon {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255,255,255,0.15);
+      font-size: 0.95rem;
+    }
+
+    .profile-menu {
+      position: absolute;
+      top: calc(100% + 10px);
+      right: 0;
+      width: 260px;
+      background: #0b1020;
+      border-radius: 16px;
+      border: 1px solid rgba(148,163,184,0.18);
+      box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+      padding: 8px;
+      display: none;
+      z-index: 50;
+    }
+
+    .profile-menu.show { display: block; }
+
+    .menu-item {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: transparent;
+      border: none;
+      color: #e6edf3;
+      font-size: 0.95rem;
+      font-weight: 600;
+      text-align: left;
+      cursor: pointer;
+      transition: 0.15s ease;
+    }
+
+    .menu-item:hover { background: rgba(255,255,255,0.08); }
+
+    .menu-item.link {
+      text-decoration: none;
+      display: block;
+    }
+
+    .menu-sep {
+      height: 1px;
+      margin: 6px 0;
+      background: rgba(148,163,184,0.15);
+    }
   </style>
 </head>
 
@@ -321,9 +383,22 @@
       </div>
     </div>
 
-    <div class="actions">
-      <button class="chip" id="btnSwitch">↩ Changer de mode</button>
-      <button class="chip" id="btnLogout">⛔ Déconnexion</button>
+    <!-- ✅ Bouton profil + menu -->
+    <div class="profile-wrapper">
+      <button class="profile-btn" id="profileBtn">
+        <span class="profile-icon" id="profileIcon">🕶️</span>
+        <span class="profile-label" id="profileLabel">Invité</span>
+      </button>
+
+      <div class="profile-menu" id="profileMenu">
+        <button class="menu-item" id="menuSave">⚙️ Sauvegarder la progression</button>
+        <button class="menu-item" id="menuLogout">⛔ Déconnexion</button>
+
+        <div class="menu-sep"></div>
+
+        <a class="menu-item link" href="https://discord.gg/" target="_blank">💬 Rejoindre le Discord</a>
+        <a class="menu-item link" href="#" target="_blank">📖 Voir le Wiki</a>
+      </div>
     </div>
   </header>
 
@@ -341,9 +416,7 @@
             Aucun système détecté pour le moment. Créez votre premier monde et commencez à réécrire son histoire.
           </p>
 
-          <button class="big-btn" id="btnCreate">
-            + Créer un système
-          </button>
+          <button class="big-btn" id="btnCreate">+ Créer un système</button>
 
           <div class="hint">
             Astuce : vous pourrez bientôt importer des drapeaux, choisir des doctrines, et déclencher des crises galactiques.
@@ -372,7 +445,6 @@
     Politaria © 2025 – Tous droits réservés.
   </footer>
 
-  <!-- 🔥 LOGIQUE DE DÉTECTION (GOOGLE / INVITÉ) -->
   <script>
     const MODE_KEY = "politariaMode";
 
@@ -384,9 +456,16 @@
     const storagePill = document.getElementById("storagePill");
     const statusPill  = document.getElementById("statusPill");
 
-    const btnCreate = document.getElementById("btnCreate");
-    const btnSwitch = document.getElementById("btnSwitch");
-    const btnLogout = document.getElementById("btnLogout");
+    const systemsText = document.getElementById("systemsText");
+    const btnCreate   = document.getElementById("btnCreate");
+
+    // Profil / menu
+    const profileBtn   = document.getElementById("profileBtn");
+    const profileMenu  = document.getElementById("profileMenu");
+    const profileIcon  = document.getElementById("profileIcon");
+    const profileLabel = document.getElementById("profileLabel");
+    const menuLogout   = document.getElementById("menuLogout");
+    const menuSave     = document.getElementById("menuSave");
 
     // 1) Token Google dans le hash (#)
     const hashParams = new URLSearchParams(window.location.hash.slice(1));
@@ -410,6 +489,16 @@
       }
     }
 
+    function updateProfileUI(mode){
+      if (mode === "google") {
+        profileIcon.textContent = "👤";
+        profileLabel.textContent = "Compte Google";
+      } else {
+        profileIcon.textContent = "🕶️";
+        profileLabel.textContent = "Invité";
+      }
+    }
+
     function setGuestMode() {
       localStorage.setItem(MODE_KEY, "guest");
       if (statusText) statusText.textContent = "🕶️ Mode invité";
@@ -420,11 +509,11 @@
       if (storagePill) storagePill.textContent = "Local";
       if (statusPill) statusPill.textContent = "Actif";
 
-      // En invité : message systèmes
-      const systemsText = document.getElementById("systemsText");
       if (systemsText) {
         systemsText.textContent = "Aucun système détecté. En mode invité, vos sauvegardes seront stockées sur cet appareil.";
       }
+
+      updateProfileUI("guest");
     }
 
     function setGoogleMode() {
@@ -437,20 +526,20 @@
       if (storagePill) storagePill.textContent = "Cloud (bientôt)";
       if (statusPill) statusPill.textContent = "Actif";
 
-      const systemsText = document.getElementById("systemsText");
       if (systemsText) {
         systemsText.textContent = "Bienvenue. Vos systèmes apparaîtront ici dès que la synchronisation sera branchée.";
       }
+
+      updateProfileUI("google");
     }
 
-    // Nettoie l’URL : on enlève le hash (#access_token=...) pour éviter de le garder affiché
     function cleanUrlHash(){
       if (window.location.hash && window.history && window.history.replaceState) {
         history.replaceState(null, "", window.location.pathname + window.location.search);
       }
     }
 
-    // Priorité
+    // Priorité :
     if (googleToken) {
       setGoogleMode();
       cleanUrlHash();
@@ -464,29 +553,37 @@
       setGuestMode();
     }
 
-    // Actions UI
+    // Menu profil
+    if (profileBtn) {
+      profileBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        profileMenu.classList.toggle("show");
+      });
+
+      document.addEventListener("click", () => {
+        profileMenu.classList.remove("show");
+      });
+    }
+
+    // Actions
     if (btnCreate) {
       btnCreate.addEventListener("click", () => {
         alert("Création de système à venir !");
       });
     }
 
-    // Changer de mode = reset + retour à l’accueil
-    if (btnSwitch) {
-      btnSwitch.addEventListener("click", () => {
-        localStorage.removeItem(MODE_KEY);
-        window.location.href = "/";
+    if (menuSave) {
+      menuSave.addEventListener("click", () => {
+        alert("Sauvegarde automatique activée (à brancher serveur).");
       });
     }
 
-    // Déconnexion = force mode guest (pour l’instant, car pas de serveur)
-    if (btnLogout) {
-      btnLogout.addEventListener("click", () => {
+    if (menuLogout) {
+      menuLogout.addEventListener("click", () => {
         localStorage.setItem(MODE_KEY, "guest");
         window.location.href = "/games.html?mode=guest";
       });
     }
   </script>
-
 </body>
 </html>
