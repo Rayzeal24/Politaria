@@ -1,939 +1,299 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Politaria – Games</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Politaria — Games</title>
 
-  <!-- Favicons -->
-  <link rel="icon" type="image/png" sizes="96x96" href="icon/favicon-96x96.png" />
-  <link rel="icon" type="image/svg+xml" href="icon/favicon.svg" />
-  <link rel="shortcut icon" href="icon/favicon.ico" />
-  <link rel="apple-touch-icon" sizes="180x180" href="icon/apple-touch-icon.png" />
-  <link rel="manifest" href="icon/site.webmanifest" />
+<link rel="icon" href="icon/favicon-96x96.png">
 
-  <style>
-    :root{
-      --bg0:#070A12;
-      --bg1:#0b1020;
-      --glass: rgba(255,255,255,0.05);
-      --glass2: rgba(255,255,255,0.03);
-      --border: rgba(148,163,184,0.16);
-      --text:#e6edf3;
-      --muted: rgba(230,237,243,0.72);
-      --accent:#60a5fa;
-      --accent2:#22d3ee;
-      --radius:22px;
-      --shadow:0 24px 70px rgba(0,0,0,0.55);
-    }
+<style>
+:root{
+  --bg0:#05070e;
+  --bg1:#0b1020;
+  --glass:rgba(255,255,255,0.06);
+  --glass2:rgba(255,255,255,0.03);
+  --border:rgba(148,163,184,0.18);
+  --text:#e6edf3;
+  --muted:rgba(230,237,243,0.7);
+  --blue:#60a5fa;
+  --cyan:#22d3ee;
+  --purple:#a855f7;
+  --radius:22px;
+}
 
-    *{ box-sizing:border-box; }
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:system-ui,-apple-system,Segoe UI,Roboto;
+  color:var(--text);
+  background:
+    radial-gradient(900px 500px at 20% 10%, rgba(99,102,241,.2), transparent 60%),
+    radial-gradient(800px 500px at 80% 20%, rgba(34,211,238,.15), transparent 60%),
+    linear-gradient(180deg,var(--bg0),var(--bg1));
+}
 
-    body{
-      margin:0;
-      color:var(--text);
-      background:
-        radial-gradient(1200px 600px at 18% 10%, rgba(99,102,241,0.18), transparent 55%),
-        radial-gradient(900px 500px at 85% 20%, rgba(34,211,238,0.14), transparent 58%),
-        radial-gradient(900px 600px at 40% 90%, rgba(52,211,153,0.10), transparent 62%),
-        linear-gradient(180deg, var(--bg0), var(--bg1));
-      overflow-x:hidden;
-      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
-    }
+/* ================= HEADER ================= */
+header{
+  position:sticky;top:0;z-index:20;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:18px 26px;
+  backdrop-filter:blur(10px);
+  background:rgba(10,14,26,.6);
+  border-bottom:1px solid var(--border);
+}
 
-    .stars{
-      position:fixed;
-      inset:0;
-      pointer-events:none;
-      opacity:0.55;
-      background-image:
-        radial-gradient(2px 2px at 15% 25%, rgba(255,255,255,0.9) 40%, transparent 60%),
-        radial-gradient(1px 1px at 45% 70%, rgba(255,255,255,0.7) 40%, transparent 60%),
-        radial-gradient(1px 1px at 75% 35%, rgba(255,255,255,0.6) 40%, transparent 60%),
-        radial-gradient(1px 1px at 85% 80%, rgba(255,255,255,0.55) 40%, transparent 60%),
-        radial-gradient(2px 2px at 30% 85%, rgba(255,255,255,0.5) 40%, transparent 60%);
-      filter: blur(0.1px);
-    }
+.logo{
+  display:flex;align-items:center;gap:12px;
+  font-weight:900;font-size:1.2rem;
+}
+.logo img{width:34px;height:34px}
 
-    /* =========================
-       HEADER (garde le style)
-       ========================= */
-    header{
-      position:sticky;
-      top:0;
-      z-index:20;
-      padding:18px 26px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      border-bottom:1px solid rgba(148,163,184,0.12);
-      background: rgba(10, 14, 26, 0.58);
-      backdrop-filter: blur(10px);
-      gap: 14px;
-    }
+.profile-btn{
+  display:flex;align-items:center;gap:12px;
+  padding:8px 14px;border-radius:999px;
+  background:var(--glass);
+  border:1px solid var(--border);
+  cursor:pointer;
+}
+.avatar{
+  width:38px;height:38px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,var(--purple),var(--blue));
+  font-weight:900;
+}
 
-    .left{
-      display:flex;
-      align-items:center;
-      gap:14px;
-      min-width: 280px;
-    }
+/* ================= HERO ================= */
+main{
+  max-width:1200px;
+  margin:0 auto;
+  padding:60px 18px 120px;
+  display:flex;
+  flex-direction:column;
+  gap:90px;
+}
 
-    .logo{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      font-weight:900;
-      letter-spacing:0.3px;
-      user-select:none;
-    }
+/* ====== CENTRAL CORE ====== */
+.core-zone{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:28px;
+  text-align:center;
+}
 
-    .logo-badge{
-      width:36px;
-      height:36px;
-      border-radius:14px;
-      overflow:hidden;
-      background: rgba(255,255,255,0.06);
-      border:1px solid rgba(255,255,255,0.14);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      box-shadow: 0 0 22px rgba(99,102,241,0.18), 0 0 22px rgba(34,211,238,0.12);
-    }
+.core{
+  position:relative;
+  width:240px;
+  height:240px;
+  border-radius:50%;
+  background:
+    radial-gradient(circle at 30% 30%, #fff, var(--cyan), var(--purple));
+  box-shadow:
+    0 0 60px rgba(99,102,241,.6),
+    0 0 120px rgba(34,211,238,.35);
+  animation:pulse 4s ease-in-out infinite;
+}
 
-    .logo-img{
-      width: 74%;
-      height: 74%;
-      object-fit: contain;
-      display:block;
-      filter: drop-shadow(0 0 6px rgba(0,0,0,0.35));
-    }
+.core::before{
+  content:"";
+  position:absolute;inset:-30px;
+  border-radius:50%;
+  border:1px solid rgba(255,255,255,.15);
+  animation:spin 18s linear infinite;
+}
 
-    .logo span{
-      font-size:1.15rem;
-      font-weight: 950;
-      background: linear-gradient(90deg, #dbeafe, #a5b4fc, #67e8f9);
-      -webkit-background-clip:text;
-      color:transparent;
-      text-shadow: 0 0 18px rgba(99,102,241,0.22);
-    }
+@keyframes pulse{
+  0%,100%{transform:scale(1)}
+  50%{transform:scale(1.06)}
+}
+@keyframes spin{
+  from{transform:rotate(0deg)}
+  to{transform:rotate(360deg)}
+}
 
-    .header-right{
-      display:flex;
-      align-items:center;
-      gap:12px;
-    }
+.core-title{
+  font-size:3.4rem;
+  font-weight:950;
+  background:linear-gradient(90deg,#fff,var(--blue),var(--cyan));
+  -webkit-background-clip:text;
+  color:transparent;
+}
 
-    .profile-wrapper{ position:relative; }
+.subtitle{
+  max-width:700px;
+  color:var(--muted);
+  font-size:1.1rem;
+}
 
-    .profile-btn{
-      display:flex;
-      align-items:center;
-      gap: 12px;
-      padding: 10px 14px 10px 12px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(148,163,184,0.18);
-      color: #e6edf3;
-      font-weight: 800;
-      cursor: pointer;
-      transition: 0.2s ease;
-      white-space: nowrap;
-    }
-    .profile-btn:hover{
-      transform: translateY(-1px);
-      box-shadow: 0 12px 32px rgba(0,0,0,0.35);
-      border-color: rgba(148,163,184,0.35);
-    }
+/* ====== CORE ACTIONS ====== */
+.core-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:14px;
+  justify-content:center;
+}
 
-    /* pastille avatar */
-    .avatar-ring{
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      padding: 3px;
-      background: linear-gradient(135deg, rgba(168,85,247,0.95), rgba(59,130,246,0.88));
-      box-shadow: 0 18px 40px rgba(168,85,247,0.16);
-      flex: 0 0 auto;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-    }
-    .avatar{
-      width:100%;
-      height:100%;
-      border-radius:50%;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      background: linear-gradient(180deg, rgba(249,115,22,0.95), rgba(239,68,68,0.88));
-      border:1px solid rgba(255,255,255,0.14);
-      font-weight:950;
-      font-size:1.1rem;
-      letter-spacing:0.5px;
-    }
+.btn{
+  padding:12px 18px;
+  border-radius:999px;
+  border:1px solid var(--border);
+  background:var(--glass);
+  color:var(--text);
+  font-weight:800;
+  cursor:pointer;
+}
+.btn.primary{
+  background:linear-gradient(135deg,var(--blue),var(--cyan));
+  color:#071018;border:none;
+}
 
-    .profile-label{
-      font-weight: 850;
-      color: rgba(230,237,243,0.92);
-      display:flex;
-      align-items:center;
-      gap:10px;
-    }
+/* ================= SECTIONS ================= */
+.section{
+  display:flex;
+  flex-direction:column;
+  gap:18px;
+}
 
-    .profile-menu{
-      position: absolute;
-      top: calc(100% + 10px);
-      right: 0;
-      width: 280px;
-      background: #0b1020;
-      border-radius: 16px;
-      border: 1px solid rgba(148,163,184,0.18);
-      box-shadow: 0 30px 80px rgba(0,0,0,0.6);
-      padding: 8px;
-      display: none;
-      z-index: 50;
-    }
-    .profile-menu.show{ display:block; }
+.section h2{
+  font-size:1.8rem;
+  font-weight:900;
+}
 
-    .menu-item{
-      width:100%;
-      padding:12px 14px;
-      border-radius:12px;
-      background:transparent;
-      border:none;
-      color:#e6edf3;
-      font-size:0.95rem;
-      font-weight:700;
-      text-align:left;
-      cursor:pointer;
-      transition:0.15s ease;
-    }
-    .menu-item:hover{ background: rgba(255,255,255,0.08); }
-    .menu-item.link{ text-decoration:none; display:block; }
-    .menu-sep{ height:1px; margin:6px 0; background: rgba(148,163,184,0.15); }
+.card{
+  background:linear-gradient(180deg,var(--glass),var(--glass2));
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:22px;
+}
 
-    /* =========================
-       PAGE (plus longue + sections)
-       ========================= */
-    main{
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 42px 18px 120px;
-      display:flex;
-      flex-direction:column;
-      gap: 64px;
-    }
+/* Systems */
+.system{
+  display:flex;justify-content:space-between;
+  gap:14px;
+  padding:14px;
+  border-radius:14px;
+  background:rgba(255,255,255,.04);
+  border:1px solid var(--border);
+  margin-top:10px;
+}
 
-    .hero{
-      margin-top: 12px;
-      text-align:center;
-      position:relative;
-      display:flex;
-      flex-direction:column;
-      gap: 10px;
-    }
-
-    h1{
-      margin:0;
-      font-size: clamp(2.6rem, 5vw, 4.2rem);
-      font-weight: 950;
-      letter-spacing: 0.4px;
-      background: linear-gradient(90deg, rgba(255,255,255,0.98), rgba(165,180,252,0.95), rgba(103,232,249,0.95));
-      -webkit-background-clip:text;
-      color:transparent;
-      text-shadow: 0 0 26px rgba(99,102,241,0.18);
-    }
-
-    .subtitle{
-      margin: 0 auto;
-      max-width: 860px;
-      opacity:0.92;
-      font-size: 1.08rem;
-      color: var(--muted);
-      line-height:1.55;
-    }
-
-    .section-title{
-      display:flex;
-      align-items:flex-end;
-      justify-content:space-between;
-      gap: 16px;
-    }
-    .section-title h2{
-      margin:0;
-      font-size: 1.55rem;
-      font-weight: 950;
-      letter-spacing:0.2px;
-    }
-    .section-title .desc{
-      color: rgba(230,237,243,0.70);
-      max-width: 720px;
-      line-height:1.5;
-    }
-
-    .grid{
-      display:grid;
-      grid-template-columns: 1.45fr 0.55fr;
-      gap: 16px;
-      align-items:stretch;
-    }
-    @media (max-width: 920px){
-      .grid{ grid-template-columns: 1fr; }
-      header{ padding: 16px 16px; }
-      .left{ min-width: unset; }
-    }
-
-    .card{
-      background: linear-gradient(180deg, var(--glass), var(--glass2));
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      overflow:hidden;
-      position:relative;
-    }
-    .card::before{
-      content:"";
-      position:absolute;
-      inset:-2px;
-      background:
-        radial-gradient(700px 240px at 18% 0%, rgba(99,102,241,0.20), transparent 60%),
-        radial-gradient(700px 240px at 82% 10%, rgba(34,211,238,0.16), transparent 60%);
-      pointer-events:none;
-      opacity:0.95;
-    }
-
-    .card-inner{ position:relative; padding: 24px 24px 22px; }
-
-    .muted{ color: var(--muted); line-height:1.6; margin:0; }
-
-    .toolbar{
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-      margin-top: 14px;
-    }
-
-    .btn{
-      border: 1px solid rgba(148,163,184,0.18);
-      background: rgba(255,255,255,0.055);
-      color: rgba(255,255,255,0.92);
-      padding: 11px 16px;
-      border-radius: 999px;
-      font-weight: 900;
-      cursor: pointer;
-      transition: 0.18s ease;
-    }
-    .btn:hover{ transform: translateY(-1px); border-color: rgba(148,163,184,0.35); }
-    .btn:active{ transform: translateY(0px); }
-    .btn.primary{
-      border:none;
-      color:#071018;
-      background: linear-gradient(135deg, rgba(96,165,250,0.95), rgba(34,211,238,0.90));
-      box-shadow: 0 16px 44px rgba(37,99,235,0.18), 0 10px 34px rgba(34,211,238,0.16);
-    }
-
-    .pillcol{
-      display:flex;
-      flex-direction:column;
-      gap: 12px;
-    }
-    .pill{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      padding: 14px 16px;
-      border-radius: 18px;
-      border: 1px solid rgba(148,163,184,0.14);
-      background: rgba(255,255,255,0.035);
-    }
-    .pill .k{ font-weight:900; letter-spacing:0.2px; }
-    .pill .v{ color: rgba(230,237,243,0.82); font-weight:800; }
-
-    .list{
-      margin-top: 16px;
-      display:flex;
-      flex-direction:column;
-      gap: 10px;
-    }
-    .system{
-      border-radius: 16px;
-      border: 1px solid rgba(148,163,184,0.14);
-      background: rgba(255,255,255,0.03);
-      padding: 14px 14px;
-      display:flex;
-      align-items:flex-start;
-      justify-content:space-between;
-      gap:12px;
-    }
-    .system h3{
-      margin:0;
-      font-size: 1.06rem;
-      font-weight: 950;
-      letter-spacing:0.2px;
-    }
-    .system .meta{
-      margin-top: 7px;
-      font-size: 0.92rem;
-      color: rgba(230,237,243,0.70);
-      display:flex;
-      flex-wrap:wrap;
-      gap: 8px;
-    }
-    .system .actions{
-      display:flex;
-      flex-wrap:wrap;
-      gap: 8px;
-      justify-content:flex-end;
-      align-items:center;
-    }
-    .chip{
-      padding: 5px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(148,163,184,0.18);
-      background: rgba(255,255,255,0.03);
-      font-weight: 850;
-      color: rgba(230,237,243,0.88);
-      white-space:nowrap;
-    }
-
-    .hint{
-      margin-top: 10px;
-      font-size: 0.95rem;
-      color: rgba(230,237,243,0.70);
-    }
-
-    /* ===== Sections “launcher” ===== */
-    .tiles{
-      display:grid;
-      grid-template-columns: repeat(12, 1fr);
-      gap: 14px;
-    }
-
-    .tile{
-      grid-column: span 6;
-      padding: 18px 18px;
-      border-radius: 18px;
-      border: 1px solid rgba(148,163,184,0.14);
-      background: rgba(255,255,255,0.035);
-      transition: 0.18s ease;
-      cursor:pointer;
-      position:relative;
-      overflow:hidden;
-    }
-    .tile:hover{
-      transform: translateY(-2px);
-      border-color: rgba(148,163,184,0.28);
-    }
-    .tile::before{
-      content:"";
-      position:absolute;
-      inset:-2px;
-      background:
-        radial-gradient(520px 160px at 20% 0%, rgba(96,165,250,0.14), transparent 60%),
-        radial-gradient(520px 180px at 80% 40%, rgba(34,211,238,0.10), transparent 62%);
-      opacity:0.95;
-      pointer-events:none;
-    }
-    .tile > *{ position:relative; }
-    .tile h3{
-      margin:0;
-      font-size: 1.1rem;
-      font-weight: 950;
-      letter-spacing:0.2px;
-    }
-    .tile p{
-      margin-top: 8px;
-      color: rgba(230,237,243,0.72);
-    }
-    .tile .go{
-      margin-top: 14px;
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      font-weight: 900;
-      color: rgba(255,255,255,0.9);
-      opacity:0.9;
-    }
-
-    .tile.small{ grid-column: span 4; }
-    @media (max-width: 980px){
-      .tile{ grid-column: span 12; }
-      .tile.small{ grid-column: span 12; }
-    }
-
-    footer{
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 18px 50px;
-      opacity:0.55;
-      font-size:0.88rem;
-      text-align:center;
-    }
-
-    /* Accessibilité */
-    .sr-only{
-      position:absolute; width:1px; height:1px;
-      padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0);
-      white-space:nowrap; border:0;
-    }
-  </style>
+/* Footer */
+footer{
+  text-align:center;
+  opacity:.55;
+  padding-bottom:40px;
+}
+</style>
 </head>
 
 <body>
-  <div class="stars"></div>
-
-  <header>
-    <div class="left">
-      <div class="logo">
-        <div class="logo-badge">
-          <img src="icon/favicon-96x96.png" alt="Politaria" class="logo-img">
-        </div>
-        <span>Politaria</span>
-      </div>
-    </div>
-
-    <div class="header-right">
-      <div class="profile-wrapper" id="profileWrapper">
-        <button class="profile-btn" id="profileBtn" aria-haspopup="true" aria-expanded="false">
-          <span class="avatar-ring" aria-hidden="true">
-            <span class="avatar" id="profileAvatar">U</span>
-          </span>
-          <span class="profile-label">
-            <span id="profileLabelText">Invité</span>
-          </span>
-        </button>
-
-        <div class="profile-menu" id="profileMenu" role="menu" aria-label="Menu utilisateur">
-          <button class="menu-item" id="menuSave">⚙️ Sauvegarder la progression</button>
-          <button class="menu-item" id="menuLogout">⛔ Déconnexion</button>
-          <div class="menu-sep"></div>
-          <a class="menu-item link" href="https://discord.gg/" target="_blank" rel="noopener">💬 Rejoindre le Discord</a>
-          <a class="menu-item link" href="#" target="_blank" rel="noopener">📖 Voir le Wiki</a>
-        </div>
-      </div>
-    </div>
-  </header>
-
-  <main>
-    <!-- HERO -->
-    <section class="hero">
-      <h1>Games</h1>
-      <p class="subtitle" id="subtitle">Chargement...</p>
-    </section>
-
-    <!-- SECTION 1 : HUB -->
-    <section>
-      <div class="section-title">
-        <h2>Centre de Commandement</h2>
-        <div class="desc">
-          Ton univers t’attend. Crée un système, importe une seed, puis ouvre une chronique. Chaque clic est un choix… et chaque choix marque une époque.
-        </div>
-      </div>
-
-      <div class="grid">
-        <!-- gauche -->
-        <div class="card">
-          <div class="card-inner">
-            <h2 style="margin:0 0 8px;">Vos systèmes stellaires</h2>
-            <p class="muted" id="systemsText">
-              Préparez votre première étoile. Donnez-lui un nom… et laissez Politaria écrire le reste.
-            </p>
-
-            <div class="toolbar" aria-label="Actions principales">
-              <button class="btn primary" id="btnCreate">+ Créer</button>
-              <button class="btn" id="btnImport">Importer</button>
-              <button class="btn" id="btnTutorial">Tutoriel</button>
-              <button class="btn" id="btnLeaderboard">Classement</button>
-              <button class="btn" id="btnSettings">Paramètres</button>
-            </div>
-
-            <div class="hint" id="hint">
-              Astuce : chaque système a une <b>seed</b>. Plus tard, elle générera planètes, ressources et anomalies.
-            </div>
-
-            <div class="list" id="systemsList" aria-live="polite"></div>
-
-            <p class="muted" id="emptyState" style="margin-top:12px; display:none;">
-              Rien ici pour l’instant. Crée ton premier système et lance la chronologie.
-            </p>
-          </div>
-        </div>
-
-        <!-- droite -->
-        <div class="pillcol">
-          <div class="pill">
-            <div class="k">Mode</div>
-            <div class="v" id="modePill">…</div>
-          </div>
-          <div class="pill">
-            <div class="k">Stockage</div>
-            <div class="v" id="storagePill">…</div>
-          </div>
-          <div class="pill">
-            <div class="k">Statut</div>
-            <div class="v" id="statusPill">…</div>
-          </div>
-          <div class="pill">
-            <div class="k">Systèmes</div>
-            <div class="v" id="countPill">0</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- SECTION 2 : LAUNCHER / REDIRECTIONS -->
-    <section>
-      <div class="section-title">
-        <h2>Portails</h2>
-        <div class="desc">
-          Des routes s’ouvrent. Certaines mènent à des pages réelles, d’autres à des promesses. Mais toutes existent déjà… dans l’ombre du code.
-        </div>
-      </div>
-
-      <div class="tiles">
-        <div class="tile" id="goMap">
-          <h3>🌌 Carte galactique</h3>
-          <p>Explore visuellement tes systèmes, routes et anomalies (page à venir).</p>
-          <span class="go">Ouvrir →</span>
-        </div>
-
-        <div class="tile" id="goFactions">
-          <h3>⚔️ Factions</h3>
-          <p>Crée des empires, des dogmes, des rebelles et des guerres froides.</p>
-          <span class="go">Ouvrir →</span>
-        </div>
-
-        <div class="tile small" id="goChronicles">
-          <h3>📜 Chroniques</h3>
-          <p>Timeline, événements, crises.</p>
-          <span class="go">Ouvrir →</span>
-        </div>
-
-        <div class="tile small" id="goWiki">
-          <h3>📖 Wiki</h3>
-          <p>Lore, règles, guides.</p>
-          <span class="go">Ouvrir →</span>
-        </div>
-
-        <div class="tile small" id="goHome">
-          <h3>🏠 Accueil</h3>
-          <p>Retourner à l’index.</p>
-          <span class="go">Ouvrir →</span>
-        </div>
-      </div>
-    </section>
-
-    <!-- SECTION 3 : A VENIR -->
-    <section>
-      <div class="section-title">
-        <h2>Prochaines fonctionnalités</h2>
-        <div class="desc">
-          Une feuille de route visible, comme une constellation : tu vois déjà les étoiles… même si elles ne brûlent pas encore.
-        </div>
-      </div>
-
-      <div class="tiles">
-        <div class="tile">
-          <h3>🌍 Génération de planètes</h3>
-          <p>Biomes, ressources, anomalies, noms procéduraux et raretés.</p>
-          <span class="go">Bientôt</span>
-        </div>
-        <div class="tile">
-          <h3>🛰️ Flottes & logistique</h3>
-          <p>Routes commerciales, coûts, maintenance, sabotage.</p>
-          <span class="go">Bientôt</span>
-        </div>
-        <div class="tile small">
-          <h3>🏆 Classements</h3>
-          <p>Scores, records, saisons.</p>
-          <span class="go">Bientôt</span>
-        </div>
-        <div class="tile small">
-          <h3>🤝 Multijoueur</h3>
-          <p>Univers partagés et diplomatie.</p>
-          <span class="go">Bientôt</span>
-        </div>
-        <div class="tile small">
-          <h3>🧠 IA narrative</h3>
-          <p>Événements dynamiques et crises.</p>
-          <span class="go">Bientôt</span>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <footer>
-    Politaria © 2025 — L’univers n’attend que vous.
-  </footer>
-
-  <script>
-    "use strict";
-
-    const MODE_KEY = "politariaMode";
-    const SYSTEMS_KEY = "politariaSystems_v1";
-    const EMAIL_KEY = "politariaEmail";
-    const USERNAME_KEY = "politariaUsername";
-
-    const subtitle     = document.getElementById("subtitle");
-    const systemsText  = document.getElementById("systemsText");
-    const systemsList  = document.getElementById("systemsList");
-    const emptyState   = document.getElementById("emptyState");
-
-    const modePill     = document.getElementById("modePill");
-    const storagePill  = document.getElementById("storagePill");
-    const statusPill   = document.getElementById("statusPill");
-    const countPill    = document.getElementById("countPill");
-
-    const btnCreate      = document.getElementById("btnCreate");
-    const btnImport      = document.getElementById("btnImport");
-    const btnTutorial    = document.getElementById("btnTutorial");
-    const btnLeaderboard = document.getElementById("btnLeaderboard");
-    const btnSettings    = document.getElementById("btnSettings");
-
-    const profileBtn       = document.getElementById("profileBtn");
-    const profileMenu      = document.getElementById("profileMenu");
-    const profileLabelText = document.getElementById("profileLabelText");
-    const profileAvatar    = document.getElementById("profileAvatar");
-
-    // Portails
-    const goHome      = document.getElementById("goHome");
-    const goWiki      = document.getElementById("goWiki");
-    const goMap       = document.getElementById("goMap");
-    const goFactions  = document.getElementById("goFactions");
-    const goChron     = document.getElementById("goChronicles");
-
-    const uid = () => (crypto?.randomUUID ? crypto.randomUUID() : String(Date.now()) + "_" + Math.random().toString(16).slice(2));
-    const nowISO = () => new Date().toISOString();
-    const safeJsonParse = (s, fallback) => { try { return JSON.parse(s); } catch { return fallback; } };
-
-    function toast(msg){ alert(msg); }
-
-    function generateUsername(){
-      const n = Math.floor(1000 + Math.random() * 9000);
-      return "user" + n;
-    }
-
-    function updateProfileUI(){
-      const email = localStorage.getItem(EMAIL_KEY) || "";
-      let username = localStorage.getItem(USERNAME_KEY);
-      if(!username){
-        username = generateUsername();
-        localStorage.setItem(USERNAME_KEY, username);
-      }
-      profileLabelText.textContent = username;
-
-      // Avatar = première lettre du mail si dispo, sinon du username
-      const src = (email.trim() ? email.trim()[0] : username.trim()[0] || "U").toUpperCase();
-      profileAvatar.textContent = /[A-Z0-9]/.test(src) ? src : "U";
-    }
-
-    // ===== Session Mode (Google / Guest) =====
-    const hashParams = new URLSearchParams(window.location.hash.slice(1));
-    const googleToken = hashParams.get("access_token");
-
-    const params = new URLSearchParams(window.location.search);
-    const urlMode = params.get("mode");
-
-    const urlEmail = params.get("email") || hashParams.get("email");
-    if (urlEmail) localStorage.setItem(EMAIL_KEY, urlEmail);
-
-    const savedMode = localStorage.getItem(MODE_KEY);
-
-    function setGuestMode() {
-      localStorage.setItem(MODE_KEY, "guest");
-      subtitle.textContent = "Mode invité : progression locale, sans synchronisation.";
-      modePill.textContent = "Invité";
-      storagePill.textContent = "Local";
-      statusPill.textContent = "Actif";
-      systemsText.textContent = "Créez un système, testez, cassez tout… puis recommencez. Ici, l’univers vous obéit.";
-      updateProfileUI();
-    }
-
-    function setGoogleMode() {
-      localStorage.setItem(MODE_KEY, "google");
-      subtitle.textContent = "Session Google détectée : synchronisation cloud à brancher.";
-      modePill.textContent = "Google";
-      storagePill.textContent = "Cloud (bientôt)";
-      statusPill.textContent = "Actif";
-      systemsText.textContent = "Bienvenue. Vos systèmes apparaîtront ici, prêts à être partagés et disputés.";
-      updateProfileUI();
-    }
-
-    function cleanUrlHash(){
-      if (window.location.hash && window.history?.replaceState) {
-        history.replaceState(null, "", window.location.pathname + window.location.search);
-      }
-    }
-
-    if (googleToken) { setGoogleMode(); cleanUrlHash(); }
-    else if (urlMode === "guest") setGuestMode();
-    else if (savedMode === "google") setGoogleMode();
-    else setGuestMode();
-
-    // ===== Systems Store (local) =====
-    function loadSystems(){
-      return safeJsonParse(localStorage.getItem(SYSTEMS_KEY), []);
-    }
-    function saveSystems(list){
-      localStorage.setItem(SYSTEMS_KEY, JSON.stringify(list));
-    }
-
-    function renderSystems(){
-      const systems = loadSystems();
-      systemsList.innerHTML = "";
-
-      countPill.textContent = String(systems.length);
-      emptyState.style.display = systems.length ? "none" : "block";
-
-      systems.sort((a,b) => (b.updatedAt || b.createdAt || "").localeCompare(a.updatedAt || a.createdAt || ""));
-
-      for(const s of systems){
-        const el = document.createElement("div");
-        el.className = "system";
-
-        const left = document.createElement("div");
-        left.style.flex = "1";
-
-        const title = document.createElement("h3");
-        title.textContent = s.name || "Système sans nom";
-
-        const meta = document.createElement("div");
-        meta.className = "meta";
-
-        const chipMode = document.createElement("span");
-        chipMode.className = "chip";
-        chipMode.textContent = "Mode: " + (s.mode || "Sandbox");
-
-        const chipSeed = document.createElement("span");
-        chipSeed.className = "chip";
-        chipSeed.textContent = "Seed: " + (s.seed || "—");
-
-        const chipDate = document.createElement("span");
-        chipDate.className = "chip";
-        chipDate.textContent = "Maj: " + (s.updatedAt ? new Date(s.updatedAt).toLocaleString() : "—");
-
-        meta.append(chipMode, chipSeed, chipDate);
-        left.append(title, meta);
-
-        const actions = document.createElement("div");
-        actions.className = "actions";
-
-        const btnPlay = document.createElement("button");
-        btnPlay.className = "btn primary";
-        btnPlay.textContent = "Jouer";
-        btnPlay.addEventListener("click", () => toast("Mode jeu à venir. Système: " + (s.name || "—")));
-
-        const btnRename = document.createElement("button");
-        btnRename.className = "btn";
-        btnRename.textContent = "Renommer";
-        btnRename.addEventListener("click", () => {
-          const name = prompt("Nouveau nom :", s.name || "");
-          if(!name) return;
-          updateSystem(s.id, { name, updatedAt: nowISO() });
-          renderSystems();
-        });
-
-        const btnDelete = document.createElement("button");
-        btnDelete.className = "btn";
-        btnDelete.textContent = "Supprimer";
-        btnDelete.addEventListener("click", () => {
-          if(confirm("Supprimer ce système ?")) {
-            deleteSystem(s.id);
-            renderSystems();
-          }
-        });
-
-        actions.append(btnPlay, btnRename, btnDelete);
-        el.append(left, actions);
-        systemsList.appendChild(el);
-      }
-    }
-
-    function addSystem(system){
-      const systems = loadSystems();
-      systems.push(system);
-      saveSystems(systems);
-    }
-
-    function updateSystem(id, patch){
-      const systems = loadSystems();
-      const i = systems.findIndex(x => x.id === id);
-      if(i === -1) return;
-      systems[i] = { ...systems[i], ...patch };
-      saveSystems(systems);
-    }
-
-    function deleteSystem(id){
-      const systems = loadSystems().filter(x => x.id !== id);
-      saveSystems(systems);
-    }
-
-    // ===== Profile menu =====
-    profileBtn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      const isOpen = profileMenu.classList.toggle("show");
-      profileBtn.setAttribute("aria-expanded", String(isOpen));
-    });
-
-    document.addEventListener("click", () => {
-      profileMenu.classList.remove("show");
-      profileBtn.setAttribute("aria-expanded", "false");
-    });
-
-    document.getElementById("menuSave").addEventListener("click", () => {
-      toast("Sauvegarde : OK (local). Cloud à brancher ensuite.");
-    });
-
-    document.getElementById("menuLogout").addEventListener("click", () => {
-      localStorage.removeItem(MODE_KEY);
-      window.location.href = "index.html";
-    });
-
-    // ===== Main actions =====
-    btnCreate.addEventListener("click", () => {
-      const name = prompt("Nom du système :", "Nova-" + Math.floor(Math.random()*999));
-      if(!name) return;
-
-      const mode = prompt("Mode (Sandbox / Chronique / Survie / Escarmouche) :", "Sandbox") || "Sandbox";
-      const seed = prompt("Seed (laisser vide = auto) :", "") || Math.floor(Math.random()*1e9).toString(16);
-
-      addSystem({
-        id: uid(),
-        name: name.trim(),
-        mode: mode.trim(),
-        seed: seed.trim(),
-        createdAt: nowISO(),
-        updatedAt: nowISO(),
-        planets: [],
-        factions: [],
-        events: []
-      });
-
-      renderSystems();
-    });
-
-    btnImport.addEventListener("click", () => toast("Import JSON à brancher ici."));
-    btnTutorial.addEventListener("click", () => toast("Tutoriel à venir : création → planètes → factions → événements → première crise."));
-    btnLeaderboard.addEventListener("click", () => toast("Classement à venir (quand le mode en ligne sera prêt)."));
-    btnSettings.addEventListener("click", () => {
-      const current = localStorage.getItem(MODE_KEY) || "guest";
-      const next = prompt("Paramètre rapide : mode (guest/google) :", current);
-      if(!next) return;
-      localStorage.setItem(MODE_KEY, next === "google" ? "google" : "guest");
-      location.reload();
-    });
-
-    // ===== Portails (redirections) =====
-    goHome.addEventListener("click", () => window.location.href = "index.html");
-    goWiki.addEventListener("click", () => toast("Wiki : à brancher (lien à ajouter)."));
-    goMap.addEventListener("click", () => toast("Carte galactique : page à venir."));
-    goFactions.addEventListener("click", () => toast("Factions : page à venir."));
-    goChron.addEventListener("click", () => toast("Chroniques : page à venir."));
-
-    // Init
-    renderSystems();
-  </script>
+
+<header>
+  <div class="logo">
+    <img src="icon/favicon-96x96.png">
+    Politaria
+  </div>
+  <button class="profile-btn">
+    <div class="avatar" id="avatar">U</div>
+    <span id="username">Invité</span>
+  </button>
+</header>
+
+<main>
+
+<!-- ================= CENTRAL CORE ================= -->
+<section class="core-zone">
+  <div class="core"></div>
+
+  <div class="core-title">Games</div>
+  <p class="subtitle">
+    Devant toi s’étend le noyau de ton univers.
+    Chaque système créé laisse une trace.  
+    Chaque décision façonne une chronologie.
+  </p>
+
+  <div class="core-actions">
+    <button class="btn primary" id="btnCreate">Créer un système</button>
+    <button class="btn" id="btnImport">Importer</button>
+    <button class="btn" onclick="location.href='index.html'">Accueil</button>
+  </div>
+</section>
+
+<!-- ================= SYSTEMS ================= -->
+<section class="section">
+  <h2>Vos systèmes stellaires</h2>
+  <div class="card">
+    <div id="systems"></div>
+    <p id="empty" class="subtitle">Aucun système pour l’instant.</p>
+  </div>
+</section>
+
+<!-- ================= PORTALS ================= -->
+<section class="section">
+  <h2>Portails</h2>
+  <div class="card">
+    <button class="btn" onclick="alert('Carte galactique à venir')">🌌 Carte galactique</button>
+    <button class="btn" onclick="alert('Factions à venir')">⚔️ Factions</button>
+    <button class="btn" onclick="alert('Chroniques à venir')">📜 Chroniques</button>
+    <button class="btn" onclick="alert('Wiki à venir')">📖 Wiki</button>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  Politaria © 2025 — Le noyau est éveillé.
+</footer>
+
+<script>
+"use strict";
+
+const SYSTEMS_KEY="politariaSystems_v1";
+const USERNAME_KEY="politariaUsername";
+const EMAIL_KEY="politariaEmail";
+
+const systemsDiv=document.getElementById("systems");
+const empty=document.getElementById("empty");
+const avatar=document.getElementById("avatar");
+const usernameSpan=document.getElementById("username");
+
+function uid(){return crypto.randomUUID()}
+function load(){return JSON.parse(localStorage.getItem(SYSTEMS_KEY)||"[]")}
+function save(v){localStorage.setItem(SYSTEMS_KEY,JSON.stringify(v))}
+
+function render(){
+  const s=load();
+  systemsDiv.innerHTML="";
+  empty.style.display=s.length?"none":"block";
+  s.forEach(sys=>{
+    const d=document.createElement("div");
+    d.className="system";
+    d.innerHTML=`<b>${sys.name}</b><span>${sys.seed}</span>`;
+    systemsDiv.appendChild(d);
+  });
+}
+
+document.getElementById("btnCreate").onclick=()=>{
+  const name=prompt("Nom du système ?");
+  if(!name)return;
+  const s=load();
+  s.push({id:uid(),name,seed:Math.random().toString(16).slice(2)});
+  save(s);render();
+};
+
+document.getElementById("btnImport").onclick=()=>alert("Import JSON à venir");
+
+(function initUser(){
+  let u=localStorage.getItem(USERNAME_KEY);
+  if(!u){u="user"+Math.floor(Math.random()*9000);localStorage.setItem(USERNAME_KEY,u);}
+  usernameSpan.textContent=u;
+  const email=localStorage.getItem(EMAIL_KEY)||u;
+  avatar.textContent=email[0].toUpperCase();
+})();
+
+render();
+</script>
+
 </body>
 </html>
