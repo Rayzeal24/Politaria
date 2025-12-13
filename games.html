@@ -81,6 +81,83 @@
       min-width: 280px;
     }
 
+    /* ✅ NOUVEAU : bouton menu à gauche du logo */
+    .menu-wrapper{ position:relative; display:flex; align-items:center; }
+    .menu-btn{
+      width:42px;
+      height:42px;
+      border-radius:12px;
+      border:1px solid rgba(148,163,184,0.18);
+      background: rgba(255,255,255,0.045);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      transition: 0.18s ease;
+    }
+    .menu-btn:hover{
+      transform: translateY(-1px);
+      border-color: rgba(148,163,184,0.35);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.35);
+    }
+    .hamburger{
+      width:18px;
+      height:14px;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+    }
+    .hamburger span{
+      display:block;
+      height:2px;
+      border-radius:999px;
+      background: rgba(230,237,243,0.92);
+      opacity:0.95;
+    }
+
+    /* ✅ Mini-fenêtre menu (coins/shop/etc dedans) */
+    .mini-menu{
+      position:absolute;
+      top: calc(100% + 10px);
+      left: 0;
+      width: 260px;
+      background: #0b1020;
+      border-radius: 16px;
+      border: 1px solid rgba(148,163,184,0.18);
+      box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+      padding: 8px;
+      display: none;
+      z-index: 60;
+    }
+    .mini-menu.show{ display:block; }
+
+    .mini-head{
+      padding: 10px 12px 8px;
+      font-weight: 950;
+      letter-spacing: 0.2px;
+      color: rgba(230,237,243,0.92);
+      opacity: 0.92;
+    }
+    .menu-item{
+      width:100%;
+      padding:12px 14px;
+      border-radius:12px;
+      background:transparent;
+      border:none;
+      color:#e6edf3;
+      font-size:0.95rem;
+      font-weight:800;
+      text-align:left;
+      cursor:pointer;
+      transition:0.15s ease;
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .menu-item:hover{ background: rgba(255,255,255,0.08); }
+    .menu-item.link{ text-decoration:none; display:block; }
+    .menu-sep{ height:1px; margin:6px 0; background: rgba(148,163,184,0.15); }
+
     .logo{
       display:flex;
       align-items:center;
@@ -104,7 +181,6 @@
       position:relative;
     }
 
-    /* ✅ IMAGE 1 : on “change la couleur” du logo via filtre + glow */
     .logo-img{
       width: 74%;
       height: 74%;
@@ -118,7 +194,6 @@
         drop-shadow(0 0 18px rgba(96,165,250,0.22));
       opacity:0.95;
     }
-    /* Option : petit voile coloré par-dessus (donne le “teinté”) */
     .logo-badge::after{
       content:"";
       position:absolute;
@@ -141,39 +216,6 @@
       display:flex;
       align-items:center;
       gap:12px;
-    }
-
-    /* ✅ 4 boutons en haut */
-    .top-actions{
-      display:flex;
-      align-items:center;
-      gap:10px;
-    }
-
-    .top-btn{
-      display:inline-flex;
-      align-items:center;
-      gap:10px;
-      padding:10px 14px;
-      border-radius:999px;
-      border:1px solid rgba(148,163,184,0.18);
-      background: rgba(255,255,255,0.045);
-      color: rgba(230,237,243,0.92);
-      font-weight: 900;
-      cursor:pointer;
-      transition: 0.18s ease;
-      white-space:nowrap;
-    }
-    .top-btn:hover{
-      transform: translateY(-1px);
-      border-color: rgba(148,163,184,0.35);
-      box-shadow: 0 12px 30px rgba(0,0,0,0.35);
-    }
-    .top-btn .dot{
-      width:10px;height:10px;border-radius:50%;
-      background: linear-gradient(135deg, rgba(96,165,250,0.95), rgba(34,211,238,0.85));
-      box-shadow: 0 0 12px rgba(34,211,238,0.25);
-      flex:0 0 auto;
     }
 
     /* =========================
@@ -214,7 +256,6 @@
       flex:0 0 auto;
     }
 
-    /* ✅ PAREIL : avatar “U” dans la même gamme */
     .avatar{
       width:100%;
       height:100%;
@@ -244,23 +285,6 @@
       z-index: 50;
     }
     .profile-menu.show{ display:block; }
-
-    .menu-item{
-      width:100%;
-      padding:12px 14px;
-      border-radius:12px;
-      background:transparent;
-      border:none;
-      color:#e6edf3;
-      font-size:0.95rem;
-      font-weight:700;
-      text-align:left;
-      cursor:pointer;
-      transition:0.15s ease;
-    }
-    .menu-item:hover{ background: rgba(255,255,255,0.08); }
-    .menu-item.link{ text-decoration:none; display:block; }
-    .menu-sep{ height:1px; margin:6px 0; background: rgba(148,163,184,0.15); }
 
     /* =========================
        PAGE
@@ -312,7 +336,6 @@
       .grid{ grid-template-columns: 1fr; }
       header{ padding: 16px 16px; }
       .left{ min-width: unset; }
-      .top-actions{ display:none; } /* sur mobile, on peut cacher si tu veux */
     }
 
     .card{
@@ -440,6 +463,25 @@
 
   <header>
     <div class="left">
+      <!-- ✅ Menu hamburger (mini fenêtre) -->
+      <div class="menu-wrapper">
+        <button class="menu-btn" id="menuBtn" aria-haspopup="true" aria-expanded="false" aria-label="Ouvrir le menu">
+          <div class="hamburger" aria-hidden="true">
+            <span></span><span></span><span></span>
+          </div>
+        </button>
+
+        <div class="mini-menu" id="miniMenu" role="menu" aria-label="Menu rapide">
+          <div class="mini-head">Menu</div>
+          <button class="menu-item" id="topCoins">💰 Coins</button>
+          <button class="menu-item" id="topShop">🛒 Boutique</button>
+          <button class="menu-item" id="topRank">🏆 Classement</button>
+          <button class="menu-item" id="topWiki">📖 Wiki</button>
+          <div class="menu-sep"></div>
+          <a class="menu-item link" href="https://discord.gg/" target="_blank" rel="noopener">💬 Discord</a>
+        </div>
+      </div>
+
       <div class="logo">
         <div class="logo-badge">
           <img src="icon/favicon-96x96.png" alt="Politaria" class="logo-img">
@@ -449,14 +491,6 @@
     </div>
 
     <div class="header-right">
-      <!-- ✅ 4 boutons ici -->
-      <div class="top-actions">
-        <button class="top-btn" id="topCoins"><span class="dot"></span> Coins</button>
-        <button class="top-btn" id="topShop"><span class="dot"></span> Boutique</button>
-        <button class="top-btn" id="topRank"><span class="dot"></span> Classement</button>
-        <button class="top-btn" id="topWiki"><span class="dot"></span> Wiki</button>
-      </div>
-
       <div class="profile-wrapper">
         <button class="profile-btn" id="profileBtn" aria-haspopup="true" aria-expanded="false">
           <span class="avatar-ring" aria-hidden="true">
@@ -519,218 +553,8 @@
     Politaria © 2025 — L’univers n’attend que vous.
   </footer>
 
-  <script>
-    "use strict";
-
-    const MODE_KEY = "politariaMode";
-    const SYSTEMS_KEY = "politariaSystems_v1";
-    const EMAIL_KEY = "politariaEmail";
-    const USERNAME_KEY = "politariaUsername";
-
-    const subtitle     = document.getElementById("subtitle");
-    const systemsText  = document.getElementById("systemsText");
-    const systemsList  = document.getElementById("systemsList");
-    const emptyState   = document.getElementById("emptyState");
-
-    const modePill     = document.getElementById("modePill");
-    const storagePill  = document.getElementById("storagePill");
-    const statusPill   = document.getElementById("statusPill");
-    const countPill    = document.getElementById("countPill");
-
-    const btnCreate      = document.getElementById("btnCreate");
-    const btnImport      = document.getElementById("btnImport");
-    const btnTutorial    = document.getElementById("btnTutorial");
-    const btnLeaderboard = document.getElementById("btnLeaderboard");
-    const btnSettings    = document.getElementById("btnSettings");
-
-    const profileBtn       = document.getElementById("profileBtn");
-    const profileMenu      = document.getElementById("profileMenu");
-    const profileLabelText = document.getElementById("profileLabelText");
-    const profileAvatar    = document.getElementById("profileAvatar");
-
-    // Top buttons
-    const topCoins = document.getElementById("topCoins");
-    const topShop  = document.getElementById("topShop");
-    const topRank  = document.getElementById("topRank");
-    const topWiki  = document.getElementById("topWiki");
-
-    const uid = () => (crypto?.randomUUID ? crypto.randomUUID() : String(Date.now()) + "_" + Math.random().toString(16).slice(2));
-    const nowISO = () => new Date().toISOString();
-    const safeJsonParse = (s, fallback) => { try { return JSON.parse(s); } catch { return fallback; } };
-
-    function toast(msg){ alert(msg); }
-
-    function generateUsername(){
-      const n = Math.floor(1000 + Math.random() * 9000);
-      return "user" + n;
-    }
-
-    function updateProfileUI(){
-      const email = localStorage.getItem(EMAIL_KEY) || "";
-      let username = localStorage.getItem(USERNAME_KEY);
-      if(!username){
-        username = generateUsername();
-        localStorage.setItem(USERNAME_KEY, username);
-      }
-      profileLabelText.textContent = username;
-
-      const src = (email.trim() ? email.trim()[0] : username.trim()[0] || "U").toUpperCase();
-      profileAvatar.textContent = /[A-Z0-9]/.test(src) ? src : "U";
-    }
-
-    // Session mode (simple)
-    const hashParams = new URLSearchParams(window.location.hash.slice(1));
-    const googleToken = hashParams.get("access_token");
-    const params = new URLSearchParams(window.location.search);
-    const urlMode = params.get("mode");
-    const urlEmail = params.get("email") || hashParams.get("email");
-    if (urlEmail) localStorage.setItem(EMAIL_KEY, urlEmail);
-
-    const savedMode = localStorage.getItem(MODE_KEY);
-
-    function setGuestMode() {
-      localStorage.setItem(MODE_KEY, "guest");
-      subtitle.textContent = "Mode invité : progression locale, sans synchronisation.";
-      modePill.textContent = "Invité";
-      storagePill.textContent = "Local";
-      statusPill.textContent = "Actif";
-      systemsText.textContent = "Créez un système, testez, cassez tout… puis recommencez. Ici, l’univers vous obéit.";
-      updateProfileUI();
-    }
-
-    function setGoogleMode() {
-      localStorage.setItem(MODE_KEY, "google");
-      subtitle.textContent = "Session Google détectée : synchronisation cloud à brancher.";
-      modePill.textContent = "Google";
-      storagePill.textContent = "Cloud (bientôt)";
-      statusPill.textContent = "Actif";
-      systemsText.textContent = "Bienvenue. Vos systèmes apparaîtront ici, prêts à être partagés et disputés.";
-      updateProfileUI();
-    }
-
-    function cleanUrlHash(){
-      if (window.location.hash && window.history?.replaceState) {
-        history.replaceState(null, "", window.location.pathname + window.location.search);
-      }
-    }
-
-    if (googleToken) { setGoogleMode(); cleanUrlHash(); }
-    else if (urlMode === "guest") setGuestMode();
-    else if (savedMode === "google") setGoogleMode();
-    else setGuestMode();
-
-    // Systems store
-    function loadSystems(){ return safeJsonParse(localStorage.getItem(SYSTEMS_KEY), []); }
-    function saveSystems(list){ localStorage.setItem(SYSTEMS_KEY, JSON.stringify(list)); }
-
-    function renderSystems(){
-      const systems = loadSystems();
-      systemsList.innerHTML = "";
-
-      countPill.textContent = String(systems.length);
-      emptyState.style.display = systems.length ? "none" : "block";
-
-      systems.sort((a,b) => (b.updatedAt || b.createdAt || "").localeCompare(a.updatedAt || a.createdAt || ""));
-
-      for(const s of systems){
-        const el = document.createElement("div");
-        el.className = "system";
-
-        const left = document.createElement("div");
-        left.style.flex = "1";
-
-        const title = document.createElement("h3");
-        title.textContent = s.name || "Système sans nom";
-
-        const meta = document.createElement("div");
-        meta.className = "meta";
-
-        const chipMode = document.createElement("span");
-        chipMode.className = "chip";
-        chipMode.textContent = "Mode: " + (s.mode || "Sandbox");
-
-        const chipSeed = document.createElement("span");
-        chipSeed.className = "chip";
-        chipSeed.textContent = "Seed: " + (s.seed || "—");
-
-        meta.append(chipMode, chipSeed);
-        left.append(title, meta);
-
-        const actions = document.createElement("div");
-        actions.className = "actions";
-
-        const btnPlay = document.createElement("button");
-        btnPlay.className = "btn primary";
-        btnPlay.textContent = "Jouer";
-        btnPlay.addEventListener("click", () => toast("Mode jeu à venir. Système: " + (s.name || "—")));
-
-        const btnDelete = document.createElement("button");
-        btnDelete.className = "btn";
-        btnDelete.textContent = "Supprimer";
-        btnDelete.addEventListener("click", () => {
-          if(confirm("Supprimer ce système ?")) {
-            saveSystems(loadSystems().filter(x => x.id !== s.id));
-            renderSystems();
-          }
-        });
-
-        actions.append(btnPlay, btnDelete);
-        el.append(left, actions);
-        systemsList.appendChild(el);
-      }
-    }
-
-    // Buttons actions
-    btnCreate.addEventListener("click", () => {
-      const name = prompt("Nom du système :", "Nova-" + Math.floor(Math.random()*999));
-      if(!name) return;
-
-      const mode = prompt("Mode (Sandbox / Chronique / Survie / Escarmouche) :", "Sandbox") || "Sandbox";
-      const seed = prompt("Seed (laisser vide = auto) :", "") || Math.floor(Math.random()*1e9).toString(16);
-
-      const systems = loadSystems();
-      systems.push({
-        id: uid(),
-        name: name.trim(),
-        mode: mode.trim(),
-        seed: seed.trim(),
-        createdAt: nowISO(),
-        updatedAt: nowISO()
-      });
-      saveSystems(systems);
-      renderSystems();
-    });
-
-    btnImport.addEventListener("click", () => toast("Import JSON à brancher ici."));
-    btnTutorial.addEventListener("click", () => toast("Tutoriel à venir."));
-    btnLeaderboard.addEventListener("click", () => toast("Classement à venir."));
-    btnSettings.addEventListener("click", () => toast("Paramètres avancés à venir."));
-
-    // Profile menu
-    profileBtn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      const isOpen = profileMenu.classList.toggle("show");
-      profileBtn.setAttribute("aria-expanded", String(isOpen));
-    });
-    document.addEventListener("click", () => {
-      profileMenu.classList.remove("show");
-      profileBtn.setAttribute("aria-expanded", "false");
-    });
-
-    document.getElementById("menuSave").addEventListener("click", () => toast("Sauvegarde : OK (local)."));
-    document.getElementById("menuLogout").addEventListener("click", () => {
-      localStorage.removeItem(MODE_KEY);
-      window.location.href = "index.html";
-    });
-
-    // ✅ Top actions (à toi de remplacer par des vraies pages quand tu veux)
-    topCoins.addEventListener("click", () => toast("💰 Coins : page à venir (ou branche vers shop/coins.html)."));
-    topShop.addEventListener("click",  () => toast("🛒 Boutique : page à venir (ou shop.html)."));
-    topRank.addEventListener("click",  () => toast("🏆 Classement : page à venir (ou leaderboard.html)."));
-    topWiki.addEventListener("click",  () => window.open("#", "_blank"));
-
-    // Init
-    renderSystems();
-  </script>
+  <!-- ✅ Script séparé -->
+  <script src="games.js"></script>
 </body>
 </html>
+
