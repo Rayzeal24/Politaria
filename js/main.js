@@ -383,7 +383,7 @@ function handleGoogleLogin() {
 
 function applyGuestModeUI() {
   if (subtitle) {
-    subtitle.textContent = "Mode invité : votre premier système Politaria est en préparation…";
+    subtitle.textContent = "Un bac à sable d'histoire alternative parmi les étoiles";
     subtitle.style.opacity = "1";
     subtitle.style.transform = "translateY(0)";
   }
@@ -391,7 +391,7 @@ function applyGuestModeUI() {
   if (hero) hero.classList.add("guest-active");
 
   if (footer) {
-    footer.textContent = "Mode invité actif. Votre progression sera stockée localement.";
+    footer.textContent = "Construisez votre propre système. Réécrivez son histoire.";
     footer.classList.add("guest");
   }
 }
