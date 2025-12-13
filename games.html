@@ -81,7 +81,6 @@
       min-width: 280px;
     }
 
-    /* ✅ NOUVEAU : bouton menu à gauche du logo */
     .menu-wrapper{ position:relative; display:flex; align-items:center; }
     .menu-btn{
       width:42px;
@@ -115,7 +114,6 @@
       opacity:0.95;
     }
 
-    /* ✅ Mini-fenêtre menu (coins/shop/etc dedans) */
     .mini-menu{
       position:absolute;
       top: calc(100% + 10px);
@@ -463,7 +461,6 @@
 
   <header>
     <div class="left">
-      <!-- ✅ Menu hamburger (mini fenêtre) -->
       <div class="menu-wrapper">
         <button class="menu-btn" id="menuBtn" aria-haspopup="true" aria-expanded="false" aria-label="Ouvrir le menu">
           <div class="hamburger" aria-hidden="true">
@@ -474,7 +471,7 @@
         <div class="mini-menu" id="miniMenu" role="menu" aria-label="Menu rapide">
           <div class="mini-head">Menu</div>
 
-          <!-- ✅ Remplacement demandé -->
+          <!-- ✅ 1 Preset / 2 Star / 3 Classement / 4 Boutique -->
           <button class="menu-item" id="topCoins">🎛️ Preset</button>
           <button class="menu-item" id="topShop">⭐ Star</button>
           <button class="menu-item" id="topRank">🏆 Classement</button>
@@ -504,12 +501,12 @@
           </span>
         </button>
 
-        <div class="partials/profile-menu" id="profileMenu" role="menu" aria-label="Menu utilisateur">
+        <div class="profile-menu" id="profileMenu" role="menu" aria-label="Menu utilisateur">
           <button class="menu-item" id="menuSave">⚙️ Sauvegarder la progression</button>
           <button class="menu-item" id="menuLogout">⛔ Déconnexion</button>
           <div class="menu-sep"></div>
           <a class="menu-item link" href="https://discord.gg/" target="_blank" rel="noopener">💬 Rejoindre le Discord</a>
-          <a class="menu-item link" href="#" target="_blank" rel="noopener">📖 Voir le Wiki</a>
+          <a class="menu-item link" href="#" id="menuWikiLink" target="_blank" rel="noopener">📖 Voir le Wiki</a>
         </div>
       </div>
     </div>
@@ -556,7 +553,6 @@
     Politaria © 2025 — L’univers n’attend que vous.
   </footer>
 
-  <!-- ✅ Script séparé -->
-  <script src="js/games.js"></script>
+  <script src="games.js"></script>
 </body>
 </html>
