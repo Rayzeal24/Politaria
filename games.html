@@ -37,6 +37,14 @@
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
     }
 
+    .stars{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      opacity:.55;
+    }
+
+    /* HEADER */
     header{
       position:sticky;
       top:0;
@@ -45,9 +53,9 @@
       display:flex;
       justify-content:space-between;
       align-items:center;
-      background: rgba(10,14,26,0.6);
+      background: rgba(10,14,26,.6);
       backdrop-filter: blur(10px);
-      border-bottom:1px solid rgba(148,163,184,0.12);
+      border-bottom:1px solid rgba(148,163,184,.12);
     }
 
     .left{ display:flex; align-items:center; gap:14px; }
@@ -57,12 +65,10 @@
     .menu-btn{
       width:42px;height:42px;
       border-radius:12px;
-      border:1px solid rgba(148,163,184,0.18);
-      background: rgba(255,255,255,0.05);
+      border:1px solid rgba(148,163,184,.18);
+      background: rgba(255,255,255,.05);
       cursor:pointer;
-      display:flex;
-      align-items:center;
-      justify-content:center;
+      display:flex;align-items:center;justify-content:center;
     }
     .hamburger{ width:18px;height:14px;display:flex;flex-direction:column;justify-content:space-between; }
     .hamburger span{ height:2px;background:#e6edf3;border-radius:999px; }
@@ -74,13 +80,14 @@
       width:260px;
       background:#0b1020;
       border-radius:16px;
-      border:1px solid rgba(148,163,184,0.18);
-      box-shadow:0 30px 80px rgba(0,0,0,0.6);
+      border:1px solid rgba(148,163,184,.18);
+      box-shadow:0 30px 80px rgba(0,0,0,.6);
       padding:8px;
       display:none;
       z-index:60;
     }
     .mini-menu.show{ display:block; }
+
     .mini-head{ padding:10px 12px;font-weight:900;opacity:.85; }
 
     .menu-item{
@@ -94,16 +101,14 @@
       text-align:left;
       cursor:pointer;
     }
-    .menu-item:hover{ background:rgba(255,255,255,0.08); }
+    .menu-item:hover{ background:rgba(255,255,255,.08); }
 
     /* LOGO */
     .logo{ display:flex; align-items:center; gap:10px; font-weight:900; }
     .logo-badge{
-      width:36px;height:36px;
-      border-radius:14px;
-      overflow:hidden;
-      border:1px solid rgba(255,255,255,0.14);
-      background:rgba(255,255,255,0.06);
+      width:36px;height:36px;border-radius:14px;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(255,255,255,.06);
       display:flex;align-items:center;justify-content:center;
     }
     .logo-img{ width:70%;height:70%;object-fit:contain; }
@@ -116,11 +121,10 @@
     /* PROFIL */
     .profile-wrapper{ position:relative; }
     .profile-btn{
-      display:flex;align-items:center;gap:10px;
-      padding:8px 14px;
+      padding:8px 16px;
       border-radius:999px;
-      border:1px solid rgba(148,163,184,0.18);
-      background:rgba(255,255,255,0.05);
+      border:1px solid rgba(148,163,184,.18);
+      background:rgba(255,255,255,.05);
       color:#e6edf3;
       cursor:pointer;
       font-weight:800;
@@ -133,17 +137,76 @@
       width:260px;
       background:#0b1020;
       border-radius:16px;
-      border:1px solid rgba(148,163,184,0.18);
-      box-shadow:0 30px 80px rgba(0,0,0,0.6);
+      border:1px solid rgba(148,163,184,.18);
+      box-shadow:0 30px 80px rgba(0,0,0,.6);
       padding:8px;
       display:none;
       z-index:60;
     }
     .profile-menu.show{ display:block; }
+
+    /* PAGE */
+    main{
+      max-width:1200px;
+      margin:0 auto;
+      padding:42px 18px 120px;
+      display:flex;
+      flex-direction:column;
+      gap:64px;
+    }
+
+    .hero{text-align:center;}
+    h1{font-size:3rem;margin:0;}
+    .subtitle{color:var(--muted);}
+
+    .grid{
+      display:grid;
+      grid-template-columns:1.45fr .55fr;
+      gap:16px;
+    }
+    @media(max-width:980px){
+      .grid{grid-template-columns:1fr;}
+    }
+
+    .card{
+      background:linear-gradient(180deg,var(--glass),var(--glass2));
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+    }
+    .card-inner{padding:24px;}
+
+    .toolbar{display:flex;gap:10px;flex-wrap:wrap;}
+    .btn{
+      padding:11px 16px;
+      border-radius:999px;
+      border:1px solid rgba(148,163,184,.18);
+      background:rgba(255,255,255,.05);
+      color:#fff;
+      font-weight:900;
+      cursor:pointer;
+    }
+    .btn.primary{
+      border:none;
+      color:#071018;
+      background:linear-gradient(135deg,#60a5fa,#22d3ee);
+    }
+
+    .pillcol{display:flex;flex-direction:column;gap:12px;}
+    .pill{
+      display:flex;justify-content:space-between;
+      padding:14px 16px;
+      border-radius:18px;
+      border:1px solid rgba(148,163,184,.14);
+      background:rgba(255,255,255,.035);
+    }
+
+    footer{text-align:center;opacity:.55;}
   </style>
 </head>
 
 <body>
+<div class="stars"></div>
 
 <header>
   <div class="left">
@@ -152,7 +215,6 @@
         <div class="hamburger"><span></span><span></span><span></span></div>
       </button>
 
-      <!-- ✅ MINI MENU CORRECT -->
       <div class="mini-menu" id="miniMenu">
         <div class="mini-head">Menu</div>
         <button class="menu-item" id="topPreset">🧩 Preset</button>
@@ -164,23 +226,58 @@
 
     <div class="logo">
       <div class="logo-badge">
-        <img src="icon/favicon-96x96.png" class="logo-img" alt="Politaria">
+        <img src="icon/favicon-96x96.png" class="logo-img" alt="">
       </div>
       <span>Politaria</span>
     </div>
   </div>
 
   <div class="profile-wrapper">
-    <button class="profile-btn" id="profileBtn">
-      <span id="profileLabelText">Invité</span>
-    </button>
-
+    <button class="profile-btn" id="profileBtn">Invité</button>
     <div class="profile-menu" id="profileMenu">
       <button class="menu-item" id="menuSave">⚙️ Sauvegarder</button>
       <button class="menu-item" id="menuLogout">⛔ Déconnexion</button>
     </div>
   </div>
 </header>
+
+<main>
+  <section class="hero">
+    <h1>Games</h1>
+    <p class="subtitle" id="subtitle">Chargement…</p>
+  </section>
+
+  <section class="grid">
+    <div class="card">
+      <div class="card-inner">
+        <h2>Vos systèmes stellaires</h2>
+        <p id="systemsText">Préparez votre première étoile.</p>
+
+        <div class="toolbar">
+          <button class="btn primary" id="btnCreate">+ Créer</button>
+          <button class="btn" id="btnImport">Importer</button>
+          <button class="btn" id="btnTutorial">Tutoriel</button>
+          <button class="btn" id="btnLeaderboard">Classement</button>
+          <button class="btn" id="btnSettings">Paramètres</button>
+        </div>
+
+        <div id="systemsList"></div>
+        <p id="emptyState" style="display:none;">Aucun système pour l’instant.</p>
+      </div>
+    </div>
+
+    <div class="pillcol">
+      <div class="pill"><span>Mode</span><span id="modePill">…</span></div>
+      <div class="pill"><span>Stockage</span><span id="storagePill">…</span></div>
+      <div class="pill"><span>Statut</span><span id="statusPill">…</span></div>
+      <div class="pill"><span>Systèmes</span><span id="countPill">0</span></div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  Politaria © 2025 — L’univers n’attend que vous.
+</footer>
 
 <script src="js/games.js"></script>
 </body>
