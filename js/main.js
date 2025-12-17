@@ -332,10 +332,11 @@ const btnGuest = document.getElementById("btn-guest");
 
 const MODE_KEY = "politariaMode";
 
-// ⚙️ Config OAuth Google (Implicit Flow)
-const GOOGLE_CLIENT_ID = "384194128216-26uuditt8tfcj2trpghfb0a3bj0njuhd.apps.googleusercontent.com";
-const GOOGLE_AUTH_ENDPOINT = "https://accounts.google.com/o/oauth2/v2/auth";
-const GOOGLE_REDIRECT_URI = "https://politaria.eu/games.html";
+/*
+  ✅ IMPORTANT
+  - On n'utilise PLUS le flux OAuth Google "maison"
+  - On utilise Supabase OAuth (window.sb)
+*/
 
 function startGame() {
   const mode = localStorage.getItem(MODE_KEY);
@@ -367,18 +368,24 @@ function backdropClick(event) {
    🔐 Actions des boutons
 ------------------------ */
 
-function handleGoogleLogin() {
-  const params = new URLSearchParams({
-    client_id: GOOGLE_CLIENT_ID,
-    redirect_uri: GOOGLE_REDIRECT_URI,
-    response_type: "token",
-    scope: "openid email profile",
-    include_granted_scopes: "true",
-    prompt: "select_account"
-  });
+async function handleGoogleLogin() {
+  // Sécurité : si Supabase n'est pas chargé, on affiche une erreur claire
+  if (!window.sb) {
+    console.error("Supabase client introuvable. Vérifie que /js/supabase.js est chargé avant main.js");
+    alert("Erreur: Supabase n'est pas chargé. Vérifie la configuration.");
+    return;
+  }
 
-  const url = `${GOOGLE_AUTH_ENDPOINT}?${params.toString()}`;
-  window.location.href = url;
+  // On mémorise le mode choisi (utile pour ton startGame + UI)
+  localStorage.setItem(MODE_KEY, "google");
+
+  // OAuth via Supabase
+  await window.sb.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      redirectTo: window.location.origin
+    }
+  });
 }
 
 function applyGuestModeUI() {
