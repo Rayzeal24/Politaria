@@ -2,12 +2,15 @@
 
 /* ===========================================================
    Politaria — Games
-   - Guest: localStorage
-   - Google: Supabase Auth (session)
+   - Guest: localStorage (par "guest")
+   - Google: Supabase Auth (session) + pseudo localStorage par user.id
    =========================================================== */
 
 const MODE_KEY = "politariaMode";
 const SYSTEMS_KEY = "politariaSystems_v1";
+
+/* ✅ Nouveau: pseudo par user */
+const USERNAME_PREFIX = "politariaUsername_"; // + userId | guest
 
 /* UI */
 const subtitle     = document.getElementById("subtitle");
@@ -86,7 +89,6 @@ function getProfileFromSession(session){
   if (!session?.user) return null;
   const u = session.user;
 
-  // Supabase fournit des infos dans user_metadata selon provider
   const meta = u.user_metadata || {};
   const email = u.email || meta.email || "";
   const name =
@@ -101,9 +103,89 @@ function getProfileFromSession(session){
 }
 
 /* ===========================================================
+   Username (par user)
+   =========================================================== */
+function generateUsername(){
+  // un peu plus "unique" que user1234 (mais on reste simple)
+  const a = Math.floor(1000 + Math.random() * 9000);
+  const b = Math.floor(10 + Math.random() * 90);
+  return "user" + a + b; // ex: user74451
+}
+
+function sanitizeUsername(raw){
+  const s = (raw ?? "").trim();
+
+  // règles simples: 3-20, lettres/chiffres/_-
+  if (s.length < 3 || s.length > 20) return null;
+  if (!/^[a-zA-Z0-9_-]+$/.test(s)) return null;
+
+  return s;
+}
+
+async function getUsernameKey(){
+  const mode = localStorage.getItem(MODE_KEY) || "guest";
+
+  if (mode !== "google") {
+    return USERNAME_PREFIX + "guest";
+  }
+
+  const session = await getSessionSafe();
+  const userId = session?.user?.id;
+
+  // fallback si pas de session => guest
+  if (!userId) return USERNAME_PREFIX + "guest";
+
+  return USERNAME_PREFIX + userId;
+}
+
+async function getOrCreateUsername(){
+  const key = await getUsernameKey();
+
+  let username = localStorage.getItem(key);
+  if (!username) {
+    username = generateUsername();
+    localStorage.setItem(key, username);
+  }
+  return { key, username };
+}
+
+function setProfileUIFromUsername(username){
+  const label = username || "Invité";
+  profileLabelText.textContent = label;
+
+  const initial = (label.trim()[0] || "U").toUpperCase();
+  profileAvatar.textContent = /[A-Z0-9]/.test(initial) ? initial : "U";
+}
+
+async function updateProfileUI(){
+  const { username } = await getOrCreateUsername();
+  setProfileUIFromUsername(username);
+}
+
+async function changeUsername(){
+  const { key, username } = await getOrCreateUsername();
+
+  const next = prompt(
+    "Choisis ton pseudo (3-20 caractères, lettres/chiffres/_-)\nEx: Nova_77, Yukari-01",
+    username
+  );
+
+  if (next === null) return; // annulé
+
+  const clean = sanitizeUsername(next);
+  if (!clean) {
+    toast("Pseudo invalide.\nRègles: 3-20 caractères, uniquement lettres/chiffres/_-");
+    return;
+  }
+
+  localStorage.setItem(key, clean);
+  setProfileUIFromUsername(clean);
+}
+
+/* ===========================================================
    Mode + Profil UI
    =========================================================== */
-function setGuestModeUI(){
+async function setGuestModeUI(){
   localStorage.setItem(MODE_KEY, "guest");
   subtitle.textContent = "Mode invité : progression locale, sans synchronisation.";
   modePill.textContent = "Invité";
@@ -111,12 +193,10 @@ function setGuestModeUI(){
   statusPill.textContent = "Actif";
   systemsText.textContent = "Créez un système, testez, cassez tout… puis recommencez. Ici, l’univers vous obéit.";
 
-  // Profil invité stable (pas aléatoire)
-  profileLabelText.textContent = "Invité";
-  profileAvatar.textContent = "I";
+  await updateProfileUI();
 }
 
-function setGoogleModeUI(profile){
+async function setGoogleModeUI(_profile){
   localStorage.setItem(MODE_KEY, "google");
   subtitle.textContent = "Connecté : vos systèmes peuvent être synchronisés dans le cloud.";
   modePill.textContent = "Google";
@@ -124,11 +204,8 @@ function setGoogleModeUI(profile){
   statusPill.textContent = "Actif";
   systemsText.textContent = "Bienvenue. Vos systèmes apparaîtront ici, prêts à être partagés et disputés.";
 
-  const label = profile?.name || profile?.email || "Utilisateur";
-  profileLabelText.textContent = label;
-
-  const initial = (label.trim()[0] || "U").toUpperCase();
-  profileAvatar.textContent = /[A-Z0-9]/.test(initial) ? initial : "U";
+  // ✅ on affiche le pseudo "Politaria" (par user) au lieu du nom Google
+  await updateProfileUI();
 }
 
 async function resolveModeAndProfile(){
@@ -136,7 +213,7 @@ async function resolveModeAndProfile(){
   const session = await getSessionSafe();
   if (session){
     const profile = getProfileFromSession(session);
-    setGoogleModeUI(profile);
+    await setGoogleModeUI(profile);
     cleanUrlHash();
     return { mode: "google", profile, session };
   }
@@ -145,13 +222,13 @@ async function resolveModeAndProfile(){
   const params = new URLSearchParams(window.location.search);
   const urlMode = params.get("mode");
   if (urlMode === "guest"){
-    setGuestModeUI();
+    await setGuestModeUI();
     cleanUrlHash();
     return { mode: "guest", profile: null, session: null };
   }
 
-  // 3) Sinon, fallback sur saved mode (mais sans session => guest)
-  setGuestModeUI();
+  // 3) Sinon, fallback guest
+  await setGuestModeUI();
   cleanUrlHash();
   return { mode: "guest", profile: null, session: null };
 }
@@ -305,6 +382,16 @@ menuLogoutBtn.addEventListener("click", async () => {
   window.location.href = "index.html";
 });
 
+/* ✅ Bonus: changer pseudo en cliquant sur l'avatar/nom (simple) */
+profileLabelText.addEventListener("click", (e) => {
+  e.stopPropagation();
+  changeUsername();
+});
+profileAvatar.addEventListener("click", (e) => {
+  e.stopPropagation();
+  changeUsername();
+});
+
 /* Actions du mini-menu */
 topCoins.addEventListener("click", () => toast("🎛️ Preset : page à venir."));
 topShop.addEventListener("click",  () => toast("⭐ Star : page à venir."));
@@ -315,23 +402,19 @@ topWiki.addEventListener("click",  () => window.open("#", "_blank"));
    Boot
    =========================================================== */
 (async function boot(){
-  // Mode + profil depuis Supabase session (ou guest)
   await resolveModeAndProfile();
-
-  // Rendu
   renderSystems();
 
   // Si la session change (connexion/déconnexion), on met à jour l’UI
   if (ensureSupabase()){
-    window.sb.auth.onAuthStateChange((_event, session) => {
+    window.sb.auth.onAuthStateChange(async (_event, session) => {
       if (session){
         const profile = getProfileFromSession(session);
-        setGoogleModeUI(profile);
+        await setGoogleModeUI(profile);
       }else{
-        setGuestModeUI();
+        await setGuestModeUI();
       }
       renderSystems();
     });
   }
 })();
-
