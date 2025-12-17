@@ -383,7 +383,9 @@ async function handleGoogleLogin() {
   await window.sb.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: window.location.origin
+      // ✅ IMPORTANT : on force le redirect vers le site PROD
+      // Sinon, en local, window.location.origin = http://localhost:3000 et ça casse.
+      redirectTo: "https://politaria.eu/games.html"
     }
   });
 }
