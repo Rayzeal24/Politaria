@@ -1,10 +1,15 @@
 "use strict";
 
+/* ===========================================================
+   Politaria — Games
+   - Guest: localStorage
+   - Google: Supabase Auth (session)
+   =========================================================== */
+
 const MODE_KEY = "politariaMode";
 const SYSTEMS_KEY = "politariaSystems_v1";
-const EMAIL_KEY = "politariaEmail";
-const USERNAME_KEY = "politariaUsername";
 
+/* UI */
 const subtitle     = document.getElementById("subtitle");
 const systemsText  = document.getElementById("systemsText");
 const systemsList  = document.getElementById("systemsList");
@@ -36,76 +41,124 @@ const topShop  = document.getElementById("topShop");
 const topRank  = document.getElementById("topRank");
 const topWiki  = document.getElementById("topWiki");
 
+/* Profil menu buttons */
+const menuSaveBtn   = document.getElementById("menuSave");
+const menuLogoutBtn = document.getElementById("menuLogout");
+
+/* Utils */
 const uid = () => (crypto?.randomUUID ? crypto.randomUUID() : String(Date.now()) + "_" + Math.random().toString(16).slice(2));
 const nowISO = () => new Date().toISOString();
 const safeJsonParse = (s, fallback) => { try { return JSON.parse(s); } catch { return fallback; } };
 
 function toast(msg){ alert(msg); }
 
-function generateUsername(){
-  const n = Math.floor(1000 + Math.random() * 9000);
-  return "user" + n;
-}
-
-function updateProfileUI(){
-  const email = localStorage.getItem(EMAIL_KEY) || "";
-  let username = localStorage.getItem(USERNAME_KEY);
-  if(!username){
-    username = generateUsername();
-    localStorage.setItem(USERNAME_KEY, username);
+function cleanUrlHash(){
+  // Supabase OAuth met parfois des infos dans le hash. On le nettoie pour éviter des bugs.
+  if (window.location.hash && window.history?.replaceState) {
+    history.replaceState(null, "", window.location.pathname + window.location.search);
   }
-  profileLabelText.textContent = username;
-
-  const src = (email.trim() ? email.trim()[0] : username.trim()[0] || "U").toUpperCase();
-  profileAvatar.textContent = /[A-Z0-9]/.test(src) ? src : "U";
 }
 
-/* =========================
-   Session mode (simple)
-   ========================= */
-const hashParams = new URLSearchParams(window.location.hash.slice(1));
-const googleToken = hashParams.get("access_token");
-const params = new URLSearchParams(window.location.search);
-const urlMode = params.get("mode");
-const urlEmail = params.get("email") || hashParams.get("email");
-if (urlEmail) localStorage.setItem(EMAIL_KEY, urlEmail);
+/* ===========================================================
+   Supabase (Auth)
+   =========================================================== */
+function ensureSupabase(){
+  if (!window.sb) {
+    console.error("Supabase client introuvable. Vérifie que js/supabase.js est chargé AVANT games.js");
+    return false;
+  }
+  return true;
+}
 
-const savedMode = localStorage.getItem(MODE_KEY);
+async function getSessionSafe(){
+  if (!ensureSupabase()) return null;
+  try{
+    const { data, error } = await window.sb.auth.getSession();
+    if (error) throw error;
+    return data?.session || null;
+  }catch(err){
+    console.error("getSession error:", err);
+    return null;
+  }
+}
 
-function setGuestMode() {
+function getProfileFromSession(session){
+  if (!session?.user) return null;
+  const u = session.user;
+
+  // Supabase fournit des infos dans user_metadata selon provider
+  const meta = u.user_metadata || {};
+  const email = u.email || meta.email || "";
+  const name =
+    meta.full_name ||
+    meta.name ||
+    meta.user_name ||
+    meta.preferred_username ||
+    (email ? email.split("@")[0] : "") ||
+    "Utilisateur";
+
+  return { id: u.id, email, name };
+}
+
+/* ===========================================================
+   Mode + Profil UI
+   =========================================================== */
+function setGuestModeUI(){
   localStorage.setItem(MODE_KEY, "guest");
   subtitle.textContent = "Mode invité : progression locale, sans synchronisation.";
   modePill.textContent = "Invité";
   storagePill.textContent = "Local";
   statusPill.textContent = "Actif";
   systemsText.textContent = "Créez un système, testez, cassez tout… puis recommencez. Ici, l’univers vous obéit.";
-  updateProfileUI();
+
+  // Profil invité stable (pas aléatoire)
+  profileLabelText.textContent = "Invité";
+  profileAvatar.textContent = "I";
 }
 
-function setGoogleMode() {
+function setGoogleModeUI(profile){
   localStorage.setItem(MODE_KEY, "google");
-  subtitle.textContent = "Session Google détectée : synchronisation cloud à brancher.";
+  subtitle.textContent = "Connecté : vos systèmes peuvent être synchronisés dans le cloud.";
   modePill.textContent = "Google";
-  storagePill.textContent = "Cloud (bientôt)";
+  storagePill.textContent = "Local (sync à brancher)";
   statusPill.textContent = "Actif";
   systemsText.textContent = "Bienvenue. Vos systèmes apparaîtront ici, prêts à être partagés et disputés.";
-  updateProfileUI();
+
+  const label = profile?.name || profile?.email || "Utilisateur";
+  profileLabelText.textContent = label;
+
+  const initial = (label.trim()[0] || "U").toUpperCase();
+  profileAvatar.textContent = /[A-Z0-9]/.test(initial) ? initial : "U";
 }
 
-function cleanUrlHash(){
-  if (window.location.hash && window.history?.replaceState) {
-    history.replaceState(null, "", window.location.pathname + window.location.search);
+async function resolveModeAndProfile(){
+  // 1) Si session Supabase existe => Google mode
+  const session = await getSessionSafe();
+  if (session){
+    const profile = getProfileFromSession(session);
+    setGoogleModeUI(profile);
+    cleanUrlHash();
+    return { mode: "google", profile, session };
   }
+
+  // 2) Sinon, si URL a ?mode=guest => guest
+  const params = new URLSearchParams(window.location.search);
+  const urlMode = params.get("mode");
+  if (urlMode === "guest"){
+    setGuestModeUI();
+    cleanUrlHash();
+    return { mode: "guest", profile: null, session: null };
+  }
+
+  // 3) Sinon, fallback sur saved mode (mais sans session => guest)
+  setGuestModeUI();
+  cleanUrlHash();
+  return { mode: "guest", profile: null, session: null };
 }
 
-if (googleToken) { setGoogleMode(); cleanUrlHash(); }
-else if (urlMode === "guest") setGuestMode();
-else if (savedMode === "google") setGoogleMode();
-else setGuestMode();
-
-/* =========================
-   Systems store
-   ========================= */
+/* ===========================================================
+   Systems store (local)
+   =========================================================== */
 function loadSystems(){ return safeJsonParse(localStorage.getItem(SYSTEMS_KEY), []); }
 function saveSystems(list){ localStorage.setItem(SYSTEMS_KEY, JSON.stringify(list)); }
 
@@ -166,9 +219,9 @@ function renderSystems(){
   }
 }
 
-/* =========================
+/* ===========================================================
    Actions principales
-   ========================= */
+   =========================================================== */
 btnCreate.addEventListener("click", () => {
   const name = prompt("Nom du système :", "Nova-" + Math.floor(Math.random()*999));
   if(!name) return;
@@ -194,14 +247,13 @@ btnTutorial.addEventListener("click", () => toast("Tutoriel à venir."));
 btnLeaderboard.addEventListener("click", () => toast("Classement à venir."));
 btnSettings.addEventListener("click", () => toast("Paramètres avancés à venir."));
 
-/* =========================
+/* ===========================================================
    Menus : profil + mini-menu
-   ========================= */
+   =========================================================== */
 
 /* Mini menu (hamburger) */
 menuBtn.addEventListener("click", (e) => {
   e.stopPropagation();
-  // ferme l'autre si ouvert
   profileMenu.classList.remove("show");
   profileBtn.setAttribute("aria-expanded", "false");
 
@@ -212,7 +264,6 @@ menuBtn.addEventListener("click", (e) => {
 /* Menu profil */
 profileBtn.addEventListener("click", (e) => {
   e.stopPropagation();
-  // ferme l'autre si ouvert
   miniMenu.classList.remove("show");
   menuBtn.setAttribute("aria-expanded", "false");
 
@@ -230,17 +281,57 @@ document.addEventListener("click", () => {
 });
 
 /* Liens profil */
-document.getElementById("menuSave").addEventListener("click", () => toast("Sauvegarde : OK (local)."));
-document.getElementById("menuLogout").addEventListener("click", () => {
+menuSaveBtn.addEventListener("click", () => {
+  const mode = localStorage.getItem(MODE_KEY) || "guest";
+  if (mode === "google") {
+    toast("Sauvegarde : en local pour l’instant. (Ensuite on branchera la base Supabase)");
+  } else {
+    toast("Sauvegarde : OK (local).");
+  }
+});
+
+menuLogoutBtn.addEventListener("click", async () => {
+  // si user Google => logout Supabase
+  if (ensureSupabase()){
+    try{
+      await window.sb.auth.signOut();
+    }catch(err){
+      console.error("signOut error:", err);
+    }
+  }
+
+  // retour mode invité
   localStorage.removeItem(MODE_KEY);
   window.location.href = "index.html";
 });
 
 /* Actions du mini-menu */
-topCoins.addEventListener("click", () => toast("💰 Coins : page à venir (ou branche vers shop/coins.html)."));
-topShop.addEventListener("click",  () => toast("🛒 Boutique : page à venir (ou shop.html)."));
-topRank.addEventListener("click",  () => toast("🏆 Classement : page à venir (ou leaderboard.html)."));
+topCoins.addEventListener("click", () => toast("🎛️ Preset : page à venir."));
+topShop.addEventListener("click",  () => toast("⭐ Star : page à venir."));
+topRank.addEventListener("click",  () => toast("🏆 Classement : page à venir."));
 topWiki.addEventListener("click",  () => window.open("#", "_blank"));
 
-/* Init */
-renderSystems();
+/* ===========================================================
+   Boot
+   =========================================================== */
+(async function boot(){
+  // Mode + profil depuis Supabase session (ou guest)
+  await resolveModeAndProfile();
+
+  // Rendu
+  renderSystems();
+
+  // Si la session change (connexion/déconnexion), on met à jour l’UI
+  if (ensureSupabase()){
+    window.sb.auth.onAuthStateChange((_event, session) => {
+      if (session){
+        const profile = getProfileFromSession(session);
+        setGoogleModeUI(profile);
+      }else{
+        setGuestModeUI();
+      }
+      renderSystems();
+    });
+  }
+})();
+
