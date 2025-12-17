@@ -89,13 +89,13 @@
 
       <div class="modal-right">
         <!-- Connexion Google -->
-        <button class="auth-btn" id="btn-google">
+        <button class="auth-btn" id="btn-google" type="button">
           <span class="auth-btn-icon">G</span>
           <span>Se connecter avec Google</span>
         </button>
 
         <!-- Continuer en invité -->
-        <button class="auth-btn secondary" id="btn-guest">
+        <button class="auth-btn secondary" id="btn-guest" type="button">
           <span class="auth-btn-icon guest">🕶️</span>
           <span>Continuer en invité</span>
         </button>
@@ -114,6 +114,10 @@
       <div id="legal-content" style="max-height:60vh; overflow:auto;"></div>
     </div>
   </div>
+
+  <!-- ✅ Supabase (doit être chargé AVANT main.js) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/js/supabase.js"></script>
 
   <!-- 🔥 JS chargé correctement + cache buster -->
   <script src="/js/main.js?v=alpha10" defer></script>
