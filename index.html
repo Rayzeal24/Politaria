@@ -1,1 +1,48 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Tower Defense Canvas (Kingdom Rush-like)</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div id="app">
+    <header class="topbar">
+      <div class="stat"><span class="label">Gold</span><span id="gold">0</span></div>
+      <div class="stat"><span class="label">Lives</span><span id="lives">0</span></div>
+      <div class="stat"><span class="label">Wave</span><span id="wave">0</span></div>
+      <div class="stat"><span class="label">Best</span><span id="bestWave">0</span></div>
 
+      <div class="spacer"></div>
+
+      <button id="btnStart" class="btn">Start</button>
+      <button id="btnPause" class="btn">Pause</button>
+    </header>
+
+    <main class="main">
+      <div class="stage">
+        <canvas id="game" width="960" height="540" aria-label="Tower Defense Canvas"></canvas>
+        <div class="hint">
+          <div><b>Click</b> sur un pad pour construire.</div>
+          <div><b>Click</b> sur une tour pour Upgrade / Sell / Targeting.</div>
+          <div><b>Hover</b> pour voir la portée.</div>
+        </div>
+      </div>
+
+      <aside class="panel" id="panel">
+        <div class="panel-title">Tower Panel</div>
+        <div id="panelBody" class="panel-body">
+          <div class="panel-empty">Sélectionne un pad / une tour.</div>
+        </div>
+      </aside>
+    </main>
+
+    <footer class="footer">
+      Pur HTML/CSS/JS, Canvas + ES Modules, compatible GitHub Pages.
+    </footer>
+  </div>
+
+  <script type="module" src="./js/main.js"></script>
+</body>
+</html>
