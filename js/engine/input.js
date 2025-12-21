@@ -7,6 +7,8 @@ export class Input {
     this.mx = 0;
     this.my = 0;
     this._down = false;
+
+    // Latch: reste vrai jusqu'à consumeClick() (ou endFrame)
     this._clicked = false;
 
     this._rect = canvas.getBoundingClientRect();
@@ -31,14 +33,18 @@ export class Input {
   }
 
   beginFrame() {
-    this._clicked = false;
+    // ⚠️ NE PAS reset _clicked ici (sinon on perd les clics entre frames)
     if (this._needsRect) {
       this._rect = this.canvas.getBoundingClientRect();
       this._needsRect = false;
     }
   }
 
-  endFrame() {}
+  endFrame() {
+    // Optionnel: si tu veux que "un clic" dure max 1 frame
+    // MAIS ici on le laisse se faire consommer par consumeClick()
+    // Donc on ne reset pas ici non plus.
+  }
 
   consumeClick() {
     const c = this._clicked;
@@ -59,7 +65,7 @@ export class Input {
   _handleDown(e) {
     if (e.button !== 0) return;
     this._down = true;
-    this._clicked = true;
+    this._clicked = true; // latch until consumed
     this._handleMove(e);
   }
 
@@ -67,4 +73,3 @@ export class Input {
     this._down = false;
   }
 }
-
