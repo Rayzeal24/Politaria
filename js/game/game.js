@@ -1,8 +1,7 @@
-
 import { Pool } from "../engine/pool.js";
 import { dist2, TAU } from "../engine/math.js";
 
-import { GAME_DEFAULTS, COLORS, TOWER_DATA, TOWER_TYPES } from "./config.js";
+import { GAME_DEFAULTS, COLORS, TOWER_DATA, TOWER_TYPES, TERRAIN } from "./config.js";
 import { createDemoLevel } from "./level.js";
 
 import { Economy } from "./managers/economy.js";
@@ -51,6 +50,13 @@ export class Game {
     // Selection state
     this.selection = { type: "none", padIndex: -1, tower: null };
     this._hoverPad = -1;
+
+    // === TERRAIN CACHE (nouveau) ===
+    this._terrainCanvas = document.createElement("canvas");
+    this._terrainCanvas.width = this.canvas.width;
+    this._terrainCanvas.height = this.canvas.height;
+    this._terrainCtx = this._terrainCanvas.getContext("2d", { alpha: false });
+    this._generateTerrain(); // 1 seule fois
 
     // Bind initial panel + HUD
     this.ui.updateHUD();
@@ -136,7 +142,6 @@ export class Game {
     if (this._started) {
       const { waveEnded } = this.waveManager.update(dt);
       if (waveEnded) {
-        // Save best wave (1-based waveIndex; waveIndex already advanced)
         this.economy.saveBestWave(Math.min(this.waveManager.waveIndex, this.waveManager.waveCount));
       }
     }
@@ -145,19 +150,17 @@ export class Game {
     this.enemyPool.forEachActive((e) => {
       e.update(dt, this.level.waypoints);
       if (e.reached && e.active) {
-        // reached base -> lose life and remove enemy
         this.economy.loseLife(1);
         this.waveManager.onEnemyRemoved();
         this.enemyPool.release(e);
       } else if (e.dead && e.active) {
-        // reward + remove
         this.economy.earn(e.goldReward);
         this.waveManager.onEnemyRemoved();
         this.enemyPool.release(e);
       }
     });
 
-    // Game over (simple)
+    // Game over
     if (this.economy.lives <= 0) {
       this.paused = true;
       this.ui.updateHUD();
@@ -167,9 +170,7 @@ export class Game {
     }
 
     // Update soldiers
-    // respawnSeconds from barracks stats per soldier (already stored in each soldier as timer)
     this.soldierPool.forEachActive((s) => {
-      // respawn seconds: soldier keeps its own timer; pass a default (not used in this impl except kill)
       s.update(dt, this.enemyList, 4.0);
       if (s.active && !s.dead && s.hp <= 0) {
         s.kill(4.5);
@@ -214,7 +215,7 @@ export class Game {
     // handle input last
     this._handleInput();
 
-    // update HUD (cheap)
+    // update HUD
     this.ui.updateHUD();
 
     this.input.endFrame();
@@ -258,22 +259,8 @@ export class Game {
     const w = this.canvas.width;
     const h = this.canvas.height;
 
-    // clear
-    ctx.clearRect(0, 0, w, h);
-
-    // background grid-ish
-    ctx.save();
-    ctx.globalAlpha = 0.14;
-    ctx.beginPath();
-    for (let x = 0; x <= w; x += 48) {
-      ctx.moveTo(x, 0); ctx.lineTo(x, h);
-    }
-    for (let y = 0; y <= h; y += 48) {
-      ctx.moveTo(0, y); ctx.lineTo(w, y);
-    }
-    ctx.strokeStyle = "rgba(255,255,255,.15)";
-    ctx.stroke();
-    ctx.restore();
+    // === TERRAIN (nouveau) ===
+    ctx.drawImage(this._terrainCanvas, 0, 0);
 
     // path
     this._renderPath(ctx);
@@ -339,7 +326,6 @@ export class Game {
       ctx.beginPath();
       ctx.arc(e.x, e.y, e.r, 0, TAU);
 
-      // small tint based on resistances
       const isArmored = e.armor > 0.18;
       const isMagic = e.mResist > 0.18;
       ctx.fillStyle = isMagic ? COLORS.enemyMagic : (isArmored ? COLORS.enemyArmor : COLORS.enemy);
@@ -377,7 +363,7 @@ export class Game {
     // overlays
     if (!this._started) {
       ctx.save();
-      ctx.fillStyle = "rgba(0,0,0,.35)";
+      ctx.fillStyle = "rgba(0,0,0,.25)";
       ctx.fillRect(0, 0, w, h);
       ctx.fillStyle = "rgba(255,255,255,.9)";
       ctx.font = "700 22px system-ui";
@@ -387,7 +373,7 @@ export class Game {
 
     if (this.paused && this.economy.lives > 0) {
       ctx.save();
-      ctx.fillStyle = "rgba(0,0,0,.25)";
+      ctx.fillStyle = "rgba(0,0,0,.18)";
       ctx.fillRect(0, 0, w, h);
       ctx.fillStyle = "rgba(255,255,255,.9)";
       ctx.font = "700 22px system-ui";
@@ -397,7 +383,7 @@ export class Game {
 
     if (this.economy.lives <= 0) {
       ctx.save();
-      ctx.fillStyle = "rgba(0,0,0,.50)";
+      ctx.fillStyle = "rgba(0,0,0,.45)";
       ctx.fillRect(0, 0, w, h);
       ctx.fillStyle = "rgba(255,120,120,.95)";
       ctx.font = "800 28px system-ui";
@@ -477,15 +463,167 @@ export class Game {
   }
 
   _getRangeTower() {
-    // If tower selected, show its range.
     if (this.selection.type === "tower" && this.selection.tower && this.selection.tower.active) {
       return this.selection.tower;
     }
-    // If hover pad and tower exists, show.
     if (this._hoverPad !== -1) {
       const t = this.towersByPad[this._hoverPad];
       if (t && t.active) return t;
     }
     return null;
+  }
+
+  // =========================
+  // TERRAIN GENERATION (nouveau)
+  // =========================
+
+  _generateTerrain() {
+    const ctx = this._terrainCtx;
+    const w = this._terrainCanvas.width;
+    const h = this._terrainCanvas.height;
+
+    // ImageData (1 seule alloc)
+    const img = ctx.createImageData(w, h);
+    const data = img.data;
+
+    const wps = this.level.waypoints;
+
+    // Prebuild segments for distance checks (no alloc per pixel)
+    const segCount = wps.length - 1;
+    const segAx = new Float32Array(segCount);
+    const segAy = new Float32Array(segCount);
+    const segBx = new Float32Array(segCount);
+    const segBy = new Float32Array(segCount);
+
+    for (let i = 0; i < segCount; i++) {
+      segAx[i] = wps[i].x;   segAy[i] = wps[i].y;
+      segBx[i] = wps[i+1].x; segBy[i] = wps[i+1].y;
+    }
+
+    const maxD = TERRAIN.gradientMaxDist;
+
+    const near = TERRAIN.nearPath;
+    const far  = TERRAIN.farPath;
+
+    const plainsTint = TERRAIN.plainsTint;
+    const forestTint = TERRAIN.forestTint;
+
+    const noiseStrength = TERRAIN.noiseStrength;
+    const forestStart = TERRAIN.forestStart;
+
+    // Helpers
+    const clamp01 = (t) => (t < 0 ? 0 : (t > 1 ? 1 : t));
+    const lerp = (a, b, t) => a + (b - a) * t;
+
+    // Distance point -> segment (squared)
+    const distPointSeg2 = (px, py, ax, ay, bx, by) => {
+      const abx = bx - ax, aby = by - ay;
+      const apx = px - ax, apy = py - ay;
+      const ab2 = abx * abx + aby * aby;
+      if (ab2 <= 1e-8) {
+        const dx = px - ax, dy = py - ay;
+        return dx * dx + dy * dy;
+      }
+      let t = (apx * abx + apy * aby) / ab2;
+      if (t < 0) t = 0; else if (t > 1) t = 1;
+      const cx = ax + abx * t;
+      const cy = ay + aby * t;
+      const dx = px - cx, dy = py - cy;
+      return dx * dx + dy * dy;
+    };
+
+    // Fast hash noise 0..1 (int)
+    const hash01 = (x, y) => {
+      let n = (x | 0) * 374761393 + (y | 0) * 668265263;
+      n = (n ^ (n >> 13)) * 1274126177;
+      n = n ^ (n >> 16);
+      return (n >>> 0) / 4294967295;
+    };
+
+    // Fill pixels
+    let idx = 0;
+    for (let y = 0; y < h; y++) {
+      for (let x = 0; x < w; x++) {
+        // min distance to path polyline
+        let minD2 = 1e18;
+        for (let i = 0; i < segCount; i++) {
+          const d2 = distPointSeg2(x, y, segAx[i], segAy[i], segBx[i], segBy[i]);
+          if (d2 < minD2) minD2 = d2;
+        }
+
+        const d = Math.sqrt(minD2);
+        const t = clamp01(d / maxD); // 0 near path -> 1 far
+
+        // Base gradient color
+        let r = lerp(near[0], far[0], t);
+        let g = lerp(near[1], far[1], t);
+        let b = lerp(near[2], far[2], t);
+
+        // Biome decision: farther => more forest, closer => more plains
+        // Add noise so it's not a straight ring around the road
+        const n1 = hash01(x >> 3, y >> 3); // low frequency
+        const n2 = hash01(x >> 1, y >> 1); // high freq
+        const noise = (n1 * 0.7 + n2 * 0.3) - 0.5; // -0.5..0.5
+
+        const biomeFactor = clamp01((t - forestStart) / (1 - forestStart)); // 0..1
+        const forestiness = clamp01(biomeFactor + noise * 0.35);
+
+        // Apply tint blend between plains and forest
+        // plains: slight boost, forest: slight darken
+        const tr = lerp(plainsTint[0], forestTint[0], forestiness);
+        const tg = lerp(plainsTint[1], forestTint[1], forestiness);
+        const tb = lerp(plainsTint[2], forestTint[2], forestiness);
+
+        r += tr;
+        g += tg;
+        b += tb;
+
+        // Add subtle texture noise
+        const tex = noise * (255 * noiseStrength);
+        r += tex * 0.35;
+        g += tex * 0.50;
+        b += tex * 0.25;
+
+        // Optional "tree specks" in forest areas (rare dots)
+        if (forestiness > 0.55) {
+          const tseed = hash01(x >> 2, y >> 2);
+          if (tseed > 0.985) {
+            // darker dot = tree canopy
+            r *= 0.65; g *= 0.70; b *= 0.65;
+          }
+        }
+
+        // Clamp 0..255
+        r = r < 0 ? 0 : (r > 255 ? 255 : r);
+        g = g < 0 ? 0 : (g > 255 ? 255 : g);
+        b = b < 0 ? 0 : (b > 255 ? 255 : b);
+
+        data[idx++] = r | 0;
+        data[idx++] = g | 0;
+        data[idx++] = b | 0;
+        data[idx++] = 255;
+      }
+    }
+
+    ctx.putImageData(img, 0, 0);
+
+    // Add a light vignette to match your UI (cheap, 1 time)
+    ctx.save();
+    const grad = ctx.createRadialGradient(w * 0.5, h * 0.5, 60, w * 0.5, h * 0.5, Math.max(w, h) * 0.75);
+    grad.addColorStop(0, "rgba(0,0,0,0)");
+    grad.addColorStop(1, "rgba(0,0,0,0.35)");
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, w, h);
+    ctx.restore();
+
+    // Add subtle grid overlay (1 time)
+    ctx.save();
+    ctx.globalAlpha = 0.10;
+    ctx.beginPath();
+    for (let gx = 0; gx <= w; gx += 48) { ctx.moveTo(gx, 0); ctx.lineTo(gx, h); }
+    for (let gy = 0; gy <= h; gy += 48) { ctx.moveTo(0, gy); ctx.lineTo(w, gy); }
+    ctx.strokeStyle = "rgba(255,255,255,.18)";
+    ctx.stroke();
+    ctx.restore();
   }
 }
