@@ -1,4 +1,3 @@
-
 export const SAVE_KEY = "td_save_v1";
 
 export const TOWER_TYPES = {
@@ -115,3 +114,27 @@ export const WAVES = [
     ],
   },
 ];
+
+/**
+ * TERRAIN (nouveau)
+ * - Gradient vert en fonction de la distance au chemin
+ * - Variations forêt / plaine via bruit léger (sans assets)
+ */
+export const TERRAIN = {
+  // distance max utilisée pour le gradient (en pixels canvas)
+  gradientMaxDist: 240,
+
+  // Couleurs de base (RGB)
+  nearPath: [62, 138, 76],    // vert clair proche du chemin
+  farPath:  [10,  34, 24],    // vert sombre loin du chemin
+
+  // Influence "plaine" (plus clair) vs "forêt" (plus sombre)
+  plainsTint: [18, 30, 8],    // boost léger vers jaune/vert
+  forestTint: [-10, -18, -6], // assombrit et refroidit
+
+  // intensité du bruit (0..1)
+  noiseStrength: 0.18,
+
+  // seuil (0..1) : plus loin du chemin -> plus de forêt
+  forestStart: 0.55,
+};
